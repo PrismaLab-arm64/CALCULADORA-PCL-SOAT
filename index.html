@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a1931">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PCL SOAT">
+    
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <title>Calculadora PCL SOAT | SISTROVIAL.LEGAL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-overlay-start: rgba(10, 25, 49, 0.88); 
+            --bg-overlay-end: rgba(28, 66, 120, 0.85);
+            --text-color: #ffffff;
+            --input-bg: rgba(255, 255, 255, 0.08); 
+            --input-border-color: rgba(255, 255, 255, 0.3);
+            --highlight-color: #4facfe;
+            --error-color: #ff4b4b;
+            --glass-effect: blur(12px);
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+        body {
+            margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100dvh; 
+            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+            overflow-x: hidden; position: relative;
+        }
+
+        /* FONDO: Busca la imagen Diosa.jpg en el mismo repositorio */
+        .background-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background-image: url('Diosa.jpg'); 
+            background-size: cover; background-position: center top; background-repeat: no-repeat;
+            filter: blur(3px); transform: scale(1.02);
+        }
+
+        .gradient-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%);
+        }
+
+        .app-container {
+            width: 100%; max-width: 400px; text-align: center; position: relative;
+            max-height: 100dvh; overflow-y: auto; scrollbar-width: none;
+        }
+        .app-container::-webkit-scrollbar { display: none; }
+
+        /* Estilos Compactos */
+        .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; margin-top: 10px; }
+        h1.top-label { font-family: 'Roboto', sans-serif; font-weight: 300; letter-spacing: 4px; font-size: 0.9rem; margin: 0; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px; }
+        h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); margin: 0; line-height: 1.1; letter-spacing: 1px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 8px; }
+        h2.company-name { font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 1rem; opacity: 0.95; letter-spacing: 2px; text-transform: uppercase; margin: 0; margin-bottom: 4px; }
+        h3.tagline { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; font-weight: 400; color: #e0e0e0; margin: 0; margin-bottom: 10px; opacity: 0.8; }
+        .website-url { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 0.85rem; color: var(--highlight-color); opacity: 0.9; letter-spacing: 1px; text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: all 0.3s; }
+        .website-url:hover { border-bottom-color: var(--highlight-color); }
+
+        .input-group { position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; overflow: hidden; background: var(--input-bg); backdrop-filter: var(--glass-effect); -webkit-backdrop-filter: var(--glass-effect); border: 1px solid var(--input-border-color); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .input-group.error { border-color: var(--error-color); box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: shake 0.4s ease-in-out; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; font-size: 1.2rem; color: rgba(255,255,255,0.7); }
+        .custom-field { width: 100%; background: transparent; border: none; font-size: 16px; padding: 18px 15px 18px 50px; color: var(--text-color); font-family: 'Roboto', sans-serif; font-weight: 400; outline: none; border-radius: 0; }
+        ::placeholder { color: rgba(255, 255, 255, 0.4); }
+        select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointer; color: white; }
+        select.custom-field option { background-color: #0a1931; color: white; padding: 10px; }
+        .select-arrow { position: absolute; top: 50%; transform: translateY(-50%); right: 15px; pointer-events: none; font-size: 0.9rem; color: rgba(255,255,255,0.6); }
+        .readonly-field { color: var(--highlight-color); font-weight: 500; cursor: not-allowed; background: rgba(0, 0, 0, 0.2); }
+        .dynamic-label-container { height: 18px; margin-top: -18px; margin-bottom: 20px; text-align: right; padding-right: 10px; }
+        .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
+        .dynamic-label.visible { opacity: 1; transform: translateY(0); }
+
+        .btn-calcular { width: 100%; padding: 18px; background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.25)); border: 1px solid rgba(255, 255, 255, 0.5); color: var(--text-color); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; border-radius: 30px; font-family: inherit; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: manipulation; }
+        .btn-calcular:active { transform: scale(0.98); }
+        .footer { margin-top: 35px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-card { background: #101c36; border: 1px solid var(--error-color); width: 85%; max-width: 320px; padding: 25px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+        .modal-icon { font-size: 3rem; color: var(--error-color); margin-bottom: 15px; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 10px; }
+        .modal-text { font-size: 0.9rem; color: #ddd; margin-bottom: 20px; line-height: 1.4; }
+        .modal-btn { background: var(--error-color); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; }
+
+        @media (max-height: 700px) { .title-container { margin-bottom: 15px; } h1.main-title { font-size: 2.2rem; } .btn-calcular { padding: 15px; } .input-group { margin-bottom: 15px; } .custom-field { padding: 14px 15px 14px 45px; } .footer { margin-top: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="background-layer"></div>
+    <div class="gradient-overlay"></div>
+    <div class="app-container">
+        <div class="title-container">
+            <h1 class="top-label">CALCULADORA</h1>
+            <h1 class="main-title">PCL SOAT</h1>
+            <h2 class="company-name">SISTROVIAL.LEGAL</h2>
+            <h3 class="tagline">"Abogados & Peritos"</h3>
+            <a href="https://www.sistrovial.legal" class="website-url">www.sistrovial.legal</a>
+        </div>
+        <form id="pclForm">
+            <div class="input-group">
+                <i class="fa-solid fa-calendar-circle-user input-icon"></i>
+                <select id="anio" class="custom-field">
+                    <option value="2024">Año Gravable 2024</option>
+                    <option value="2025" selected>Año Gravable 2025</option>
+                    <option value="2026">Año Gravable 2026</option>
+                </select>
+                <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+            <div class="input-group" id="pclGroup">
+                <i class="fa-solid fa-percent input-icon"></i>
+                <input type="text" id="porcentajePCL" class="custom-field" placeholder="Ingrese % PCL (0 - 100)" inputmode="decimal" pattern="[0-9]*">
+            </div>
+            <div class="dynamic-label-container"><span id="labelEquivalencia" class="dynamic-label">0 SMDLV</span></div>
+            <div class="input-group">
+                <i class="fa-solid fa-coins input-icon"></i>
+                <input type="text" id="valorDia" class="custom-field readonly-field" readonly value="$ 0">
+            </div>
+            <div class="input-group" style="border-color: var(--highlight-color); background: rgba(79, 172, 254, 0.12);">
+                <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
+                <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
+            </div>
+            <button type="button" class="btn-calcular" id="btnCalcular">CALCULAR</button>
+        </form>
+        <div class="footer">© 2026 Forensics Crash S.A.S | Versión PWA 3.1</div>
+    </div>
+    <div class="modal-overlay" id="errorModal">
+        <div class="modal-card">
+            <div class="modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="modal-title">¡Atención!</div>
+            <div class="modal-text">El porcentaje de pérdida (PCL) no puede ser mayor al <b>100%</b>.<br><br>Por favor verifica el valor.</div>
+            <button class="modal-btn" onclick="cerrarModal()">Entendido</button>
+        </div>
+    </div>
+    
+    <script>
+        // Lógica de Registro SW
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registrado', reg))
+                    .catch(err => console.log('Error Service Worker', err));
+            });
+        }
+
+        // Lógica de la Calculadora
+        const smmlvValues = { '2024': 1300000, '2025': 1400000, '2026': 1500000 };
+        const anioSelect = document.getElementById('anio'); const inputPCL = document.getElementById('porcentajePCL'); const inputGroupPCL = document.getElementById('pclGroup'); const labelEquivalencia = document.getElementById('labelEquivalencia'); const valorDiaInput = document.getElementById('valorDia'); const resultadoInput = document.getElementById('resultadoPcl'); const btnCalcular = document.getElementById('btnCalcular'); const errorModal = document.getElementById('errorModal'); const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+        function mostrarModal() { errorModal.classList.add('active'); inputGroupPCL.classList.add('error'); inputPCL.blur(); }
+        function cerrarModal() { errorModal.classList.remove('active'); inputPCL.value = ""; inputPCL.focus(); inputGroupPCL.classList.remove('error'); actualizarCalculos(); }
+        function obtenerDiasIndemnizacion(porcentaje) {
+            if (porcentaje < 1) return 0; if (porcentaje <= 5) return 14; if (porcentaje > 50) return 180;
+            let rangoSuperior = Math.ceil(porcentaje); if (porcentaje % 1 === 0) rangoSuperior = porcentaje; return 14 + ((rangoSuperior - 5) * 3.5);
+        }
+        function limpiarInputPCL(valor) { return valor.replace(',', '.').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); }
+        function actualizarCalculos() {
+            let anio = anioSelect.value; let smmlv = smmlvValues[anio]; let valorRaw = limpiarInputPCL(inputPCL.value); let pcl = parseFloat(valorRaw); let valorDia = smmlv / 30; valorDiaInput.value = `${formatter.format(valorDia)} / día`;
+            if (pcl > 100) { mostrarModal(); resultadoInput.value = "$ 0"; labelEquivalencia.classList.remove('visible'); return; } else { inputGroupPCL.classList.remove('error'); }
+            if (!isNaN(pcl) && pcl > 0 && pcl <= 100) { let diasIndemnizacion = obtenerDiasIndemnizacion(pcl); labelEquivalencia.innerText = `Tabla: ${diasIndemnizacion} días de salario`; labelEquivalencia.classList.add('visible'); let total = valorDia * diasIndemnizacion; resultadoInput.value = formatter.format(total); } else { resultadoInput.value = "$ 0"; labelEquivalencia.classList.remove('visible'); }
+        }
+        anioSelect.addEventListener('change', actualizarCalculos); btnCalcular.addEventListener('click', actualizarCalculos);
+        inputPCL.addEventListener('input', (e) => { if(parseFloat(e.target.value) > 100) mostrarModal(); });
+        inputPCL.addEventListener('blur', (e) => { e.target.value = limpiarInputPCL(e.target.value); actualizarCalculos(); });
+        errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModal(); });
+        actualizarCalculos();
+    </script>
+</body>
+</html>
