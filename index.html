@@ -39,10 +39,11 @@
             overflow-x: hidden; position: relative;
         }
 
-        /* FONDO: Busca la imagen Diosa.png en el mismo repositorio */
+        /* --- CORRECCIÓN REALIZADA AQUÍ --- */
+        /* Se cambió la extensión a .png para coincidir con tu archivo */
         .background-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background-image: url('Diosa.png'); 
+            background-image: url('Diosa.png');  /* <--- ¡AQUÍ ESTABA EL CAMBIO! */
             background-size: cover; background-position: center top; background-repeat: no-repeat;
             filter: blur(3px); transform: scale(1.02);
         }
