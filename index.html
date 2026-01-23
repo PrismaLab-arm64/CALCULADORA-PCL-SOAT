@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a1931">
     
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' 'unsafe-inline'; 
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
+        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
+        img-src 'self' data:; 
+        connect-src 'self' https://www.forensics-crash.com https://forensics-crash.com; 
+    ">
+    
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES --- */
+        /* --- ESTILOS GENERALES (V21 - FINAL MERGE) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -41,7 +50,7 @@
             background-color: #0a1931; 
         }
 
-        /* --- PANTALLA DE CARGA (SPLASH SCREEN) --- */
+        /* --- PANTALLA DE CARGA Y BLOQUEO --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #081222; z-index: 99999;
@@ -51,57 +60,30 @@
         
         #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        .splash-logo {
-            width: 100px; height: 100px; margin-bottom: 30px;
-            border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3);
-            animation: pulseLogo 2s infinite;
-        }
-
-        .splash-title {
-            font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 1.5rem;
-            letter-spacing: 2px; margin-bottom: 5px; color: white;
-        }
-        
-        .splash-subtitle {
-            font-family: 'Playfair Display', serif; font-style: italic;
-            font-size: 0.9rem; color: #8899a6; margin-bottom: 40px;
-        }
+        .splash-logo { width: 100px; height: 100px; margin-bottom: 30px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; }
+        .splash-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 5px; color: white; }
+        .splash-subtitle { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; color: #8899a6; margin-bottom: 40px; }
 
         .loading-container { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; overflow: hidden; }
-        
-        .loading-bar {
-            position: absolute; top: 0; left: 0; height: 100%; width: 0%;
-            background: var(--highlight-color); border-radius: 2px;
-            box-shadow: 0 0 10px var(--highlight-color);
-            transition: width 0.3s ease;
-        }
-
+        .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--highlight-color); border-radius: 2px; box-shadow: 0 0 10px var(--highlight-color); transition: width 0.3s ease; }
         .loading-text { margin-top: 15px; font-size: 0.75rem; color: var(--highlight-color); letter-spacing: 1px; min-height: 1.2em; }
+
+        /* ESTILO DE BLOQUEO (ROJO) */
+        .splash-locked .loading-bar { background: var(--error-color); box-shadow: 0 0 15px var(--error-color); }
+        .splash-locked .loading-text { color: var(--error-color); font-weight: bold; }
+        .splash-locked .splash-logo { animation: none; filter: grayscale(100%); }
 
         @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } 100% { transform: scale(1); } }
 
         /* --- RESTO DE LA APP --- */
-        .background-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background-image: url('Diosa.png'); 
-            background-size: cover; background-position: center top; background-repeat: no-repeat;
-            filter: blur(3px); transform: scale(1.02);
-        }
+        .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center top; background-repeat: no-repeat; filter: blur(3px); transform: scale(1.02); }
+        .gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%); }
 
-        .gradient-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%);
-        }
-
-        .app-container {
-            width: 100%; max-width: 400px; text-align: center; position: relative;
-            max-height: 100dvh; overflow-y: auto; scrollbar-width: none;
-            opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; /* Animación de entrada */
-        }
+        .app-container { width: 100%; max-width: 400px; text-align: center; position: relative; max-height: 100dvh; overflow-y: auto; scrollbar-width: none; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
         .app-container.visible { opacity: 1; transform: translateY(0); }
         .app-container::-webkit-scrollbar { display: none; }
 
-        /* HEADER */
+        /* HEADER & UI */
         .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; margin-top: 10px; }
         h1.top-label { font-family: 'Roboto', sans-serif; font-weight: 300; letter-spacing: 4px; font-size: 0.9rem; margin: 0; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px; }
         h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); margin: 0; line-height: 1.1; letter-spacing: 1px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 8px; }
@@ -109,7 +91,6 @@
         h3.tagline { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; font-weight: 400; color: #e0e0e0; margin: 0; margin-bottom: 10px; opacity: 0.8; }
         .website-url { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 0.85rem; color: var(--highlight-color); opacity: 0.9; letter-spacing: 1px; text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: all 0.3s; }
         
-        /* INPUTS */
         .input-group { position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; overflow: hidden; background: var(--input-bg); backdrop-filter: var(--glass-effect); -webkit-backdrop-filter: var(--glass-effect); border: 1px solid var(--input-border-color); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .input-group.error { border-color: var(--error-color); box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: shake 0.4s ease-in-out; }
         .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; font-size: 1.2rem; color: rgba(255,255,255,0.7); }
@@ -122,31 +103,11 @@
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
-        /* CONTENEDOR RESULTADO */
         .result-container { display: flex; gap: 10px; align-items: center; }
-
-        .btn-share {
-            background: rgba(37, 211, 102, 0.15);
-            border: 1px solid var(--whatsapp-color);
-            color: var(--whatsapp-color);
-            border-radius: 12px;
-            width: 55px; height: 55px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem; cursor: pointer; transition: all 0.2s;
-            backdrop-filter: var(--glass-effect);
-        }
+        .btn-share { background: rgba(37, 211, 102, 0.15); border: 1px solid var(--whatsapp-color); color: var(--whatsapp-color); border-radius: 12px; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: all 0.2s; backdrop-filter: var(--glass-effect); }
         .btn-share:active { transform: scale(0.90); background: rgba(37, 211, 102, 0.3); }
-
-        .btn-tarifas {
-            width: 100%; padding: 18px; margin-top: 15px;
-            background: rgba(79, 172, 254, 0.15);
-            border: 1px solid rgba(79, 172, 254, 0.6);
-            color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px;
-            border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation;
-            transition: all 0.2s;
-        }
+        .btn-tarifas { width: 100%; padding: 18px; margin-top: 15px; background: rgba(79, 172, 254, 0.15); border: 1px solid rgba(79, 172, 254, 0.6); color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px; border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation; transition: all 0.2s; }
         .btn-tarifas:active { background: rgba(79, 172, 254, 0.3); transform: scale(0.98); }
-
         .footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
 
         /* MODALES */
@@ -155,7 +116,6 @@
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
         .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
         .tarifa-left { display: flex; flex-direction: column; }
         .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
@@ -163,7 +123,6 @@
         .tarifa-value { font-size: 1.1rem; color: var(--highlight-color); font-weight: 700; text-align: right; font-family: 'Roboto', sans-serif; }
         .modal-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
         .medical-header { text-align: left; color: #8899a6; font-size: 0.85rem; margin-bottom: 15px; }
-
         .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 14px 0; border-radius: 25px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 25px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
         
         @media (max-height: 700px) { .title-container { margin-bottom: 10px; } h1.main-title { font-size: 2.2rem; } .input-group { margin-bottom: 15px; } .btn-tarifas { padding: 15px; } }
@@ -197,8 +156,7 @@
         <form id="pclForm">
             <div class="input-group">
                 <i class="fa-solid fa-calendar-circle-user input-icon"></i>
-                <select id="anio" class="custom-field">
-                    </select>
+                <select id="anio" class="custom-field"></select>
                 <i class="fa-solid fa-chevron-down select-arrow"></i>
             </div>
 
@@ -226,7 +184,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V20 (Pro Loading)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V21 (Final Merge)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -241,61 +199,67 @@
     <div class="modal-overlay" id="tarifasModal">
         <div class="modal-card">
             <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
-            <div class="tarifa-row">
-                <div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div>
-                <div class="tarifa-value" id="valMuerte">$ 0</div>
-            </div>
-            <div class="tarifa-row">
-                <div class="tarifa-left"><span class="tarifa-label">Transporte</span><span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div>
-                <div class="tarifa-value" id="valTransporte">$ 0</div>
-            </div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div><div class="tarifa-value" id="valMuerte">$ 0</div></div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Transporte</span><span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div><div class="tarifa-value" id="valTransporte">$ 0</div></div>
             <hr class="modal-divider">
             <div class="medical-header">Topes Gastos Médicos:</div>
-            <div class="tarifa-row">
-                <div class="tarifa-left"><span class="tarifa-label">Motos &lt; 200cc</span><span class="tarifa-sub">300 SMLDV</span></div>
-                <div class="tarifa-value" id="valMedicoBajo">$ 0</div>
-            </div>
-            <div class="tarifa-row">
-                <div class="tarifa-left"><span class="tarifa-label">Otros / &gt; 200cc</span><span class="tarifa-sub">800 SMLDV</span></div>
-                <div class="tarifa-value" id="valMedicoAlto">$ 0</div>
-            </div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Motos &lt; 200cc</span><span class="tarifa-sub">300 SMLDV</span></div><div class="tarifa-value" id="valMedicoBajo">$ 0</div></div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Otros / &gt; 200cc</span><span class="tarifa-sub">800 SMLDV</span></div><div class="tarifa-value" id="valMedicoAlto">$ 0</div></div>
             <button class="modal-btn" onclick="cerrarModalTarifas()">CERRAR</button>
         </div>
     </div>
     
     <script>
         // ==========================================
-        //  ANIMACIÓN DE CARGA (SPLASH SCREEN)
+        //  CONFIGURACIÓN DEL KILL SWITCH (SEGURIDAD)
         // ==========================================
-        function initApp() {
+        const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
+
+        async function verificarYArrancar() {
             const bar = document.getElementById('loadBar');
             const text = document.getElementById('loadText');
             const splash = document.getElementById('splash-screen');
             const mainApp = document.getElementById('mainAppContainer');
 
-            // Simulación de carga (Secuencia de pasos)
-            setTimeout(() => { bar.style.width = "30%"; }, 100);
+            // 1. Inicia animación
+            bar.style.width = "30%";
+            
+            try {
+                // 2. Conectando al servidor...
+                setTimeout(() => { bar.style.width = "50%"; text.innerText = "Verificando licencia..."; }, 600);
+                
+                // Intento de conexión al archivo JSON (con timestamp para evitar caché)
+                const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // SI LA LICENCIA ES INACTIVA -> BLOQUEO TOTAL
+                    if (data.estado === 'inactivo') {
+                        bar.style.width = "100%";
+                        text.innerText = "ACCESO DENEGADO";
+                        splash.classList.add('splash-locked'); // Cambia a rojo
+                        // No cargamos la app, nos quedamos aquí
+                        return; 
+                    }
+                }
+            } catch (error) {
+                // Si falla la conexión (Offline), PERMITIMOS EL ACCESO (Soft Fail)
+                console.log("Modo Offline: Verificación omitida.");
+            }
+
+            // 3. Si llegamos aquí, todo está bien (Activo u Offline)
+            setTimeout(() => { bar.style.width = "80%"; text.innerText = "Cargando Normativa..."; }, 1200);
             
             setTimeout(() => { 
-                bar.style.width = "60%"; 
-                text.innerText = "Conectando Servidor...";
-            }, 800);
-
-            setTimeout(() => { 
-                bar.style.width = "90%"; 
-                text.innerText = "Cargando Normativa 2026...";
+                bar.style.width = "100%"; text.innerText = "Bienvenido";
+                
+                // Ocultar Splash y Mostrar App
+                setTimeout(() => {
+                    splash.classList.add('hidden');
+                    mainApp.classList.add('visible');
+                }, 500);
             }, 1800);
-
-            setTimeout(() => { 
-                bar.style.width = "100%"; 
-                text.innerText = "¡Listo!";
-            }, 2600);
-
-            // Finalizar carga y mostrar app
-            setTimeout(() => {
-                splash.classList.add('hidden'); // Desvanece el splash
-                mainApp.classList.add('visible'); // Aparece la app suavemente
-            }, 3000);
         }
 
         // ==========================================
@@ -312,11 +276,10 @@
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { 
                 navigator.serviceWorker.register('./sw.js'); 
-                initApp(); // Iniciar animación de carga al cargar todo
+                verificarYArrancar(); // Iniciar sistema con verificación
             }); 
         } else {
-            // Fallback si no hay service worker (navegador viejo o dev)
-            window.addEventListener('load', initApp);
+            window.addEventListener('load', verificarYArrancar);
         }
 
         const anioSelect = document.getElementById('anio'); 
@@ -335,7 +298,7 @@
                     anioSelect.appendChild(option);
                 });
                 if (anios.length > 0) anioSelect.value = anios[0];
-            } catch(e) { console.error("Error iniciando años:", e); }
+            } catch(e) {}
         }
 
         function getDatosAnio() { return DATA_HISTORICA[anioSelect.value]; }
@@ -343,16 +306,12 @@
         function actualizarCalculos() {
             const datos = getDatosAnio();
             if (!datos) return;
-
             let smmlv = datos.smmlv;
             let valorDia = smmlv / 30;
-            
             document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
             let pclRaw = inputPCL.value.replace(',', '.');
             let pcl = parseFloat(pclRaw);
-            
             if (pcl > 100) { errorModal.classList.add('active'); return; }
-
             if (!isNaN(pcl) && pcl > 0 && inputPCL.value !== "") {
                 let dias = 0;
                 if (pcl <= 5) dias = 14; 
@@ -362,7 +321,6 @@
                     if (pcl % 1 === 0) rangoSuperior = pcl;
                     dias = 14 + ((rangoSuperior - 5) * 3.5);
                 }
-                
                 document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
                 document.getElementById('labelEquivalencia').classList.add('visible');
                 document.getElementById('resultadoPcl').value = "± " + formatter.format(valorDia * dias);
@@ -375,22 +333,18 @@
         function abrirTarifas() {
             const datos = getDatosAnio();
             if(!datos) return;
-
             let smmlv = datos.smmlv;
             let uvt = datos.uvt;
             let valorDia = smmlv / 30;
-
             let muerte = valorDia * 750;
             let transporte = uvt * 8.77;
             let medicoBajo = valorDia * 300; 
             let medicoAlto = valorDia * 800; 
-
             document.getElementById('yearLabel').innerText = anioSelect.value;
             document.getElementById('valMuerte').innerText = "± " + formatter.format(muerte);
             document.getElementById('valTransporte').innerText = "± " + formatter.format(transporte);
             document.getElementById('valMedicoBajo').innerText = "± " + formatter.format(medicoBajo);
             document.getElementById('valMedicoAlto').innerText = "± " + formatter.format(medicoAlto);
-            
             tarifasModal.classList.add('active');
         }
 
@@ -399,16 +353,12 @@
             let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
             let anio = anioSelect.value;
             let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
-
-            if (resultadoClean === "$ 0" || pcl === "") {
-                alert("Ingrese un porcentaje para generar el dictamen.");
-                return;
-            }
-
-            let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Corrección rápida: Este mensaje interno está en inglés en el alert pero el output del texto de WhatsApp lo reviso abajo:
+            if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
             
-            // CORRECCION TEXTO WHATSAPP EN ESPAÑOL
+            let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
+            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Corrección rápida: "Según calificación..." (El alert interno puede quedar en inglés o español, el WA es el importante)
+            
+            // CORRECCION FINAL WA
             let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
             textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
             textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
@@ -416,7 +366,7 @@
             textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
             textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
             textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
-
+            
             let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
             window.open(url, '_blank');
         }
@@ -426,22 +376,12 @@
         
         function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
         function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
-
         anioSelect.addEventListener('change', actualizarCalculos);
         document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
         document.getElementById('btnShare').addEventListener('click', compartirResultado);
-        
-        inputPCL.addEventListener('input', (e) => { 
-            let val = e.target.value.replace(/[^0-9.,]/g, '');
-            e.target.value = val;
-            if(parseFloat(val) > 100) { errorModal.classList.add('active'); } 
-            else { actualizarCalculos(); }
-        });
-        
+        inputPCL.addEventListener('input', (e) => { let val = e.target.value.replace(/[^0-9.,]/g, ''); e.target.value = val; if(parseFloat(val) > 100) { errorModal.classList.add('active'); } else { actualizarCalculos(); } });
         tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
         errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
-
-        actualizarCalculos();
     </script>
 </body>
 </html>
