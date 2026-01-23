@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a1931">
     
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' 'unsafe-inline'; 
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
+        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
+        img-src 'self' data:; 
+        connect-src 'self' https://www.forensics-crash.com https://forensics-crash.com; 
+    ">
+    
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,7 +26,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V17 - A PRUEBA DE FALLOS) --- */
+        /* ESTILOS DE PANTALLA DE BLOQUEO (KILL SWITCH) */
+        #killScreen {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050b14; z-index: 9999; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 30px;
+        }
+        .kill-icon { font-size: 4rem; color: #ff4b4b; margin-bottom: 20px; }
+        .kill-title { font-size: 1.5rem; color: white; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
+        .kill-msg { font-size: 1rem; color: #ccc; line-height: 1.5; }
+
+        /* --- ESTILOS GENERALES --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -35,12 +54,8 @@
         body {
             margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 100dvh; 
-            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
-            overflow-x: hidden; position: relative;
-            
-            /* SALVAVIDAS: Color de fondo por si falla la imagen */
-            background-color: #0a1931; 
+            min-height: 100dvh; padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+            overflow-x: hidden; position: relative; background-color: #0a1931; 
         }
 
         /* FONDO */
@@ -50,16 +65,11 @@
             background-size: cover; background-position: center top; background-repeat: no-repeat;
             filter: blur(3px); transform: scale(1.02);
         }
-
         .gradient-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%);
         }
-
-        .app-container {
-            width: 100%; max-width: 400px; text-align: center; position: relative;
-            max-height: 100dvh; overflow-y: auto; scrollbar-width: none;
-        }
+        .app-container { width: 100%; max-width: 400px; text-align: center; position: relative; max-height: 100dvh; overflow-y: auto; scrollbar-width: none; }
         .app-container::-webkit-scrollbar { display: none; }
 
         /* HEADER */
@@ -70,7 +80,7 @@
         h3.tagline { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; font-weight: 400; color: #e0e0e0; margin: 0; margin-bottom: 10px; opacity: 0.8; }
         .website-url { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 0.85rem; color: var(--highlight-color); opacity: 0.9; letter-spacing: 1px; text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: all 0.3s; }
         
-        /* INPUTS */
+        /* INPUTS & UI */
         .input-group { position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; overflow: hidden; background: var(--input-bg); backdrop-filter: var(--glass-effect); -webkit-backdrop-filter: var(--glass-effect); border: 1px solid var(--input-border-color); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .input-group.error { border-color: var(--error-color); box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: shake 0.4s ease-in-out; }
         .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; font-size: 1.2rem; color: rgba(255,255,255,0.7); }
@@ -82,32 +92,11 @@
         .dynamic-label-container { height: 18px; margin-top: -18px; margin-bottom: 20px; text-align: right; padding-right: 10px; }
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
-
-        /* CONTENEDOR RESULTADO */
         .result-container { display: flex; gap: 10px; align-items: center; }
-
-        .btn-share {
-            background: rgba(37, 211, 102, 0.15);
-            border: 1px solid var(--whatsapp-color);
-            color: var(--whatsapp-color);
-            border-radius: 12px;
-            width: 55px; height: 55px;
-            display: flex; justify-content: center; align-items: center;
-            font-size: 1.5rem; cursor: pointer; transition: all 0.2s;
-            backdrop-filter: var(--glass-effect);
-        }
+        .btn-share { background: rgba(37, 211, 102, 0.15); border: 1px solid var(--whatsapp-color); color: var(--whatsapp-color); border-radius: 12px; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: all 0.2s; backdrop-filter: var(--glass-effect); }
         .btn-share:active { transform: scale(0.90); background: rgba(37, 211, 102, 0.3); }
-
-        .btn-tarifas {
-            width: 100%; padding: 18px; margin-top: 15px;
-            background: rgba(79, 172, 254, 0.15);
-            border: 1px solid rgba(79, 172, 254, 0.6);
-            color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px;
-            border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation;
-            transition: all 0.2s;
-        }
+        .btn-tarifas { width: 100%; padding: 18px; margin-top: 15px; background: rgba(79, 172, 254, 0.15); border: 1px solid rgba(79, 172, 254, 0.6); color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px; border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation; transition: all 0.2s; }
         .btn-tarifas:active { background: rgba(79, 172, 254, 0.3); transform: scale(0.98); }
-
         .footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
 
         /* MODALES */
@@ -116,7 +105,6 @@
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
         .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
         .tarifa-left { display: flex; flex-direction: column; }
         .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
@@ -124,7 +112,6 @@
         .tarifa-value { font-size: 1.1rem; color: var(--highlight-color); font-weight: 700; text-align: right; font-family: 'Roboto', sans-serif; }
         .modal-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
         .medical-header { text-align: left; color: #8899a6; font-size: 0.85rem; margin-bottom: 15px; }
-
         .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 14px 0; border-radius: 25px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 25px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
         
         @media (max-height: 700px) { .title-container { margin-bottom: 10px; } h1.main-title { font-size: 2.2rem; } .input-group { margin-bottom: 15px; } .btn-tarifas { padding: 15px; } }
@@ -133,7 +120,15 @@
 <body>
     <div class="background-layer"></div>
     <div class="gradient-overlay"></div>
-    <div class="app-container">
+    
+    <div id="killScreen">
+        <div class="kill-icon"><i class="fa-solid fa-ban"></i></div>
+        <div class="kill-title">ACCESO SUSPENDIDO</div>
+        <div class="kill-msg" id="killMsg">Su licencia de uso ha expirado o ha sido revocada.</div>
+        <div style="margin-top: 20px; font-size: 0.8rem; color: #555;">Código: ERR-AUTH-09</div>
+    </div>
+
+    <div class="app-container" id="mainApp">
         <div class="title-container">
             <h1 class="top-label">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
@@ -174,7 +169,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing. John A. Skinner S. | Vers. 1.2.0 (Patch CSP v1.0)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V18 (Connected)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -189,7 +184,6 @@
     <div class="modal-overlay" id="tarifasModal">
         <div class="modal-card">
             <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
-            
             <div class="tarifa-row">
                 <div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div>
                 <div class="tarifa-value" id="valMuerte">$ 0</div>
@@ -214,24 +208,46 @@
     
     <script>
         // ==========================================
-        //  CONFIGURACIÓN MAESTRA
+        //  CONFIGURACIÓN DEL KILL SWITCH
+        // ==========================================
+        // IMPORTANTE: Cambia esta URL por la ruta real donde subirás el archivo .json en tu hosting
+        // Ejemplo: https://www.forensics-crash.com/licencias/pcl-app.json
+        const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
+
+        async function verificarLicencia() {
+            try {
+                // Agregamos ?t=timestamp para evitar que el celular guarde el archivo en caché y no se entere del bloqueo
+                const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // SI EL SERVIDOR DICE "inactivo", MATAMOS LA APP
+                    if (data.estado === 'inactivo') {
+                        document.getElementById('mainApp').style.display = 'none'; // Ocultar App
+                        document.getElementById('killScreen').style.display = 'flex'; // Mostrar Bloqueo
+                        if(data.mensaje) document.getElementById('killMsg').innerText = data.mensaje;
+                    }
+                }
+            } catch (error) {
+                // Si no hay internet o falla la conexión, la App sigue funcionando (Modo Campo)
+                // Si quieres que sea OBLIGATORIO tener internet, pon el bloqueo aquí también.
+                console.log("Modo Offline: Verificación omitida.");
+            }
+        }
+
+        // ==========================================
+        //  CONFIGURACIÓN MAESTRA DATOS
         // ==========================================
         const DATA_HISTORICA = {
             '2023': { smmlv: 1160000, uvt: 42412 },
             '2024': { smmlv: 1300000, uvt: 47065 },
             '2025': { smmlv: 1423500, uvt: 49799 },
             '2026': { smmlv: 1750905, uvt: 53000 },
-            // Futuro: Descomentar y editar
-            // '2027': { smmlv: 0, uvt: 0 },
         };
 
-        // ==========================================
-        //  LÓGICA DEL SISTEMA
-        // ==========================================
-        
-        if ('serviceWorker' in navigator) { 
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
-        }
+        // LÓGICA DEL SISTEMA
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
 
         const anioSelect = document.getElementById('anio'); 
         const inputPCL = document.getElementById('porcentajePCL'); 
@@ -239,7 +255,6 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // 1. GENERADOR DE OPCIONES
         function inicializarAnios() {
             const anios = Object.keys(DATA_HISTORICA).sort((a, b) => b - a);
             anios.forEach(anio => {
@@ -251,23 +266,17 @@
             if (anios.length > 0) anioSelect.value = anios[0];
         }
 
-        // 2. OBTENER DATOS
         function getDatosAnio() { return DATA_HISTORICA[anioSelect.value]; }
 
-        // 3. CALCULO PCL (Reactivo)
         function actualizarCalculos() {
             const datos = getDatosAnio();
             if (!datos) return;
-
             let smmlv = datos.smmlv;
             let valorDia = smmlv / 30;
-            
             document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
             let pclRaw = inputPCL.value.replace(',', '.');
             let pcl = parseFloat(pclRaw);
-            
             if (pcl > 100) { errorModal.classList.add('active'); return; }
-
             if (!isNaN(pcl) && pcl > 0 && inputPCL.value !== "") {
                 let dias = 0;
                 if (pcl <= 5) dias = 14; 
@@ -277,7 +286,6 @@
                     if (pcl % 1 === 0) rangoSuperior = pcl;
                     dias = 14 + ((rangoSuperior - 5) * 3.5);
                 }
-                
                 document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
                 document.getElementById('labelEquivalencia').classList.add('visible');
                 document.getElementById('resultadoPcl').value = "± " + formatter.format(valorDia * dias);
@@ -287,88 +295,54 @@
             }
         }
 
-        // 4. CALCULO TARIFAS FIJAS (Con ±)
         function abrirTarifas() {
             const datos = getDatosAnio();
             let smmlv = datos.smmlv;
             let uvt = datos.uvt;
             let valorDia = smmlv / 30;
-
             let muerte = valorDia * 750;
             let transporte = uvt * 8.77;
             let medicoBajo = valorDia * 300; 
             let medicoAlto = valorDia * 800; 
-
             document.getElementById('yearLabel').innerText = anioSelect.value;
             document.getElementById('valMuerte').innerText = "± " + formatter.format(muerte);
             document.getElementById('valTransporte').innerText = "± " + formatter.format(transporte);
             document.getElementById('valMedicoBajo').innerText = "± " + formatter.format(medicoBajo);
             document.getElementById('valMedicoAlto').innerText = "± " + formatter.format(medicoAlto);
-            
             tarifasModal.classList.add('active');
         }
 
-        // 5. COMPARTIR WHATSAPP (FORMATO ESPAÑOL JURÍDICO APROBADO)
         function compartirResultado() {
             let pcl = inputPCL.value;
             let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
             let anio = anioSelect.value;
             let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
-
-            if (resultadoClean === "$ 0" || pcl === "") {
-                alert("Ingrese un porcentaje para generar el dictamen.");
-                return;
-            }
-
-            // TEXTO DEFINITIVO EN ESPAÑOL + SIGNO ± + FORMATO PROLIJO
+            if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
+            
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
+            texto += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
+            texto += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
+            texto += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
+            texto += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
+            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
+            texto += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
             
-            texto += `*DICTAMEN PRELIMINAR:*\n`;
-            texto += `Según calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
-            
-            texto += `*CONVERSIÓN NORMATIVA:*\n`;
-            texto += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
-            
-            texto += `*VALOR ESTIMADO A PAGAR:*\n`;
-            texto += `*± ${resultadoClean} COP*\n\n`; 
-            
-            texto += `*FUNDAMENTO JURÍDICO:*\n`;
-            texto += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
-            
-            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\n`;
-            texto += `No arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
-            
-            texto += `*LÍNEAS DE ATENCIÓN:*\n`;
-            texto += `315 314 5848\n`;
-            texto += `310 330 3814\n`;
-            texto += `314 294 8943\n\n`;
-            
-            texto += `o Ingresa a: www.sistrovial.legal`;
-
             let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
             window.open(url, '_blank');
         }
 
-        // INICIALIZACIÓN
+        // INICIALIZAR
         inicializarAnios();
-        
+        verificarLicencia(); // <--- AQUÍ SE EJECUTA EL KILL SWITCH AL INICIAR
+
         function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
         function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
-
         anioSelect.addEventListener('change', actualizarCalculos);
         document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
         document.getElementById('btnShare').addEventListener('click', compartirResultado);
-        
-        inputPCL.addEventListener('input', (e) => { 
-            let val = e.target.value.replace(/[^0-9.,]/g, '');
-            e.target.value = val;
-            if(parseFloat(val) > 100) { errorModal.classList.add('active'); } 
-            else { actualizarCalculos(); }
-        });
-        
+        inputPCL.addEventListener('input', (e) => { let val = e.target.value.replace(/[^0-9.,]/g, ''); e.target.value = val; if(parseFloat(val) > 100) { errorModal.classList.add('active'); } else { actualizarCalculos(); } });
         tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
         errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
-
         actualizarCalculos();
     </script>
 </body>
