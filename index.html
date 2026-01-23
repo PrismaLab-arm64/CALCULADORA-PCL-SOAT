@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V12) --- */
+        /* --- ESTILOS GENERALES (V13) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -178,7 +178,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 12.0 (Corregida)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 13.0 (Signo ±)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -220,7 +220,7 @@
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA V12 ---
+        // --- LOGICA DEL SISTEMA V13 ---
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
@@ -287,7 +287,7 @@
             tarifasModal.classList.add('active');
         }
 
-        // --- FUNCIÓN WHATSAPP BLINDADA (ENCODEURICOMPONENT) ---
+        // --- FUNCIÓN WHATSAPP BLINDADA (USANDO SIGNO ±) ---
         function compartirResultado() {
             let pcl = inputPCL.value;
             let resultado = document.getElementById('resultadoPcl').value;
@@ -299,8 +299,7 @@
                 return;
             }
 
-            // Construimos el mensaje completo en una variable string
-            // Usamos \n para saltos de linea normales, luego encodeURIComponent se encarga del resto
+            // Construimos el mensaje - EL USO DE encodeURIComponent ES VITAL
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
             
             texto += `*DICTAMEN PRELIMINAR:*\n`;
@@ -310,7 +309,7 @@
             texto += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
             
             texto += `*VALOR ESTIMADO A PAGAR:*\n`;
-            texto += `*+/- ${resultado} COP*\n\n`; // <-- Aquí va el signo +/-
+            texto += `*± ${resultado} COP*\n\n`; // <--- AQUI ESTA EL SIGNO MATEMÁTICO (Alt+0177)
             
             texto += `*FUNDAMENTO JURÍDICO:*\n`;
             texto += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
@@ -325,7 +324,7 @@
             
             texto += `o Ingresa a: www.sistrovial.legal`;
 
-            // Codificamos TODO el texto para que la URL no se rompa por signos especiales
+            // Esta función garantiza que WhatsApp reciba todo el texto sin cortar por símbolos
             let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
 
             window.open(url, '_blank');
