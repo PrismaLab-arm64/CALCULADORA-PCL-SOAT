@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V23) --- */
+        /* --- ESTILOS GENERALES (V24 - FAILSAFE) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -96,6 +96,7 @@
         .app-container.visible { opacity: 1; transform: translateY(0); }
         .app-container::-webkit-scrollbar { display: none; }
 
+        /* UI ELEMENTS */
         .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; margin-top: 10px; }
         h1.top-label { font-family: 'Roboto', sans-serif; font-weight: 300; letter-spacing: 4px; font-size: 0.9rem; margin: 0; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px; }
         h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); margin: 0; line-height: 1.1; letter-spacing: 1px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 8px; }
@@ -201,7 +202,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V23 (Pro)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V24 (Anti-Trauma)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -228,29 +229,55 @@
     
     <script>
         // ==========================================
-        //  SISTEMA INTELIGENTE (MODO PRODUCCIÓN)
+        //  SISTEMA INTELIGENTE V24 (FAIL-SAFE)
         // ==========================================
         const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
+
+        // Función para cargar la app (Abre el telón)
+        function launchApp() {
+            const bar = document.getElementById('loadBar');
+            const text = document.getElementById('loadText');
+            const splash = document.getElementById('splash-screen');
+            const mainApp = document.getElementById('mainAppContainer');
+            
+            bar.style.width = "100%"; 
+            text.innerText = "Bienvenido";
+            
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                mainApp.classList.add('visible');
+            }, 500);
+        }
 
         async function verificarYArrancar() {
             const bar = document.getElementById('loadBar');
             const text = document.getElementById('loadText');
             const splash = document.getElementById('splash-screen');
-            const mainApp = document.getElementById('mainAppContainer');
             const toast = document.getElementById('subscription-toast');
             const toastMsg = document.getElementById('toast-message');
 
             bar.style.width = "30%";
-            
+            setTimeout(() => { if(!splash.classList.contains('hidden')) { bar.style.width = "60%"; } }, 800);
+
+            // --- FAILSAFE: Si en 3.5 segundos no ha pasado nada, ABRE LA APP A LA FUERZA ---
+            const failsafeTimer = setTimeout(() => {
+                console.log("Tiempo de espera agotado. Forzando inicio...");
+                launchApp();
+            }, 3500);
+
             try {
-                setTimeout(() => { bar.style.width = "50%"; text.innerText = "Verificando licencia..."; }, 600);
+                text.innerText = "Verificando licencia...";
                 
+                // Fetch con timestamp
                 const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
                 
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // --- CÁLCULO DE FECHAS ---
+                    // Si responde, cancelamos el inicio forzado para evaluar la licencia
+                    clearTimeout(failsafeTimer);
+
+                    // --- LÓGICA DE FECHAS ---
                     let diasRestantes = 999;
                     if (data.vencimiento) {
                         const hoy = new Date();
@@ -259,4 +286,44 @@
                         diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
                     }
 
-                    // 1. CASO BLOQUEO
+                    // 1. CASO BLOQUEO (Solo si el servidor dice explícitamente NO)
+                    if (data.estado === 'suspendido' || diasRestantes < 0) {
+                        bar.style.width = "100%";
+                        text.innerText = "ACCESO DENEGADO";
+                        splash.classList.add('splash-locked');
+                        return; // SE QUEDA AQUÍ BLOQUEADO
+                    }
+
+                    // 2. CASO AVISO
+                    if (diasRestantes <= 30 || data.estado === 'aviso') {
+                        let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
+                        toastMsg.innerText = mensaje;
+                        setTimeout(() => { toast.classList.add('active'); }, 4000);
+                        setTimeout(() => { toast.classList.remove('active'); }, 12000);
+                    }
+                }
+            } catch (error) {
+                console.log("Error de conexión (Modo Offline o Error CORS). Iniciando igual.");
+                // No hacemos nada aquí, el failsafeTimer se encargará de abrir la app.
+            }
+
+            // Si llegamos aquí y no hubo bloqueo, abrimos la app
+            launchApp();
+        }
+
+        // --- CONFIGURACIÓN BASE ---
+        const DATA_HISTORICA = {
+            '2023': { smmlv: 1160000, uvt: 42412 },
+            '2024': { smmlv: 1300000, uvt: 47065 },
+            '2025': { smmlv: 1423500, uvt: 49799 },
+            '2026': { smmlv: 1750905, uvt: 53000 },
+        };
+
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); verificarYArrancar(); }); } 
+        else { window.addEventListener('load', verificarYArrancar); }
+
+        const anioSelect = document.getElementById('anio'); 
+        const inputPCL = document.getElementById('porcentajePCL'); 
+        const errorModal = document.getElementById('errorModal');
+        const tarifasModal = document.getElementById('tarifasModal');
+        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP
