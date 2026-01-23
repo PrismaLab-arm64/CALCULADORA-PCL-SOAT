@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V13) --- */
+        /* --- ESTILOS GENERALES (V14) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -178,7 +178,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 13.0 (Signo ±)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 14.0 (Blindada)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -220,7 +220,7 @@
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA V13 ---
+        // --- LOGICA DEL SISTEMA V14 (BLINDAJE DE CENTIMOS) ---
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
@@ -235,7 +235,7 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // CALCULO PCL (AUTOMATIZADO)
+        // CALCULO PCL (AUTOMATIZADO Y BLINDADO)
         function actualizarCalculos() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
@@ -259,14 +259,16 @@
                 
                 document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
                 document.getElementById('labelEquivalencia').classList.add('visible');
-                document.getElementById('resultadoPcl').value = formatter.format(valorDia * dias);
+                
+                // AQUI AGREGAMOS EL "±" AL RESULTADO VISUAL EN PANTALLA
+                document.getElementById('resultadoPcl').value = "± " + formatter.format(valorDia * dias);
             } else {
                 document.getElementById('resultadoPcl').value = "$ 0";
                 document.getElementById('labelEquivalencia').classList.remove('visible');
             }
         }
 
-        // CALCULO TARIFAS FIJAS
+        // CALCULO TARIFAS FIJAS (BLINDADAS)
         function abrirTarifas() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
@@ -279,27 +281,33 @@
             let medicoAlto = valorDia * 800; 
 
             document.getElementById('yearLabel').innerText = anio;
-            document.getElementById('valMuerte').innerText = formatter.format(muerte);
-            document.getElementById('valTransporte').innerText = formatter.format(transporte);
-            document.getElementById('valMedicoBajo').innerText = formatter.format(medicoBajo);
-            document.getElementById('valMedicoAlto').innerText = formatter.format(medicoAlto);
+            
+            // AGREGAMOS EL "±" A TODOS LOS VALORES DEL MODAL
+            document.getElementById('valMuerte').innerText = "± " + formatter.format(muerte);
+            document.getElementById('valTransporte').innerText = "± " + formatter.format(transporte);
+            document.getElementById('valMedicoBajo').innerText = "± " + formatter.format(medicoBajo);
+            document.getElementById('valMedicoAlto').innerText = "± " + formatter.format(medicoAlto);
             
             tarifasModal.classList.add('active');
         }
 
-        // --- FUNCIÓN WHATSAPP BLINDADA (USANDO SIGNO ±) ---
+        // --- FUNCIÓN WHATSAPP BLINDADA (SIGNO ±) ---
         function compartirResultado() {
             let pcl = inputPCL.value;
-            let resultado = document.getElementById('resultadoPcl').value;
+            
+            // Obtenemos el valor ya formateado (que ahora trae el ± del input)
+            // Pero para el mensaje de WhatsApp, lo reconstruimos limpio para evitar doble signo raro
+            let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
+            
             let anio = anioSelect.value.replace("Año Gravable ", "");
             let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
 
-            if (resultado === "$ 0" || pcl === "") {
+            if (resultadoClean === "$ 0" || pcl === "") {
                 alert("Ingrese un porcentaje para generar el dictamen.");
                 return;
             }
 
-            // Construimos el mensaje - EL USO DE encodeURIComponent ES VITAL
+            // Construimos el mensaje - USANDO EL SIGNO ± (Alt+0177)
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
             
             texto += `*DICTAMEN PRELIMINAR:*\n`;
@@ -309,7 +317,8 @@
             texto += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
             
             texto += `*VALOR ESTIMADO A PAGAR:*\n`;
-            texto += `*± ${resultado} COP*\n\n`; // <--- AQUI ESTA EL SIGNO MATEMÁTICO (Alt+0177)
+            // Agregamos el signo ± manualmente aquí para asegurar que salga en WhatsApp
+            texto += `*± ${resultadoClean}*\n\n`; 
             
             texto += `*FUNDAMENTO JURÍDICO:*\n`;
             texto += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
@@ -324,7 +333,7 @@
             
             texto += `o Ingresa a: www.sistrovial.legal`;
 
-            // Esta función garantiza que WhatsApp reciba todo el texto sin cortar por símbolos
+            // Codificación segura
             let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
 
             window.open(url, '_blank');
