@@ -97,24 +97,58 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
-        /* Modal Tarifas */
-        .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        /* ESTILO DEL MODAL (RESTAURADO A LA IMAGEN) */
+        .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
-        .modal-title { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .section-header { text-align: left; font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom: 10px; margin-top: 15px; border-left: 2px solid var(--highlight-color); padding-left: 8px; }
+        /* Estructura de Filas (Flexbox: Izq Texto - Der Valor) */
+        .tarifa-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 18px; 
+            text-align: left; 
+        }
+        
+        .tarifa-left {
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* Filas Modal */
-        .tarifa-row { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-        .tarifa-row:last-child { border-bottom: none; }
+        .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
+        .tarifa-sub { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
         
-        .tarifa-label { font-size: 0.85rem; color: #ddd; margin-bottom: 3px; }
-        .tarifa-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
-        
-        /* PRECIO EN AZUL DE LA APP */
-        .tarifa-value { font-size: 1.3rem; color: var(--highlight-color); font-weight: 900; width: 100%; text-align: left; font-family: 'Roboto', sans-serif; text-shadow: 0 0 10px rgba(79, 172, 254, 0.2); }
+        /* VALOR A LA DERECHA (AZUL) */
+        .tarifa-value { 
+            font-size: 1.1rem; 
+            color: var(--highlight-color); 
+            font-weight: 700; 
+            text-align: right; 
+            font-family: 'Roboto', sans-serif; 
+        }
 
-        .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 12px 25px; border-radius: 25px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 10px; }
+        /* Separador */
+        .modal-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
+        
+        /* Header Sección Médica */
+        .medical-header { text-align: left; color: #8899a6; font-size: 0.85rem; margin-bottom: 15px; }
+
+        /* Botón Cerrar (Estilo de la imagen) */
+        .modal-btn { 
+            background: var(--highlight-color); 
+            color: #0a1931; 
+            border: none; 
+            padding: 14px 0; 
+            border-radius: 25px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            font-size: 0.9rem; 
+            width: 100%; 
+            margin-top: 25px;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -157,10 +191,10 @@
             </div>
 
             <button type="button" class="btn-calcular" id="btnCalcular">CALCULAR</button>
-            <button type="button" class="btn-tarifas" id="btnTarifas"><i class="fa-solid fa-book-medical"></i> Ver Tarifas Fijas</button>
+            <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 4.1</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 5.0</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -174,31 +208,45 @@
 
     <div class="modal-overlay" id="tarifasModal">
         <div class="modal-card">
-            <div class="modal-title">TARIFAS LEGALES <span id="yearLabel" style="color:var(--highlight-color)">2026</span></div>
+            <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
             
             <div class="tarifa-row">
-                <div class="tarifa-label"><i class="fa-solid fa-cross"></i> Muerte / Funeral <span class="tarifa-sub">(750 SMLDV)</span></div>
+                <div class="tarifa-left">
+                    <span class="tarifa-label">Muerte / Funeral</span>
+                    <span class="tarifa-sub">750 SMLDV</span>
+                </div>
                 <div class="tarifa-value" id="valMuerte">$ 0</div>
             </div>
 
             <div class="tarifa-row">
-                <div class="tarifa-label"><i class="fa-solid fa-truck-medical"></i> Transporte Víctimas <span class="tarifa-sub">(8.77 UVT)</span></div>
+                <div class="tarifa-left">
+                    <span class="tarifa-label">Transporte</span>
+                    <span class="tarifa-sub">8.77 UVT (Ambulancia)</span>
+                </div>
                 <div class="tarifa-value" id="valTransporte">$ 0</div>
             </div>
 
-            <div class="section-header">Topes Gastos Médicos (Clínica)</div>
+            <hr class="modal-divider">
+            
+            <div class="medical-header">Topes Gastos Médicos:</div>
 
             <div class="tarifa-row">
-                <div class="tarifa-label">Motos &lt; 200cc / Microbuses <span class="tarifa-sub">(300 SMLDV)</span></div>
+                <div class="tarifa-left">
+                    <span class="tarifa-label">Motos &lt; 200cc</span>
+                    <span class="tarifa-sub">300 SMLDV</span>
+                </div>
                 <div class="tarifa-value" id="valMedicoBajo">$ 0</div>
             </div>
 
             <div class="tarifa-row">
-                <div class="tarifa-label">Motos &gt; 200cc / Particulares <span class="tarifa-sub">(800 SMLDV)</span></div>
+                <div class="tarifa-left">
+                    <span class="tarifa-label">Otros / &gt; 200cc</span>
+                    <span class="tarifa-sub">800 SMLDV</span>
+                </div>
                 <div class="tarifa-value" id="valMedicoAlto">$ 0</div>
             </div>
 
-            <button class="modal-btn" onclick="cerrarModalTarifas()">Cerrar</button>
+            <button class="modal-btn" onclick="cerrarModalTarifas()">CERRAR</button>
         </div>
     </div>
     
@@ -207,9 +255,7 @@
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { 
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW OK'))
-                    .catch(err => console.error('SW Fail', err)); 
+                navigator.serviceWorker.register('./sw.js'); 
             }); 
         }
 
@@ -262,18 +308,18 @@
             }
         }
 
-        // CALCULO TARIFAS FIJAS (CONVERTIDOR COMPLETO)
+        // CALCULO TARIFAS FIJAS
         function abrirTarifas() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
             let uvt = uvtValues[anio];
             let valorDia = smmlv / 30;
 
-            // Fórmulas
+            // Fórmulas Conversión
             let muerte = valorDia * 750;
             let transporte = uvt * 8.77;
-            let medicoBajo = valorDia * 300; // Tope < 200cc
-            let medicoAlto = valorDia * 800; // Tope > 200cc
+            let medicoBajo = valorDia * 300; 
+            let medicoAlto = valorDia * 800; 
 
             // Inyectar
             document.getElementById('yearLabel').innerText = anio;
