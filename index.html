@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* ESTILOS GENERALES (V19 - ESTABLE) */
+        /* --- ESTILOS GENERALES --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -38,10 +38,49 @@
             min-height: 100dvh; 
             padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
             overflow-x: hidden; position: relative;
-            background-color: #0a1931; /* Fondo de seguridad */
+            background-color: #0a1931; 
         }
 
-        /* FONDO */
+        /* --- PANTALLA DE CARGA (SPLASH SCREEN) --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #081222; z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease-out, visibility 0.6s;
+        }
+        
+        #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .splash-logo {
+            width: 100px; height: 100px; margin-bottom: 30px;
+            border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3);
+            animation: pulseLogo 2s infinite;
+        }
+
+        .splash-title {
+            font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 1.5rem;
+            letter-spacing: 2px; margin-bottom: 5px; color: white;
+        }
+        
+        .splash-subtitle {
+            font-family: 'Playfair Display', serif; font-style: italic;
+            font-size: 0.9rem; color: #8899a6; margin-bottom: 40px;
+        }
+
+        .loading-container { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; overflow: hidden; }
+        
+        .loading-bar {
+            position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            background: var(--highlight-color); border-radius: 2px;
+            box-shadow: 0 0 10px var(--highlight-color);
+            transition: width 0.3s ease;
+        }
+
+        .loading-text { margin-top: 15px; font-size: 0.75rem; color: var(--highlight-color); letter-spacing: 1px; min-height: 1.2em; }
+
+        @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } 100% { transform: scale(1); } }
+
+        /* --- RESTO DE LA APP --- */
         .background-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             background-image: url('Diosa.png'); 
@@ -57,7 +96,9 @@
         .app-container {
             width: 100%; max-width: 400px; text-align: center; position: relative;
             max-height: 100dvh; overflow-y: auto; scrollbar-width: none;
+            opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; /* Animación de entrada */
         }
+        .app-container.visible { opacity: 1; transform: translateY(0); }
         .app-container::-webkit-scrollbar { display: none; }
 
         /* HEADER */
@@ -129,16 +170,22 @@
     </style>
 </head>
 <body>
+    
+    <div id="splash-screen">
+        <img src="icon.png" alt="Forensics Crash" class="splash-logo">
+        <div class="splash-title">FORENSICS CRASH</div>
+        <div class="splash-subtitle">Ingeniería & Reconstrucción</div>
+        
+        <div class="loading-container">
+            <div class="loading-bar" id="loadBar"></div>
+        </div>
+        <div class="loading-text" id="loadText">Iniciando sistema...</div>
+    </div>
+
     <div class="background-layer"></div>
     <div class="gradient-overlay"></div>
     
-    <div id="killScreen" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050b14; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px;">
-        <div class="kill-icon" style="font-size: 4rem; color: #ff4b4b; margin-bottom: 20px;"><i class="fa-solid fa-ban"></i></div>
-        <div class="kill-title" style="font-size: 1.5rem; color: white; font-weight: 700; margin-bottom: 15px; text-transform: uppercase;">ACCESO SUSPENDIDO</div>
-        <div class="kill-msg" style="font-size: 1rem; color: #ccc; line-height: 1.5;">Su licencia ha expirado.</div>
-    </div>
-
-    <div class="app-container" id="mainApp">
+    <div class="app-container" id="mainAppContainer">
         <div class="title-container">
             <h1 class="top-label">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
@@ -179,7 +226,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V19 (Estable)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V20 (Pro Loading)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -218,6 +265,40 @@
     
     <script>
         // ==========================================
+        //  ANIMACIÓN DE CARGA (SPLASH SCREEN)
+        // ==========================================
+        function initApp() {
+            const bar = document.getElementById('loadBar');
+            const text = document.getElementById('loadText');
+            const splash = document.getElementById('splash-screen');
+            const mainApp = document.getElementById('mainAppContainer');
+
+            // Simulación de carga (Secuencia de pasos)
+            setTimeout(() => { bar.style.width = "30%"; }, 100);
+            
+            setTimeout(() => { 
+                bar.style.width = "60%"; 
+                text.innerText = "Conectando Servidor...";
+            }, 800);
+
+            setTimeout(() => { 
+                bar.style.width = "90%"; 
+                text.innerText = "Cargando Normativa 2026...";
+            }, 1800);
+
+            setTimeout(() => { 
+                bar.style.width = "100%"; 
+                text.innerText = "¡Listo!";
+            }, 2600);
+
+            // Finalizar carga y mostrar app
+            setTimeout(() => {
+                splash.classList.add('hidden'); // Desvanece el splash
+                mainApp.classList.add('visible'); // Aparece la app suavemente
+            }, 3000);
+        }
+
+        // ==========================================
         //  CONFIGURACIÓN MAESTRA
         // ==========================================
         const DATA_HISTORICA = {
@@ -227,12 +308,15 @@
             '2026': { smmlv: 1750905, uvt: 53000 },
         };
 
-        // ==========================================
-        //  LÓGICA DEL SISTEMA
-        // ==========================================
-        
+        // LÓGICA DEL SISTEMA
         if ('serviceWorker' in navigator) { 
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
+            window.addEventListener('load', () => { 
+                navigator.serviceWorker.register('./sw.js'); 
+                initApp(); // Iniciar animación de carga al cargar todo
+            }); 
+        } else {
+            // Fallback si no hay service worker (navegador viejo o dev)
+            window.addEventListener('load', initApp);
         }
 
         const anioSelect = document.getElementById('anio'); 
@@ -241,7 +325,6 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // 1. GENERADOR DE OPCIONES
         function inicializarAnios() {
             try {
                 const anios = Object.keys(DATA_HISTORICA).sort((a, b) => b - a);
@@ -255,15 +338,11 @@
             } catch(e) { console.error("Error iniciando años:", e); }
         }
 
-        // 2. OBTENER DATOS
-        function getDatosAnio() { 
-            return DATA_HISTORICA[anioSelect.value]; 
-        }
+        function getDatosAnio() { return DATA_HISTORICA[anioSelect.value]; }
 
-        // 3. CALCULO PCL (BLINDADO)
         function actualizarCalculos() {
             const datos = getDatosAnio();
-            if (!datos) return; // <-- ESTO EVITA LA PANTALLA AZUL SI FALLA LA CARGA
+            if (!datos) return;
 
             let smmlv = datos.smmlv;
             let valorDia = smmlv / 30;
@@ -293,7 +372,6 @@
             }
         }
 
-        // 4. CALCULO TARIFAS FIJAS
         function abrirTarifas() {
             const datos = getDatosAnio();
             if(!datos) return;
@@ -316,7 +394,6 @@
             tarifasModal.classList.add('active');
         }
 
-        // 5. COMPARTIR WHATSAPP (ESPAÑOL CORREGIDO)
         function compartirResultado() {
             let pcl = inputPCL.value;
             let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
@@ -329,14 +406,18 @@
             }
 
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            texto += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
-            texto += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
-            texto += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
-            texto += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
-            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
-            texto += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
+            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Corrección rápida: Este mensaje interno está en inglés en el alert pero el output del texto de WhatsApp lo reviso abajo:
+            
+            // CORRECCION TEXTO WHATSAPP EN ESPAÑOL
+            let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
+            textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
+            textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
+            textoWA += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
+            textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
+            textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
+            textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
 
-            let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+            let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
             window.open(url, '_blank');
         }
 
@@ -360,7 +441,6 @@
         tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
         errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
 
-        // Ejecutar calculo inicial
         actualizarCalculos();
     </script>
 </body>
