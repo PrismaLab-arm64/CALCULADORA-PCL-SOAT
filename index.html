@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V25 - FINAL) --- */
+        /* --- ESTILOS GENERALES (V26 - HÍBRIDA) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -35,6 +35,7 @@
             --input-border-color: rgba(255, 255, 255, 0.3);
             --highlight-color: #4facfe;
             --error-color: #ff4b4b;
+            --success-color: #00e676; 
             --warning-color: #ffbb00;
             --whatsapp-color: #25D366;
             --glass-effect: blur(12px);
@@ -65,16 +66,22 @@
         .splash-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 5px; color: white; }
         .splash-subtitle { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; color: #8899a6; margin-bottom: 40px; }
 
-        .loading-container { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; overflow: hidden; margin: 0 auto; }
-        .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--highlight-color); border-radius: 2px; box-shadow: 0 0 10px var(--highlight-color); transition: width 0.3s ease; }
+        .loading-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; overflow: hidden; margin: 0 auto; }
+        .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--highlight-color); border-radius: 2px; box-shadow: 0 0 10px var(--highlight-color); transition: width 0.3s ease, background-color 0.3s ease; }
         
-        /* TEXTO DE ESTADO Y BLOQUEO */
-        .loading-text { margin-top: 15px; font-size: 0.8rem; color: var(--highlight-color); letter-spacing: 1px; min-height: 1.2em; max-width: 90%; line-height: 1.4; }
+        .loading-text { 
+            margin-top: 20px; font-size: 0.9rem; color: var(--highlight-color); 
+            letter-spacing: 0.5px; min-height: 1.2em; font-weight: 400;
+            transition: color 0.3s ease;
+        }
 
-        /* ESTILO DE BLOQUEO */
+        /* ESTADOS */
         .splash-locked .loading-bar { background: var(--error-color); box-shadow: 0 0 15px var(--error-color); }
-        .splash-locked .loading-text { color: var(--error-color); font-weight: bold; font-size: 1rem; text-transform: uppercase; }
+        .splash-locked .loading-text { color: var(--error-color); font-weight: 700; font-size: 1rem; text-transform: uppercase; }
         .splash-locked .splash-logo { animation: none; filter: grayscale(100%); }
+
+        .splash-success .loading-bar { background: var(--success-color); box-shadow: 0 0 15px var(--success-color); }
+        .splash-success .loading-text { color: var(--success-color); font-weight: 500; }
 
         /* --- NOTIFICACIÓN SUTIL (TOAST) --- */
         #subscription-toast {
@@ -147,13 +154,13 @@
     
     <div id="splash-screen">
         <img src="icon.png" alt="Forensics Crash" class="splash-logo">
-        <div class="splash-title">SISTROVIAL.LEGAL</div>
-        <div class="splash-subtitle">Abogados & Peritos</div>
+        <div class="splash-title">FORENSICS CRASH</div>
+        <div class="splash-subtitle">Ingeniería & Reconstrucción</div>
         
         <div class="loading-container">
             <div class="loading-bar" id="loadBar"></div>
         </div>
-        <div class="loading-text" id="loadText">Iniciando sistema...</div>
+        <div class="loading-text" id="loadText">Conectando con base de datos...</div>
     </div>
 
     <div id="subscription-toast">
@@ -204,9 +211,227 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V25 (Final)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V26 (Hybrid)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
         <div class="modal-card" style="border-color: var(--error-color);">
-            <div
+            <div style="font-size: 3rem; color: var(--error-color); margin-bottom: 10px;"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="modal-title" style="color: white; border: none; margin-bottom: 5px;">¡Atención!</div>
+            <div style="font-size: 0.9rem; color: #ddd; margin-bottom: 20px;">El PCL no puede ser mayor al 100%.</div>
+            <button class="modal-btn" style="background: var(--error-color); color: white;" onclick="cerrarModalError()">Entendido</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tarifasModal">
+        <div class="modal-card">
+            <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div><div class="tarifa-value" id="valMuerte">$ 0</div></div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Transporte</span><span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div><div class="tarifa-value" id="valTransporte">$ 0</div></div>
+            <hr class="modal-divider">
+            <div class="medical-header">Topes Gastos Médicos:</div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Motos &lt; 200cc</span><span class="tarifa-sub">300 SMLDV</span></div><div class="tarifa-value" id="valMedicoBajo">$ 0</div></div>
+            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Otros / &gt; 200cc</span><span class="tarifa-sub">800 SMLDV</span></div><div class="tarifa-value" id="valMedicoAlto">$ 0</div></div>
+            <button class="modal-btn" onclick="cerrarModalTarifas()">CERRAR</button>
+        </div>
+    </div>
+    
+    <script>
+        // ==========================================
+        //  SISTEMA INTELIGENTE V26 (HÍBRIDO: STATUS + ANTI-TRAUMA)
+        // ==========================================
+        const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
+
+        // Función para abrir la app (Fuerza Bruta o Suave)
+        function launchApp() {
+            const splash = document.getElementById('splash-screen');
+            const mainApp = document.getElementById('mainAppContainer');
+            splash.classList.add('hidden');
+            mainApp.classList.add('visible');
+        }
+
+        async function verificarYArrancar() {
+            const bar = document.getElementById('loadBar');
+            const text = document.getElementById('loadText');
+            const splash = document.getElementById('splash-screen');
+            const toast = document.getElementById('subscription-toast');
+            const toastMsg = document.getElementById('toast-message');
+
+            bar.style.width = "30%";
+            
+            // --- ANTI-TRAUMA: SI EN 3 SEGUNDOS NO PASA NADA, ENTRA A LA FUERZA ---
+            const failsafeTimer = setTimeout(() => {
+                console.log("Anti-Trauma activado: Servidor lento. Entrando igual.");
+                launchApp();
+            }, 3000);
+
+            try {
+                setTimeout(() => { if(!splash.classList.contains('hidden')) { bar.style.width = "50%"; } }, 800);
+                
+                // Fetch con timestamp
+                const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // ¡RESPONDIÓ! CANCELAMOS LA ENTRADA FORZADA
+                    clearTimeout(failsafeTimer);
+
+                    // --- CÁLCULO DE FECHAS ---
+                    let diasRestantes = 999;
+                    if (data.vencimiento) {
+                        const hoy = new Date();
+                        const vence = new Date(data.vencimiento);
+                        const diferencia = vence - hoy;
+                        diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+                    }
+
+                    // 1. CASO BLOQUEO (ROJO)
+                    if (data.estado === 'suspendido' || diasRestantes < 0) {
+                        bar.style.width = "100%";
+                        text.innerText = data.mensaje || "ACCESO DENEGADO / LICENCIA VENCIDA";
+                        splash.classList.add('splash-locked');
+                        return; // SE DETIENE AQUÍ
+                    }
+
+                    // 2. CASO ÉXITO (VERDE)
+                    bar.style.width = "100%";
+                    splash.classList.add('splash-success');
+                    text.innerText = `✅ Licencia Activa (${diasRestantes} días restantes)`;
+
+                    // TOAST (Solo si faltan menos de 30 días)
+                    if (diasRestantes <= 30 || data.estado === 'aviso') {
+                        let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
+                        toastMsg.innerText = mensaje;
+                        setTimeout(() => { toast.classList.add('active'); }, 4000);
+                        setTimeout(() => { toast.classList.remove('active'); }, 12000);
+                    }
+
+                    // Esperamos 1.5s para que leas el mensaje verde y entramos
+                    setTimeout(() => {
+                        launchApp();
+                    }, 1500);
+
+                } else {
+                    throw new Error("No response");
+                }
+            } catch (error) {
+                // SI FALLA LA CONEXIÓN (Modo Offline)
+                // El failsafeTimer se encargará de abrir, pero por si acaso:
+                console.log("Modo Offline");
+                // No hacemos nada, dejamos que el timer abra la app
+            }
+        }
+
+        // --- CONFIGURACIÓN BASE ---
+        const DATA_HISTORICA = {
+            '2023': { smmlv: 1160000, uvt: 42412 },
+            '2024': { smmlv: 1300000, uvt: 47065 },
+            '2025': { smmlv: 1423500, uvt: 49799 },
+            '2026': { smmlv: 1750905, uvt: 53000 },
+        };
+
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); verificarYArrancar(); }); } 
+        else { window.addEventListener('load', verificarYArrancar); }
+
+        const anioSelect = document.getElementById('anio'); 
+        const inputPCL = document.getElementById('porcentajePCL'); 
+        const errorModal = document.getElementById('errorModal');
+        const tarifasModal = document.getElementById('tarifasModal');
+        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+
+        function inicializarAnios() {
+            try {
+                const anios = Object.keys(DATA_HISTORICA).sort((a, b) => b - a);
+                anios.forEach(anio => {
+                    let option = document.createElement('option');
+                    option.value = anio;
+                    option.text = `Año Gravable ${anio}`;
+                    anioSelect.appendChild(option);
+                });
+                if (anios.length > 0) anioSelect.value = anios[0];
+            } catch(e) {}
+        }
+
+        function getDatosAnio() { return DATA_HISTORICA[anioSelect.value]; }
+
+        function actualizarCalculos() {
+            const datos = getDatosAnio();
+            if (!datos) return;
+            let smmlv = datos.smmlv;
+            let valorDia = smmlv / 30;
+            document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
+            let pclRaw = inputPCL.value.replace(',', '.');
+            let pcl = parseFloat(pclRaw);
+            if (pcl > 100) { errorModal.classList.add('active'); return; }
+            if (!isNaN(pcl) && pcl > 0 && inputPCL.value !== "") {
+                let dias = 0;
+                if (pcl <= 5) dias = 14; 
+                else if (pcl > 50) dias = 180; 
+                else {
+                    let rangoSuperior = Math.ceil(pcl); 
+                    if (pcl % 1 === 0) rangoSuperior = pcl;
+                    dias = 14 + ((rangoSuperior - 5) * 3.5);
+                }
+                document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
+                document.getElementById('labelEquivalencia').classList.add('visible');
+                document.getElementById('resultadoPcl').value = "± " + formatter.format(valorDia * dias);
+            } else {
+                document.getElementById('resultadoPcl').value = "$ 0";
+                document.getElementById('labelEquivalencia').classList.remove('visible');
+            }
+        }
+
+        function abrirTarifas() {
+            const datos = getDatosAnio();
+            if(!datos) return;
+            let smmlv = datos.smmlv;
+            let uvt = datos.uvt;
+            let valorDia = smmlv / 30;
+            let muerte = valorDia * 750;
+            let transporte = uvt * 8.77;
+            let medicoBajo = valorDia * 300; 
+            let medicoAlto = valorDia * 800; 
+            document.getElementById('yearLabel').innerText = anioSelect.value;
+            document.getElementById('valMuerte').innerText = "± " + formatter.format(muerte);
+            document.getElementById('valTransporte').innerText = "± " + formatter.format(transporte);
+            document.getElementById('valMedicoBajo').innerText = "± " + formatter.format(medicoBajo);
+            document.getElementById('valMedicoAlto').innerText = "± " + formatter.format(medicoAlto);
+            tarifasModal.classList.add('active');
+        }
+
+        function compartirResultado() {
+            let pcl = inputPCL.value;
+            let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
+            let anio = anioSelect.value;
+            let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
+            if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
+            
+            let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
+            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; 
+            
+            let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
+            textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
+            textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
+            textoWA += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
+            textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
+            textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
+            textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
+            
+            let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
+            window.open(url, '_blank');
+        }
+
+        inicializarAnios();
+        
+        function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
+        function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
+        anioSelect.addEventListener('change', actualizarCalculos);
+        document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
+        document.getElementById('btnShare').addEventListener('click', compartirResultado);
+        inputPCL.addEventListener('input', (e) => { let val = e.target.value.replace(/[^0-9.,]/g, ''); e.target.value = val; if(parseFloat(val) > 100) { errorModal.classList.add('active'); } else { actualizarCalculos(); } });
+        tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
+        errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
+    </script>
+</body>
+</html>
