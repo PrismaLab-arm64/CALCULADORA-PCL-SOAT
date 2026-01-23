@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V21 - FINAL MERGE) --- */
+        /* --- ESTILOS GENERALES --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -35,6 +35,7 @@
             --input-border-color: rgba(255, 255, 255, 0.3);
             --highlight-color: #4facfe;
             --error-color: #ff4b4b;
+            --warning-color: #ffbb00; /* Color para avisos sutiles */
             --whatsapp-color: #25D366;
             --glass-effect: blur(12px);
         }
@@ -57,7 +58,6 @@
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.6s ease-out, visibility 0.6s;
         }
-        
         #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
         .splash-logo { width: 100px; height: 100px; margin-bottom: 30px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; }
@@ -68,10 +68,23 @@
         .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--highlight-color); border-radius: 2px; box-shadow: 0 0 10px var(--highlight-color); transition: width 0.3s ease; }
         .loading-text { margin-top: 15px; font-size: 0.75rem; color: var(--highlight-color); letter-spacing: 1px; min-height: 1.2em; }
 
-        /* ESTILO DE BLOQUEO (ROJO) */
+        /* ESTILO DE BLOQUEO */
         .splash-locked .loading-bar { background: var(--error-color); box-shadow: 0 0 15px var(--error-color); }
         .splash-locked .loading-text { color: var(--error-color); font-weight: bold; }
         .splash-locked .splash-logo { animation: none; filter: grayscale(100%); }
+
+        /* --- NOTIFICACIÓN SUTIL (TOAST) --- */
+        #subscription-toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: rgba(255, 187, 0, 0.15); border: 1px solid var(--warning-color);
+            color: var(--warning-color); padding: 12px 20px; border-radius: 30px;
+            font-size: 0.85rem; font-weight: 500; backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 10000;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 10px; width: 90%; max-width: 350px;
+        }
+        #subscription-toast.active { transform: translateX(-50%) translateY(0); }
+        #subscription-toast i { font-size: 1rem; }
 
         @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } 100% { transform: scale(1); } }
 
@@ -83,7 +96,7 @@
         .app-container.visible { opacity: 1; transform: translateY(0); }
         .app-container::-webkit-scrollbar { display: none; }
 
-        /* HEADER & UI */
+        /* UI ELEMENTS */
         .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; margin-top: 10px; }
         h1.top-label { font-family: 'Roboto', sans-serif; font-weight: 300; letter-spacing: 4px; font-size: 0.9rem; margin: 0; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px; }
         h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); margin: 0; line-height: 1.1; letter-spacing: 1px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 8px; }
@@ -141,6 +154,11 @@
         <div class="loading-text" id="loadText">Iniciando sistema...</div>
     </div>
 
+    <div id="subscription-toast">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span id="toast-message">Suscripción activa.</span>
+    </div>
+
     <div class="background-layer"></div>
     <div class="gradient-overlay"></div>
     
@@ -184,7 +202,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V21 (Final Merge)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V22 (Smart Subscription)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -211,7 +229,7 @@
     
     <script>
         // ==========================================
-        //  CONFIGURACIÓN DEL KILL SWITCH (SEGURIDAD)
+        //  SISTEMA INTELIGENTE DE LICENCIAS (V22)
         // ==========================================
         const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
 
@@ -220,45 +238,59 @@
             const text = document.getElementById('loadText');
             const splash = document.getElementById('splash-screen');
             const mainApp = document.getElementById('mainAppContainer');
+            const toast = document.getElementById('subscription-toast');
+            const toastMsg = document.getElementById('toast-message');
 
-            // 1. Inicia animación
             bar.style.width = "30%";
             
             try {
-                // 2. Conectando al servidor...
                 setTimeout(() => { bar.style.width = "50%"; text.innerText = "Verificando licencia..."; }, 600);
                 
-                // Intento de conexión al archivo JSON (con timestamp para evitar caché)
                 const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
                 
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // SI LA LICENCIA ES INACTIVA -> BLOQUEO TOTAL
-                    if (data.estado === 'inactivo') {
+                    // --- LÓGICA DE FECHAS ---
+                    let diasRestantes = 999; // Por defecto infinito si no hay fecha
+                    if (data.vencimiento) {
+                        const hoy = new Date();
+                        const vence = new Date(data.vencimiento);
+                        const diferencia = vence - hoy;
+                        diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+                    }
+
+                    // 1. CASO BLOQUEO TOTAL (Estado 'suspendido' o días negativos)
+                    if (data.estado === 'suspendido' || diasRestantes < 0) {
                         bar.style.width = "100%";
                         text.innerText = "ACCESO DENEGADO";
-                        splash.classList.add('splash-locked'); // Cambia a rojo
-                        // No cargamos la app, nos quedamos aquí
-                        return; 
+                        splash.classList.add('splash-locked');
+                        return; // SE DETIENE AQUI
+                    }
+
+                    // 2. CASO MENSAJE SUTIL (Menos de 30 días o Estado 'aviso')
+                    if (diasRestantes <= 30 || data.estado === 'aviso') {
+                        let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
+                        
+                        // Si hay mensaje del servidor, lo usa. Si no, usa el automático de días.
+                        toastMsg.innerText = mensaje;
+                        
+                        // Programar que salga el toast al iniciar
+                        setTimeout(() => { toast.classList.add('active'); }, 4000);
+                        
+                        // Quitarlo a los 8 segundos
+                        setTimeout(() => { toast.classList.remove('active'); }, 12000);
                     }
                 }
             } catch (error) {
-                // Si falla la conexión (Offline), PERMITIMOS EL ACCESO (Soft Fail)
-                console.log("Modo Offline: Verificación omitida.");
+                console.log("Modo Offline.");
             }
 
-            // 3. Si llegamos aquí, todo está bien (Activo u Offline)
+            // CARGA NORMAL (Si no hubo bloqueo)
             setTimeout(() => { bar.style.width = "80%"; text.innerText = "Cargando Normativa..."; }, 1200);
-            
             setTimeout(() => { 
                 bar.style.width = "100%"; text.innerText = "Bienvenido";
-                
-                // Ocultar Splash y Mostrar App
-                setTimeout(() => {
-                    splash.classList.add('hidden');
-                    mainApp.classList.add('visible');
-                }, 500);
+                setTimeout(() => { splash.classList.add('hidden'); mainApp.classList.add('visible'); }, 500);
             }, 1800);
         }
 
@@ -273,14 +305,8 @@
         };
 
         // LÓGICA DEL SISTEMA
-        if ('serviceWorker' in navigator) { 
-            window.addEventListener('load', () => { 
-                navigator.serviceWorker.register('./sw.js'); 
-                verificarYArrancar(); // Iniciar sistema con verificación
-            }); 
-        } else {
-            window.addEventListener('load', verificarYArrancar);
-        }
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); verificarYArrancar(); }); } 
+        else { window.addEventListener('load', verificarYArrancar); }
 
         const anioSelect = document.getElementById('anio'); 
         const inputPCL = document.getElementById('porcentajePCL'); 
@@ -356,9 +382,7 @@
             if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
             
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Corrección rápida: "Según calificación..." (El alert interno puede quedar en inglés o español, el WA es el importante)
-            
-            // CORRECCION FINAL WA
+            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Correccion rapida
             let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
             textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
             textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
@@ -366,12 +390,10 @@
             textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
             textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
             textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
-            
             let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
             window.open(url, '_blank');
         }
 
-        // INICIALIZACIÓN
         inicializarAnios();
         
         function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
