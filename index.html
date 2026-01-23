@@ -17,14 +17,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V11) --- */
+        /* --- ESTILOS GENERALES (V12) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
             --text-color: #ffffff;
             --input-bg: rgba(255, 255, 255, 0.08); 
             --input-border-color: rgba(255, 255, 255, 0.3);
-            --highlight-color: #4facfe; /* AZUL DE LA APP */
+            --highlight-color: #4facfe;
             --error-color: #ff4b4b;
             --whatsapp-color: #25D366;
             --glass-effect: blur(12px);
@@ -178,7 +178,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 11.0 (Master)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 12.0 (Corregida)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -220,7 +220,7 @@
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA V11 ---
+        // --- LOGICA DEL SISTEMA V12 ---
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
@@ -287,7 +287,7 @@
             tarifasModal.classList.add('active');
         }
 
-        // --- FUNCIÓN WHATSAPP (V11: HÍBRIDO GANADOR APROBADO) ---
+        // --- FUNCIÓN WHATSAPP BLINDADA (ENCODEURICOMPONENT) ---
         function compartirResultado() {
             let pcl = inputPCL.value;
             let resultado = document.getElementById('resultadoPcl').value;
@@ -299,32 +299,36 @@
                 return;
             }
 
-            // MENSAJE ESTRUCTURADO Y PODEROSO
-            let mensaje = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*%0A%0A`;
+            // Construimos el mensaje completo en una variable string
+            // Usamos \n para saltos de linea normales, luego encodeURIComponent se encarga del resto
+            let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
             
-            mensaje += `*DICTAMEN PRELIMINAR:*%0A`;
-            mensaje += `Según calificación de pérdida de capacidad laboral (PCL): *${pcl}%*%0A%0A`;
+            texto += `*DICTAMEN PRELIMINAR:*\n`;
+            texto += `Según calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
             
-            mensaje += `*CONVERSIÓN NORMATIVA:*%0A`;
-            mensaje += `Corresponde a *${diasTexto} SMLDV* (Días de Salario Mínimo Legal Diario Vigente).%0A%0A`;
+            texto += `*CONVERSIÓN NORMATIVA:*\n`;
+            texto += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
             
-            mensaje += `*VALOR ESTIMADO A PAGAR:*%0A`;
-            mensaje += `*+/- ${resultado} COP*%0A%0A`;
+            texto += `*VALOR ESTIMADO A PAGAR:*\n`;
+            texto += `*+/- ${resultado} COP*\n\n`; // <-- Aquí va el signo +/-
             
-            mensaje += `*FUNDAMENTO JURÍDICO:*%0A`;
-            mensaje += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.%0A%0A`;
+            texto += `*FUNDAMENTO JURÍDICO:*\n`;
+            texto += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
             
-            mensaje += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*%0A`;
-            mensaje += `No arriesgue su indemnización. *Contrate su defensa técnica hoy mismo* y garantice el cobro efectivo sin trámites complejos.%0A%0A`;
+            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\n`;
+            texto += `No arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
             
-            mensaje += `*LÍNEAS DE ATENCIÓN:*%0A`;
-            mensaje += `315 314 5848%0A`;
-            mensaje += `310 330 3814%0A`;
-            mensaje += `314 294 8943%0A%0A`;
+            texto += `*LÍNEAS DE ATENCIÓN:*\n`;
+            texto += `315 314 5848\n`;
+            texto += `310 330 3814\n`;
+            texto += `314 294 8943\n\n`;
             
-            mensaje += `o Ingresa a: www.sistrovial.legal`;
+            texto += `o Ingresa a: www.sistrovial.legal`;
 
-            window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+            // Codificamos TODO el texto para que la URL no se rompa por signos especiales
+            let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+
+            window.open(url, '_blank');
         }
 
         // EVENTOS
