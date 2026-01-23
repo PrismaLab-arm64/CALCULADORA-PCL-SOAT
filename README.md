@@ -1,6 +1,25 @@
 # 📱 Calculadora PCL SOAT - Forensics Crash Edition
 **Versión Actual:** 1.2.0 (Secure Patch CSP v1.0) | **Build:** V17-Final
-**Desarrollado por:** Ing. John A. Skinner S.
+**Desarrollado por:** Ing. John A. Skinner S. 
+
+## 🛡️ Aviso Legal
+Esta herramienta realiza estimaciones basadas en la normativa vigente. Los valores finales pueden variar por redondeos bancarios o ajustes en las tablas oficiales de la Superintendencia Financiera.
+
+## ⚠️ Cláusula de Continuidad y Exención de Responsabilidad
+
+**1. DERECHO DE RETIRO Y SUSPENSIÓN:**
+El desarrollador (**Ing. John A. Skinner S. / Forensics Crash S.A.S.**) se reserva el derecho absoluto, unilateral y exclusivo de descontinuar, modificar, suspender o anular el acceso y soporte de esta herramienta en cualquier momento, sin previo aviso y sin que esto genere derecho a indemnización o reclamación alguna por parte de los usuarios.
+
+**2. LICENCIAMIENTO DE USO (NO VENTA):**
+La entrega de este software constituye una **Licencia de Uso Temporal, Revocable y No Exclusiva**. La propiedad intelectual y el código fuente permanecen en todo momento bajo la titularidad exclusiva de su autor. Queda prohibida la ingeniería inversa, redistribución o comercialización no autorizada.
+
+**3. EXENCIÓN DE GARANTÍA ("AS IS"):**
+Esta aplicación se entrega "TAL CUAL" (*As Is*), como una herramienta auxiliar de cálculo. El autor no se hace responsable por:
+- Cambios normativos futuros no reflejados en la versión actual.
+- Decisiones jurídicas, financieras o periciales tomadas con base en estos cálculos.
+- Lucro cesante o daños derivados del uso o imposibilidad de uso de la herramienta.
+
+**El uso continuado de esta aplicación implica la aceptación total de estos términos.**
 
 ## 📄 Descripción del Producto
 Aplicación Web Progresiva (PWA) diseñada para el cálculo forense y jurídico de indemnizaciones por Pérdida de Capacidad Laboral (PCL) bajo el amparo del **Decreto 780 de 2016** en Colombia.
