@@ -5,15 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a1931">
     
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self'; 
-        script-src 'self' 'unsafe-inline'; 
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
-        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
-        img-src 'self' data:; 
-        connect-src 'self';
-    ">
-    
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -26,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES --- */
+        /* --- ESTILOS GENERALES (V17 - A PRUEBA DE FALLOS) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -47,6 +38,9 @@
             min-height: 100dvh; 
             padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
             overflow-x: hidden; position: relative;
+            
+            /* SALVAVIDAS: Color de fondo por si falla la imagen */
+            background-color: #0a1931; 
         }
 
         /* FONDO */
@@ -180,7 +174,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing. John A. Skinner S. | PWA 1.2.0 (Patch CSP v1.0)</div>
+        <div class="footer">© 2026 Ing. John A. Skinner S. | Vers. 1.2.0 (Patch CSP v1.0)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -227,8 +221,7 @@
             '2024': { smmlv: 1300000, uvt: 47065 },
             '2025': { smmlv: 1423500, uvt: 49799 },
             '2026': { smmlv: 1750905, uvt: 53000 },
-            
-            // --- FUTURO (Solo agregar aquí y listo) ---
+            // Futuro: Descomentar y editar
             // '2027': { smmlv: 0, uvt: 0 },
         };
 
@@ -315,7 +308,7 @@
             tarifasModal.classList.add('active');
         }
 
-        // 5. COMPARTIR WHATSAPP (CORREGIDO AL ESPAÑOL Y BLINDADO)
+        // 5. COMPARTIR WHATSAPP (FORMATO ESPAÑOL JURÍDICO APROBADO)
         function compartirResultado() {
             let pcl = inputPCL.value;
             let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
@@ -327,7 +320,7 @@
                 return;
             }
 
-            // TEXTO DEFINITIVO EN ESPAÑOL
+            // TEXTO DEFINITIVO EN ESPAÑOL + SIGNO ± + FORMATO PROLIJO
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
             
             texto += `*DICTAMEN PRELIMINAR:*\n`;
