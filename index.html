@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V14) --- */
+        /* --- ESTILOS GENERALES (V15 - ETERNA) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -80,10 +80,9 @@
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
-        /* CONTENEDOR RESULTADO + SHARE */
+        /* CONTENEDOR RESULTADO */
         .result-container { display: flex; gap: 10px; align-items: center; }
 
-        /* Botón WhatsApp */
         .btn-share {
             background: rgba(37, 211, 102, 0.15);
             border: 1px solid var(--whatsapp-color);
@@ -96,7 +95,6 @@
         }
         .btn-share:active { transform: scale(0.90); background: rgba(37, 211, 102, 0.3); }
 
-        /* Botón Tarifas */
         .btn-tarifas {
             width: 100%; padding: 18px; margin-top: 15px;
             background: rgba(79, 172, 254, 0.15);
@@ -112,7 +110,6 @@
         /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -127,7 +124,6 @@
 
         .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 14px 0; border-radius: 25px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 25px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
         
-        /* Ajuste para pantallas pequeñas */
         @media (max-height: 700px) { .title-container { margin-bottom: 10px; } h1.main-title { font-size: 2.2rem; } .input-group { margin-bottom: 15px; } .btn-tarifas { padding: 15px; } }
     </style>
 </head>
@@ -147,10 +143,7 @@
             <div class="input-group">
                 <i class="fa-solid fa-calendar-circle-user input-icon"></i>
                 <select id="anio" class="custom-field">
-                    <option value="2024">Año Gravable 2024</option>
-                    <option value="2025" selected>Año Gravable 2025</option>
-                    <option value="2026">Año Gravable 2026</option>
-                </select>
+                    </select>
                 <i class="fa-solid fa-chevron-down select-arrow"></i>
             </div>
 
@@ -170,7 +163,7 @@
                     <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
                     <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
                 </div>
-                <button type="button" class="btn-share" id="btnShare" title="Compartir Dictamen Final">
+                <button type="button" class="btn-share" id="btnShare" title="Compartir Dictamen">
                     <i class="fa-brands fa-whatsapp"></i>
                 </button>
             </div>
@@ -178,7 +171,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 14.0 (Blindada)</div>
+        <div class="footer">© 2026 Ing. John A. Skinner S. | Versión PWA 1.1.0 (Eterna)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -198,15 +191,12 @@
                 <div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div>
                 <div class="tarifa-value" id="valMuerte">$ 0</div>
             </div>
-
             <div class="tarifa-row">
                 <div class="tarifa-left"><span class="tarifa-label">Transporte</span><span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div>
                 <div class="tarifa-value" id="valTransporte">$ 0</div>
             </div>
-
             <hr class="modal-divider">
             <div class="medical-header">Topes Gastos Médicos:</div>
-            
             <div class="tarifa-row">
                 <div class="tarifa-left"><span class="tarifa-label">Motos &lt; 200cc</span><span class="tarifa-sub">300 SMLDV</span></div>
                 <div class="tarifa-value" id="valMedicoBajo">$ 0</div>
@@ -220,14 +210,38 @@
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA V14 (BLINDAJE DE CENTIMOS) ---
+        // ==========================================
+        //  CONFIGURACIÓN MAESTRA (EDITAR AQUI A FUTURO)
+        // ==========================================
+        // Para activar un año nuevo:
+        // 1. Quita las dos barras (//) del inicio de la línea.
+        // 2. Actualiza el valor de 'smmlv' y 'uvt' con el decreto oficial.
+        
+        const DATA_HISTORICA = {
+            '2023': { smmlv: 1160000, uvt: 42412 },
+            '2024': { smmlv: 1300000, uvt: 47065 },
+            '2025': { smmlv: 1423500, uvt: 49799 },
+            '2026': { smmlv: 1750905, uvt: 53000 },
+            
+            // --- FUTURO (Descomentar y editar cuando llegue el momento) ---
+            // '2027': { smmlv: 0, uvt: 0 },
+            // '2028': { smmlv: 0, uvt: 0 },
+            // '2029': { smmlv: 0, uvt: 0 },
+            // '2030': { smmlv: 0, uvt: 0 },
+            // '2031': { smmlv: 0, uvt: 0 },
+            // '2032': { smmlv: 0, uvt: 0 },
+            // '2033': { smmlv: 0, uvt: 0 },
+            // '2034': { smmlv: 0, uvt: 0 },
+            // '2035': { smmlv: 0, uvt: 0 },
+        };
+
+        // ==========================================
+        //  LÓGICA DEL SISTEMA
+        // ==========================================
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
         }
-
-        const smmlvValues = { '2024': 1300000, '2025': 1423500, '2026': 1750905 };
-        const uvtValues = { '2024': 47065, '2025': 49799, '2026': 53000 }; 
 
         const anioSelect = document.getElementById('anio'); 
         const inputPCL = document.getElementById('porcentajePCL'); 
@@ -235,10 +249,34 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // CALCULO PCL (AUTOMATIZADO Y BLINDADO)
-        function actualizarCalculos() {
+        // 1. GENERADOR DE OPCIONES (Crea el menú automáticamente)
+        function inicializarAnios() {
+            // Obtenemos los años de la configuración, los ordenamos de mayor a menor (Más nuevo primero)
+            const anios = Object.keys(DATA_HISTORICA).sort((a, b) => b - a);
+            
+            anios.forEach(anio => {
+                let option = document.createElement('option');
+                option.value = anio;
+                option.text = `Año Gravable ${anio}`;
+                anioSelect.appendChild(option);
+            });
+
+            // Seleccionar el primero (el más reciente) por defecto
+            if (anios.length > 0) anioSelect.value = anios[0];
+        }
+
+        // 2. OBTENER DATOS DEL AÑO SELECCIONADO
+        function getDatosAnio() {
             let anio = anioSelect.value;
-            let smmlv = smmlvValues[anio];
+            return DATA_HISTORICA[anio];
+        }
+
+        // 3. CALCULO PCL
+        function actualizarCalculos() {
+            const datos = getDatosAnio();
+            if (!datos) return;
+
+            let smmlv = datos.smmlv;
             let valorDia = smmlv / 30;
             
             document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
@@ -259,8 +297,6 @@
                 
                 document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
                 document.getElementById('labelEquivalencia').classList.add('visible');
-                
-                // AQUI AGREGAMOS EL "±" AL RESULTADO VISUAL EN PANTALLA
                 document.getElementById('resultadoPcl').value = "± " + formatter.format(valorDia * dias);
             } else {
                 document.getElementById('resultadoPcl').value = "$ 0";
@@ -268,11 +304,11 @@
             }
         }
 
-        // CALCULO TARIFAS FIJAS (BLINDADAS)
+        // 4. CALCULO TARIFAS FIJAS
         function abrirTarifas() {
-            let anio = anioSelect.value;
-            let smmlv = smmlvValues[anio];
-            let uvt = uvtValues[anio];
+            const datos = getDatosAnio();
+            let smmlv = datos.smmlv;
+            let uvt = datos.uvt;
             let valorDia = smmlv / 30;
 
             let muerte = valorDia * 750;
@@ -280,9 +316,8 @@
             let medicoBajo = valorDia * 300; 
             let medicoAlto = valorDia * 800; 
 
-            document.getElementById('yearLabel').innerText = anio;
+            document.getElementById('yearLabel').innerText = anioSelect.value;
             
-            // AGREGAMOS EL "±" A TODOS LOS VALORES DEL MODAL
             document.getElementById('valMuerte').innerText = "± " + formatter.format(muerte);
             document.getElementById('valTransporte').innerText = "± " + formatter.format(transporte);
             document.getElementById('valMedicoBajo').innerText = "± " + formatter.format(medicoBajo);
@@ -291,15 +326,11 @@
             tarifasModal.classList.add('active');
         }
 
-        // --- FUNCIÓN WHATSAPP BLINDADA (SIGNO ±) ---
+        // 5. COMPARTIR WHATSAPP
         function compartirResultado() {
             let pcl = inputPCL.value;
-            
-            // Obtenemos el valor ya formateado (que ahora trae el ± del input)
-            // Pero para el mensaje de WhatsApp, lo reconstruimos limpio para evitar doble signo raro
             let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
-            
-            let anio = anioSelect.value.replace("Año Gravable ", "");
+            let anio = anioSelect.value; // Ya es solo el número "2026" (value)
             let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
 
             if (resultadoClean === "$ 0" || pcl === "") {
@@ -307,39 +338,21 @@
                 return;
             }
 
-            // Construimos el mensaje - USANDO EL SIGNO ± (Alt+0177)
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            
-            texto += `*DICTAMEN PRELIMINAR:*\n`;
-            texto += `Según calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
-            
-            texto += `*CONVERSIÓN NORMATIVA:*\n`;
-            texto += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
-            
-            texto += `*VALOR ESTIMADO A PAGAR:*\n`;
-            // Agregamos el signo ± manualmente aquí para asegurar que salga en WhatsApp
-            texto += `*± ${resultadoClean}*\n\n`; 
-            
-            texto += `*FUNDAMENTO JURÍDICO:*\n`;
-            texto += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
-            
-            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\n`;
-            texto += `No arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
-            
-            texto += `*LÍNEAS DE ATENCIÓN:*\n`;
-            texto += `315 314 5848\n`;
-            texto += `310 330 3814\n`;
-            texto += `314 294 8943\n\n`;
-            
-            texto += `o Ingresa a: www.sistrovial.legal`;
+            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`;
+            texto += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV.\n\n`;
+            texto += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
+            texto += `*FUNDAMENTO JURÍDICO:*\nCálculo conforme Decreto 780 de 2016 y valores ${anio}.\n\n`;
+            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo.\n\n`;
+            texto += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
 
-            // Codificación segura
             let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-
             window.open(url, '_blank');
         }
 
-        // EVENTOS
+        // INICIALIZACIÓN
+        inicializarAnios(); // Crear el menú
+        
         function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
         function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
 
