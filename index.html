@@ -121,12 +121,11 @@
         /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Estilos Tabla Modal (Restaurados V5) */
+        /* Estilos Tabla Modal */
         .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
         .tarifa-left { display: flex; flex-direction: column; }
         .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
@@ -177,7 +176,7 @@
                     <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
                     <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
                 </div>
-                <button type="button" class="btn-share" id="btnShare" title="Compartir Reporte Contable">
+                <button type="button" class="btn-share" id="btnShare" title="Compartir Reporte Oficial">
                     <i class="fa-brands fa-whatsapp"></i>
                 </button>
             </div>
@@ -185,7 +184,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 8.0 (Contador)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 10.0 (Prolijo)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -228,7 +227,6 @@
                 <div class="tarifa-left"><span class="tarifa-label">Otros / &gt; 200cc</span><span class="tarifa-sub">800 SMLDV</span></div>
                 <div class="tarifa-value" id="valMedicoAlto">$ 0</div>
             </div>
-            
             <button class="modal-btn" onclick="cerrarModalTarifas()">CERRAR</button>
         </div>
     </div>
@@ -280,7 +278,7 @@
             }
         }
 
-        // CALCULO TARIFAS FIJAS (VISUALIZACIÓN)
+        // CALCULO TARIFAS FIJAS
         function abrirTarifas() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
@@ -301,51 +299,38 @@
             tarifasModal.classList.add('active');
         }
 
-        // --- FUNCIÓN COMPARTIR: ESTILO CONTADOR / FINANCIERO ---
+        // --- FUNCIÓN WHATSAPP (V10: PROLIJA SIN EMOJIS) ---
         function compartirResultado() {
-            // 1. Recolectar datos básicos
             let pcl = inputPCL.value;
             let resultado = document.getElementById('resultadoPcl').value;
             let anio = anioSelect.value.replace("Año Gravable ", "");
             let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
 
             if (resultado === "$ 0" || pcl === "") {
-                alert("Primero ingresa un % PCL para generar el reporte.");
+                alert("Ingrese un porcentaje para generar el dictamen.");
                 return;
             }
 
-            // 2. Calcular Tarifas de Referencia (Internamente)
-            let smmlv = smmlvValues[anioSelect.value];
-            let uvt = uvtValues[anioSelect.value];
-            let valorDia = smmlv / 30;
+            // MENSAJE LIMPIO (SIN EMOJIS, SOLO TEXTO ESTRUCTURADO)
+            let mensaje = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*%0A%0A`;
+            
+            mensaje += `*DICTAMEN PRELIMINAR:*%0A`;
+            mensaje += `Según calificación de pérdida de capacidad laboral (PCL): ${pcl}%%0A%0A`;
+            
+            mensaje += `*CONVERSIÓN NORMATIVA:*%0A`;
+            mensaje += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).%0A%0A`;
+            
+            mensaje += `*VALOR ESTIMADO A PAGAR:*%0A`;
+            mensaje += `*${resultado} COP*%0A%0A`;
+            
+            mensaje += `*FUNDAMENTO JURÍDICO:*%0A`;
+            mensaje += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.%0A%0A`;
+            
+            mensaje += `315 314 5848%0A`;
+            mensaje += `310 330 3814%0A`;
+            mensaje += `314 294 8943%0A`;
+            mensaje += `www.sistrovial.legal`;
 
-            let valTransporte = formatter.format(uvt * 8.77);
-            let valClinica = formatter.format(valorDia * 800);
-            let valMuerte = formatter.format(valorDia * 750);
-
-            // 3. CONSTRUCCIÓN DEL MENSAJE "TIPO CONTADOR"
-            // Usa saltos de línea %0A y negritas *
-            
-            let mensaje = `*ESTADO DE CUENTA PROYECTADO - SOAT ${anio}*%0A`;
-            mensaje += `-----------------------------------------%0A`;
-            mensaje += `📉 *DICTAMEN PCL:* ${pcl}%%0A`;
-            mensaje += `-----------------------------------------%0A%0A`;
-            
-            mensaje += `*1. LIQUIDACIÓN A PAGAR A LA VÍCTIMA:*%0A`;
-            mensaje += `   • Concepto: Incapacidad Permanente%0A`;
-            mensaje += `   • Base Legal: ${diasTexto} (SMLDV)%0A`;
-            mensaje += `   💰 *TOTAL: ${resultado} COP*%0A%0A`;
-            
-            mensaje += `*2. COBERTURAS GLOBALES (REFERENCIA):*%0A`;
-            mensaje += `   🚑 Transporte: ${valTransporte} (8.77 UVT)%0A`;
-            mensaje += `   🏥 Clínica: ${valClinica} (800 SMLDV)%0A`;
-            mensaje += `   🕊️ Muerte: ${valMuerte} (750 SMLDV)%0A%0A`;
-            
-            mensaje += `-----------------------------------------%0A`;
-            mensaje += `_Cifras oficiales de Ley. Nada inventado._%0A`;
-            mensaje += `🔗 www.sistrovial.legal`;
-
-            // Enviar
             window.open(`https://wa.me/?text=${mensaje}`, '_blank');
         }
 
