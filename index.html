@@ -35,7 +35,7 @@
             --input-border-color: rgba(255, 255, 255, 0.3);
             --highlight-color: #4facfe;
             --error-color: #ff4b4b;
-            --warning-color: #ffbb00; /* Color para avisos sutiles */
+            --warning-color: #ffbb00;
             --whatsapp-color: #25D366;
             --glass-effect: blur(12px);
         }
@@ -202,7 +202,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V22 (Smart Subscription)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V22 (Debug Mode)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -229,7 +229,7 @@
     
     <script>
         // ==========================================
-        //  SISTEMA INTELIGENTE DE LICENCIAS (V22)
+        //  SISTEMA INTELIGENTE (MODO DIAGNÓSTICO)
         // ==========================================
         const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
 
@@ -246,13 +246,14 @@
             try {
                 setTimeout(() => { bar.style.width = "50%"; text.innerText = "Verificando licencia..."; }, 600);
                 
+                // Agregamos timestamp para romper la caché del JSON
                 const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
                 
                 if (response.ok) {
                     const data = await response.json();
                     
-                    // --- LÓGICA DE FECHAS ---
-                    let diasRestantes = 999; // Por defecto infinito si no hay fecha
+                    // --- CÁLCULO DE FECHAS ---
+                    let diasRestantes = 999;
                     if (data.vencimiento) {
                         const hoy = new Date();
                         const vence = new Date(data.vencimiento);
@@ -260,33 +261,34 @@
                         diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
                     }
 
-                    // 1. CASO BLOQUEO TOTAL (Estado 'suspendido' o días negativos)
+                    // --- ALERTA DE DIAGNÓSTICO (BORRAR LUEGO) ---
+                    // Esto te mostrará en pantalla si está leyendo el archivo
+                    alert(`DIAGNÓSTICO:\nEstado: ${data.estado}\nVence: ${data.vencimiento}\nDías Restantes: ${diasRestantes}`);
+
+                    // 1. BLOQUEO
                     if (data.estado === 'suspendido' || diasRestantes < 0) {
                         bar.style.width = "100%";
                         text.innerText = "ACCESO DENEGADO";
                         splash.classList.add('splash-locked');
-                        return; // SE DETIENE AQUI
+                        alert("BLOQUEO ACTIVADO");
+                        return;
                     }
 
-                    // 2. CASO MENSAJE SUTIL (Menos de 30 días o Estado 'aviso')
+                    // 2. AVISO (Menos de 30 días)
                     if (diasRestantes <= 30 || data.estado === 'aviso') {
                         let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
-                        
-                        // Si hay mensaje del servidor, lo usa. Si no, usa el automático de días.
                         toastMsg.innerText = mensaje;
-                        
-                        // Programar que salga el toast al iniciar
+                        // Mostrar el aviso a los 4 segundos
                         setTimeout(() => { toast.classList.add('active'); }, 4000);
-                        
-                        // Quitarlo a los 8 segundos
+                        // Quitarlo a los 12 segundos
                         setTimeout(() => { toast.classList.remove('active'); }, 12000);
                     }
                 }
             } catch (error) {
-                console.log("Modo Offline.");
+                alert("Error de conexión o JSON: " + error.message);
             }
 
-            // CARGA NORMAL (Si no hubo bloqueo)
+            // CARGA NORMAL
             setTimeout(() => { bar.style.width = "80%"; text.innerText = "Cargando Normativa..."; }, 1200);
             setTimeout(() => { 
                 bar.style.width = "100%"; text.innerText = "Bienvenido";
@@ -294,9 +296,7 @@
             }, 1800);
         }
 
-        // ==========================================
-        //  CONFIGURACIÓN MAESTRA
-        // ==========================================
+        // --- CONFIGURACIÓN BASE ---
         const DATA_HISTORICA = {
             '2023': { smmlv: 1160000, uvt: 42412 },
             '2024': { smmlv: 1300000, uvt: 47065 },
@@ -304,7 +304,6 @@
             '2026': { smmlv: 1750905, uvt: 53000 },
         };
 
-        // LÓGICA DEL SISTEMA
         if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); verificarYArrancar(); }); } 
         else { window.addEventListener('load', verificarYArrancar); }
 
@@ -382,15 +381,14 @@
             if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
             
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Correccion rapida
-            let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
-            textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
-            textoWA += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
-            textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
-            textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
-            textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
-            let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
+            texto += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
+            texto += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
+            texto += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
+            texto += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
+            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
+            texto += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
+            
+            let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
             window.open(url, '_blank');
         }
 
