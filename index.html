@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES --- */
+        /* --- ESTILOS GENERALES (V11) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -80,12 +80,8 @@
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
-        /* Contenedor Resultado + Share */
-        .result-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        /* CONTENEDOR RESULTADO + SHARE */
+        .result-container { display: flex; gap: 10px; align-items: center; }
 
         /* Botón WhatsApp */
         .btn-share {
@@ -93,14 +89,9 @@
             border: 1px solid var(--whatsapp-color);
             color: var(--whatsapp-color);
             border-radius: 12px;
-            width: 55px;
-            height: 55px; /* Misma altura que el input */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            width: 55px; height: 55px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.5rem; cursor: pointer; transition: all 0.2s;
             backdrop-filter: var(--glass-effect);
         }
         .btn-share:active { transform: scale(0.90); background: rgba(37, 211, 102, 0.3); }
@@ -121,11 +112,11 @@
         /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
+        
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Estilos Tabla Modal */
         .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
         .tarifa-left { display: flex; flex-direction: column; }
         .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
@@ -135,6 +126,9 @@
         .medical-header { text-align: left; color: #8899a6; font-size: 0.85rem; margin-bottom: 15px; }
 
         .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 14px 0; border-radius: 25px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 25px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
+        
+        /* Ajuste para pantallas pequeñas */
+        @media (max-height: 700px) { .title-container { margin-bottom: 10px; } h1.main-title { font-size: 2.2rem; } .input-group { margin-bottom: 15px; } .btn-tarifas { padding: 15px; } }
     </style>
 </head>
 <body>
@@ -176,7 +170,7 @@
                     <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
                     <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
                 </div>
-                <button type="button" class="btn-share" id="btnShare" title="Compartir Reporte Oficial">
+                <button type="button" class="btn-share" id="btnShare" title="Compartir Dictamen Final">
                     <i class="fa-brands fa-whatsapp"></i>
                 </button>
             </div>
@@ -184,7 +178,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 10.0 (Prolijo)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 11.0 (Master)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -201,18 +195,12 @@
             <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
             
             <div class="tarifa-row">
-                <div class="tarifa-left">
-                    <span class="tarifa-label">Muerte / Funeral</span>
-                    <span class="tarifa-sub">750 SMLDV</span>
-                </div>
+                <div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div>
                 <div class="tarifa-value" id="valMuerte">$ 0</div>
             </div>
 
             <div class="tarifa-row">
-                <div class="tarifa-left">
-                    <span class="tarifa-label">Transporte</span>
-                    <span class="tarifa-sub">8.77 UVT (Ambulancia)</span>
-                </div>
+                <div class="tarifa-left"><span class="tarifa-label">Transporte</span><span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div>
                 <div class="tarifa-value" id="valTransporte">$ 0</div>
             </div>
 
@@ -232,7 +220,7 @@
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA ---
+        // --- LOGICA DEL SISTEMA V11 ---
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
@@ -247,7 +235,7 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // CALCULO PCL (REACTIVO)
+        // CALCULO PCL (AUTOMATIZADO)
         function actualizarCalculos() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
@@ -299,7 +287,7 @@
             tarifasModal.classList.add('active');
         }
 
-        // --- FUNCIÓN WHATSAPP (V10: PROLIJA SIN EMOJIS) ---
+        // --- FUNCIÓN WHATSAPP (V11: HÍBRIDO GANADOR APROBADO) ---
         function compartirResultado() {
             let pcl = inputPCL.value;
             let resultado = document.getElementById('resultadoPcl').value;
@@ -311,25 +299,30 @@
                 return;
             }
 
-            // MENSAJE LIMPIO (SIN EMOJIS, SOLO TEXTO ESTRUCTURADO)
+            // MENSAJE ESTRUCTURADO Y PODEROSO
             let mensaje = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*%0A%0A`;
             
             mensaje += `*DICTAMEN PRELIMINAR:*%0A`;
-            mensaje += `Según calificación de pérdida de capacidad laboral (PCL): ${pcl}%%0A%0A`;
+            mensaje += `Según calificación de pérdida de capacidad laboral (PCL): *${pcl}%*%0A%0A`;
             
             mensaje += `*CONVERSIÓN NORMATIVA:*%0A`;
-            mensaje += `Corresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).%0A%0A`;
+            mensaje += `Corresponde a *${diasTexto} SMLDV* (Días de Salario Mínimo Legal Diario Vigente).%0A%0A`;
             
             mensaje += `*VALOR ESTIMADO A PAGAR:*%0A`;
-            mensaje += `*${resultado} COP*%0A%0A`;
+            mensaje += `*+/- ${resultado} COP*%0A%0A`;
             
             mensaje += `*FUNDAMENTO JURÍDICO:*%0A`;
             mensaje += `Cálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.%0A%0A`;
             
+            mensaje += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*%0A`;
+            mensaje += `No arriesgue su indemnización. *Contrate su defensa técnica hoy mismo* y garantice el cobro efectivo sin trámites complejos.%0A%0A`;
+            
+            mensaje += `*LÍNEAS DE ATENCIÓN:*%0A`;
             mensaje += `315 314 5848%0A`;
             mensaje += `310 330 3814%0A`;
-            mensaje += `314 294 8943%0A`;
-            mensaje += `www.sistrovial.legal`;
+            mensaje += `314 294 8943%0A%0A`;
+            
+            mensaje += `o Ingresa a: www.sistrovial.legal`;
 
             window.open(`https://wa.me/?text=${mensaje}`, '_blank');
         }
