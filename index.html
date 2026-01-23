@@ -44,7 +44,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             background-image: url('Diosa.png'); 
             background-size: cover; background-position: center top; background-repeat: no-repeat;
-            filter: blur(2px); transform: scale(1.01);
+            filter: blur(3px); transform: scale(1.02);
         }
 
         .gradient-overlay {
@@ -79,17 +79,16 @@
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
-        /* BOTONES */
-        .btn-calcular { width: 100%; padding: 18px; background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.25)); border: 1px solid rgba(255, 255, 255, 0.5); color: var(--text-color); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 5px; border-radius: 30px; font-family: inherit; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: manipulation; }
-        .btn-calcular:active { transform: scale(0.98); }
-
-        /* Botón Secundario */
+        /* Botón Tarifas (Ahora es el único botón principal) */
         .btn-tarifas {
-            width: 100%; padding: 15px; margin-top: 15px;
-            background: transparent; border: 1px solid rgba(79, 172, 254, 0.5);
-            color: var(--highlight-color); font-size: 0.9rem; font-weight: 500; letter-spacing: 1px;
+            width: 100%; padding: 18px; margin-top: 10px;
+            background: rgba(79, 172, 254, 0.15); /* Fondo sutil */
+            border: 1px solid rgba(79, 172, 254, 0.6);
+            color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px;
             border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation;
+            transition: all 0.2s;
         }
+        .btn-tarifas:active { background: rgba(79, 172, 254, 0.3); transform: scale(0.98); }
 
         .footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
 
@@ -97,58 +96,21 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
-        /* ESTILO DEL MODAL (RESTAURADO A LA IMAGEN) */
+        /* Modal Tarifas */
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Estructura de Filas (Flexbox: Izq Texto - Der Valor) */
-        .tarifa-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 18px; 
-            text-align: left; 
-        }
-        
-        .tarifa-left {
-            display: flex;
-            flex-direction: column;
-        }
-
+        /* Estructura de Filas */
+        .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
+        .tarifa-left { display: flex; flex-direction: column; }
         .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
         .tarifa-sub { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
-        
-        /* VALOR A LA DERECHA (AZUL) */
-        .tarifa-value { 
-            font-size: 1.1rem; 
-            color: var(--highlight-color); 
-            font-weight: 700; 
-            text-align: right; 
-            font-family: 'Roboto', sans-serif; 
-        }
-
-        /* Separador */
+        .tarifa-value { font-size: 1.1rem; color: var(--highlight-color); font-weight: 700; text-align: right; font-family: 'Roboto', sans-serif; }
         .modal-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
-        
-        /* Header Sección Médica */
         .medical-header { text-align: left; color: #8899a6; font-size: 0.85rem; margin-bottom: 15px; }
 
-        /* Botón Cerrar (Estilo de la imagen) */
-        .modal-btn { 
-            background: var(--highlight-color); 
-            color: #0a1931; 
-            border: none; 
-            padding: 14px 0; 
-            border-radius: 25px; 
-            font-weight: 800; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            font-size: 0.9rem; 
-            width: 100%; 
-            margin-top: 25px;
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-        }
+        .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 14px 0; border-radius: 25px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 25px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
     </style>
 </head>
 <body>
@@ -158,7 +120,7 @@
         <div class="title-container">
             <h1 class="top-label">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
-            <h1 class="company-name">SISTROVIAL.LEGAL</h1>
+            <h2 class="company-name">SISTROVIAL.LEGAL</h2>
             <h3 class="tagline">"Abogados & Peritos"</h3>
             <a href="https://www.sistrovial.legal" class="website-url">www.sistrovial.legal</a>
         </div>
@@ -190,11 +152,10 @@
                 <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
             </div>
 
-            <button type="button" class="btn-calcular" id="btnCalcular">CALCULAR</button>
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión 5.0</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 6.0</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -251,7 +212,7 @@
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA ---
+        // --- LOGICA DEL SISTEMA (AUTOMATIZADA) ---
         
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { 
@@ -259,7 +220,6 @@
             }); 
         }
 
-        // BASE DE DATOS LEGAL
         const smmlvValues = { 
             '2024': 1300000, 
             '2025': 1423500, 
@@ -278,18 +238,20 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // CALCULO PCL
+        // CALCULO PCL (AHORA SE LLAMA AL ESCRIBIR)
         function actualizarCalculos() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
             let valorDia = smmlv / 30;
             
             document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
-            let pcl = parseFloat(inputPCL.value.replace(',', '.'));
+            let pclRaw = inputPCL.value.replace(',', '.');
+            let pcl = parseFloat(pclRaw);
             
             if (pcl > 100) { errorModal.classList.add('active'); return; }
 
-            if (!isNaN(pcl) && pcl > 0) {
+            // Lógica Reactiva: Si hay número, calcula. Si borra, pone $0.
+            if (!isNaN(pcl) && pcl > 0 && inputPCL.value !== "") {
                 let dias = 0;
                 if (pcl <= 5) dias = 14; 
                 else if (pcl > 50) dias = 180; 
@@ -315,13 +277,11 @@
             let uvt = uvtValues[anio];
             let valorDia = smmlv / 30;
 
-            // Fórmulas Conversión
             let muerte = valorDia * 750;
             let transporte = uvt * 8.77;
             let medicoBajo = valorDia * 300; 
             let medicoAlto = valorDia * 800; 
 
-            // Inyectar
             document.getElementById('yearLabel').innerText = anio;
             document.getElementById('valMuerte').innerText = formatter.format(muerte);
             document.getElementById('valTransporte').innerText = formatter.format(transporte);
@@ -331,20 +291,26 @@
             tarifasModal.classList.add('active');
         }
 
-        // EVENTOS
-        function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; }
+        function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
         function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
 
+        // LISTENERS REACTIVOS
         anioSelect.addEventListener('change', actualizarCalculos);
-        document.getElementById('btnCalcular').addEventListener('click', actualizarCalculos);
         document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
         
+        // ¡LA MAGIA DE LA AUTOMATIZACIÓN!
+        // El evento 'input' dispara el cálculo en cada tecla.
         inputPCL.addEventListener('input', (e) => { 
-            e.target.value = e.target.value.replace(/[^0-9.,]/g, '');
-            if(parseFloat(e.target.value) > 100) errorModal.classList.add('active');
+            // Limpia caracteres no numéricos al vuelo
+            let val = e.target.value.replace(/[^0-9.,]/g, '');
+            e.target.value = val;
+            
+            if(parseFloat(val) > 100) {
+                errorModal.classList.add('active');
+            } else {
+                actualizarCalculos(); // CALCULA EN VIVO
+            }
         });
-        
-        inputPCL.addEventListener('blur', actualizarCalculos);
         
         tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
         errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
