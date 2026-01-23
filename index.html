@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V26 - HÍBRIDA) --- */
+        /* --- ESTILOS GENERALES (V26.1 - Marketing) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -154,8 +154,8 @@
     
     <div id="splash-screen">
         <img src="icon.png" alt="Forensics Crash" class="splash-logo">
-        <div class="splash-title">SISTROVIAL.LEGAL</div>
-        <div class="splash-subtitle">Abogadosa & Peritod</div>
+        <div class="splash-title">FORENSICS CRASH</div>
+        <div class="splash-subtitle">Ingeniería & Reconstrucción</div>
         
         <div class="loading-container">
             <div class="loading-bar" id="loadBar"></div>
@@ -211,7 +211,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing. John A. Skinner S. | V1.1.0 (Licensed)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V26.1 (Licensed)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -238,11 +238,10 @@
     
     <script>
         // ==========================================
-        //  SISTEMA INTELIGENTE V26 (HÍBRIDO: STATUS + ANTI-TRAUMA)
+        //  SISTEMA INTELIGENTE V26.1 (MARKETING + ANTI-TRAUMA)
         // ==========================================
         const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
 
-        // Función para abrir la app (Fuerza Bruta o Suave)
         function launchApp() {
             const splash = document.getElementById('splash-screen');
             const mainApp = document.getElementById('mainAppContainer');
@@ -259,22 +258,19 @@
 
             bar.style.width = "30%";
             
-            // --- ANTI-TRAUMA: SI EN 3 SEGUNDOS NO PASA NADA, ENTRA A LA FUERZA ---
+            // ANTI-TRAUMA (3 Segundos)
             const failsafeTimer = setTimeout(() => {
-                console.log("Anti-Trauma activado: Servidor lento. Entrando igual.");
+                console.log("Anti-Trauma activado.");
                 launchApp();
             }, 3000);
 
             try {
                 setTimeout(() => { if(!splash.classList.contains('hidden')) { bar.style.width = "50%"; } }, 800);
                 
-                // Fetch con timestamp
                 const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
                 
                 if (response.ok) {
                     const data = await response.json();
-                    
-                    // ¡RESPONDIÓ! CANCELAMOS LA ENTRADA FORZADA
                     clearTimeout(failsafeTimer);
 
                     // --- CÁLCULO DE FECHAS ---
@@ -286,20 +282,19 @@
                         diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
                     }
 
-                    // 1. CASO BLOQUEO (ROJO)
+                    // 1. BLOQUEO (ROJO)
                     if (data.estado === 'suspendido' || diasRestantes < 0) {
                         bar.style.width = "100%";
                         text.innerText = data.mensaje || "ACCESO DENEGADO / LICENCIA VENCIDA";
                         splash.classList.add('splash-locked');
-                        return; // SE DETIENE AQUÍ
+                        return;
                     }
 
-                    // 2. CASO ÉXITO (VERDE)
+                    // 2. ÉXITO (VERDE)
                     bar.style.width = "100%";
                     splash.classList.add('splash-success');
                     text.innerText = `✅ Licencia Activa (${diasRestantes} días restantes)`;
 
-                    // TOAST (Solo si faltan menos de 30 días)
                     if (diasRestantes <= 30 || data.estado === 'aviso') {
                         let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
                         toastMsg.innerText = mensaje;
@@ -307,19 +302,14 @@
                         setTimeout(() => { toast.classList.remove('active'); }, 12000);
                     }
 
-                    // Esperamos 1.5s para que leas el mensaje verde y entramos
-                    setTimeout(() => {
-                        launchApp();
-                    }, 1500);
+                    setTimeout(() => { launchApp(); }, 1500);
 
                 } else {
                     throw new Error("No response");
                 }
             } catch (error) {
-                // SI FALLA LA CONEXIÓN (Modo Offline)
-                // El failsafeTimer se encargará de abrir, pero por si acaso:
                 console.log("Modo Offline");
-                // No hacemos nada, dejamos que el timer abra la app
+                // Failsafe abrirá la app
             }
         }
 
@@ -342,6 +332,14 @@
 
         function inicializarAnios() {
             try {
+                // --- AÑO FANTASMA (MARKETING) ---
+                let futureOption = document.createElement('option');
+                futureOption.text = "2027 🔒 (Suscripción Vigente)";
+                futureOption.disabled = true; // Inactivo (Gris)
+                futureOption.style.color = "rgba(255, 255, 255, 0.5)"; // Semitransparente visual (si el navegador lo permite)
+                anioSelect.appendChild(futureOption);
+
+                // --- AÑOS REALES ---
                 const anios = Object.keys(DATA_HISTORICA).sort((a, b) => b - a);
                 anios.forEach(anio => {
                     let option = document.createElement('option');
@@ -349,7 +347,10 @@
                     option.text = `Año Gravable ${anio}`;
                     anioSelect.appendChild(option);
                 });
+                
+                // Selecciona el 2026 por defecto (el primero de la lista real)
                 if (anios.length > 0) anioSelect.value = anios[0];
+                
             } catch(e) {}
         }
 
