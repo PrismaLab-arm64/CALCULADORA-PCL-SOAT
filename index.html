@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES --- */
+        /* --- ESTILOS GENERALES (V23 - PRODUCTION) --- */
         :root {
             --bg-overlay-start: rgba(10, 25, 49, 0.92); 
             --bg-overlay-end: rgba(28, 66, 120, 0.90);
@@ -202,7 +202,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V22 (Debug Mode)</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | V23 (Pro)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -229,7 +229,7 @@
     
     <script>
         // ==========================================
-        //  SISTEMA INTELIGENTE (MODO DIAGNÓSTICO)
+        //  SISTEMA INTELIGENTE (MODO PRODUCCIÓN)
         // ==========================================
         const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
 
@@ -246,7 +246,6 @@
             try {
                 setTimeout(() => { bar.style.width = "50%"; text.innerText = "Verificando licencia..."; }, 600);
                 
-                // Agregamos timestamp para romper la caché del JSON
                 const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
                 
                 if (response.ok) {
@@ -261,34 +260,27 @@
                         diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
                     }
 
-                    // --- ALERTA DE DIAGNÓSTICO (BORRAR LUEGO) ---
-                    // Esto te mostrará en pantalla si está leyendo el archivo
-                    alert(`DIAGNÓSTICO:\nEstado: ${data.estado}\nVence: ${data.vencimiento}\nDías Restantes: ${diasRestantes}`);
-
-                    // 1. BLOQUEO
+                    // 1. CASO BLOQUEO TOTAL (Estado 'suspendido' o días negativos)
                     if (data.estado === 'suspendido' || diasRestantes < 0) {
                         bar.style.width = "100%";
                         text.innerText = "ACCESO DENEGADO";
                         splash.classList.add('splash-locked');
-                        alert("BLOQUEO ACTIVADO");
-                        return;
+                        return; // SE DETIENE AQUÍ, NO CARGA LA APP
                     }
 
-                    // 2. AVISO (Menos de 30 días)
+                    // 2. CASO MENSAJE SUTIL (Menos de 30 días o Estado 'aviso')
                     if (diasRestantes <= 30 || data.estado === 'aviso') {
                         let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
                         toastMsg.innerText = mensaje;
-                        // Mostrar el aviso a los 4 segundos
                         setTimeout(() => { toast.classList.add('active'); }, 4000);
-                        // Quitarlo a los 12 segundos
                         setTimeout(() => { toast.classList.remove('active'); }, 12000);
                     }
                 }
             } catch (error) {
-                alert("Error de conexión o JSON: " + error.message);
+                console.log("Modo Offline.");
             }
 
-            // CARGA NORMAL
+            // CARGA NORMAL (Si no hubo bloqueo)
             setTimeout(() => { bar.style.width = "80%"; text.innerText = "Cargando Normativa..."; }, 1200);
             setTimeout(() => { 
                 bar.style.width = "100%"; text.innerText = "Bienvenido";
@@ -381,14 +373,17 @@
             if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
             
             let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            texto += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
-            texto += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
-            texto += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
-            texto += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
-            texto += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
-            texto += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
+            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; // Interno (Legacy)
             
-            let url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+            let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
+            textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
+            textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
+            textoWA += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
+            textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
+            textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
+            textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
+            
+            let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
             window.open(url, '_blank');
         }
 
