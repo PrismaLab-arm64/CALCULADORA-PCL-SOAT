@@ -156,7 +156,7 @@
         }
 
         // Lógica de la Calculadora
-        const smmlvValues = { '2024': 1300000,, '2025': 1423500, '2026': 1750905 };
+        const smmlvValues = { '2024': 1300000, '2025': 1423500, '2026': 1750905 };
         const anioSelect = document.getElementById('anio'); const inputPCL = document.getElementById('porcentajePCL'); const inputGroupPCL = document.getElementById('pclGroup'); const labelEquivalencia = document.getElementById('labelEquivalencia'); const valorDiaInput = document.getElementById('valorDia'); const resultadoInput = document.getElementById('resultadoPcl'); const btnCalcular = document.getElementById('btnCalcular'); const errorModal = document.getElementById('errorModal'); const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
         function mostrarModal() { errorModal.classList.add('active'); inputGroupPCL.classList.add('error'); inputPCL.blur(); }
         function cerrarModal() { errorModal.classList.remove('active'); inputPCL.value = ""; inputPCL.focus(); inputGroupPCL.classList.remove('error'); actualizarCalculos(); }
