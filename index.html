@@ -19,8 +19,8 @@
     
     <style>
         :root {
-            --bg-overlay-start: rgba(10, 25, 49, 0.88); 
-            --bg-overlay-end: rgba(28, 66, 120, 0.85);
+            --bg-overlay-start: rgba(10, 25, 49, 0.90); 
+            --bg-overlay-end: rgba(28, 66, 120, 0.88);
             --text-color: #ffffff;
             --input-bg: rgba(255, 255, 255, 0.08); 
             --input-border-color: rgba(255, 255, 255, 0.3);
@@ -39,11 +39,9 @@
             overflow-x: hidden; position: relative;
         }
 
-        /* --- CORRECCIÓN REALIZADA AQUÍ --- */
-        /* Se cambió la extensión a .png para coincidir con archivo */
         .background-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background-image: url('Diosa.png');  /* <--- ¡AQUÍ ESTABA EL CAMBIO! */
+            background-image: url('Diosa.png'); 
             background-size: cover; background-position: center top; background-repeat: no-repeat;
             filter: blur(3px); transform: scale(1.02);
         }
@@ -59,21 +57,17 @@
         }
         .app-container::-webkit-scrollbar { display: none; }
 
-        /* Estilos Compactos */
-        .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; margin-top: 10px; }
+        .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; margin-top: 10px; }
         h1.top-label { font-family: 'Roboto', sans-serif; font-weight: 300; letter-spacing: 4px; font-size: 0.9rem; margin: 0; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px; }
         h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); margin: 0; line-height: 1.1; letter-spacing: 1px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 8px; }
         h2.company-name { font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 1rem; opacity: 0.95; letter-spacing: 2px; text-transform: uppercase; margin: 0; margin-bottom: 4px; }
         h3.tagline { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; font-weight: 400; color: #e0e0e0; margin: 0; margin-bottom: 10px; opacity: 0.8; }
         .website-url { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 0.85rem; color: var(--highlight-color); opacity: 0.9; letter-spacing: 1px; text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: all 0.3s; }
-        .website-url:hover { border-bottom-color: var(--highlight-color); }
-
+        
         .input-group { position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; overflow: hidden; background: var(--input-bg); backdrop-filter: var(--glass-effect); -webkit-backdrop-filter: var(--glass-effect); border: 1px solid var(--input-border-color); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .input-group.error { border-color: var(--error-color); box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: shake 0.4s ease-in-out; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; font-size: 1.2rem; color: rgba(255,255,255,0.7); }
         .custom-field { width: 100%; background: transparent; border: none; font-size: 16px; padding: 18px 15px 18px 50px; color: var(--text-color); font-family: 'Roboto', sans-serif; font-weight: 400; outline: none; border-radius: 0; }
-        ::placeholder { color: rgba(255, 255, 255, 0.4); }
         select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointer; color: white; }
         select.custom-field option { background-color: #0a1931; color: white; padding: 10px; }
         .select-arrow { position: absolute; top: 50%; transform: translateY(-50%); right: 15px; pointer-events: none; font-size: 0.9rem; color: rgba(255,255,255,0.6); }
@@ -82,20 +76,32 @@
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
-        .btn-calcular { width: 100%; padding: 18px; background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.25)); border: 1px solid rgba(255, 255, 255, 0.5); color: var(--text-color); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 10px; border-radius: 30px; font-family: inherit; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: manipulation; }
-        .btn-calcular:active { transform: scale(0.98); }
-        .footer { margin-top: 35px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
+        .btn-calcular { width: 100%; padding: 18px; background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.25)); border: 1px solid rgba(255, 255, 255, 0.5); color: var(--text-color); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 5px; border-radius: 30px; font-family: inherit; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        
+        /* Botón Secundario (Outline) */
+        .btn-tarifas {
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: transparent; border: 1px solid rgba(79, 172, 254, 0.5);
+            color: var(--highlight-color); font-size: 0.9rem; font-weight: 500; letter-spacing: 1px;
+            border-radius: 30px; cursor: pointer; text-transform: uppercase;
+        }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-card { background: #101c36; border: 1px solid var(--error-color); width: 85%; max-width: 320px; padding: 25px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
-        .modal-icon { font-size: 3rem; color: var(--error-color); margin-bottom: 15px; }
-        .modal-title { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 10px; }
-        .modal-text { font-size: 0.9rem; color: #ddd; margin-bottom: 20px; line-height: 1.4; }
-        .modal-btn { background: var(--error-color); color: white; border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; }
+        .modal-title { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        
+        /* Tabla de Tarifas */
+        .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; text-align: left; }
+        .tarifa-label { font-size: 0.85rem; color: #ccc; width: 50%; }
+        .tarifa-value { font-size: 1rem; color: var(--highlight-color); font-weight: 700; width: 50%; text-align: right; }
+        .tarifa-sub { font-size: 0.7rem; color: rgba(255,255,255,0.4); display: block; }
 
-        @media (max-height: 700px) { .title-container { margin-bottom: 15px; } h1.main-title { font-size: 2.2rem; } .btn-calcular { padding: 15px; } .input-group { margin-bottom: 15px; } .custom-field { padding: 14px 15px 14px 45px; } .footer { margin-top: 20px; } }
+        .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 12px 25px; border-radius: 25px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -133,47 +139,127 @@
                 <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
             </div>
             <button type="button" class="btn-calcular" id="btnCalcular">CALCULAR</button>
+            
+            <button type="button" class="btn-tarifas" id="btnTarifas">
+                <i class="fa-solid fa-book-medical"></i> Ver Tarifas Fijas
+            </button>
         </form>
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 1.1</div>
+        <div class="footer">© 2026 Forensics Crash S.A.S | Versión PWA 3.3</div>
     </div>
+
     <div class="modal-overlay" id="errorModal">
         <div class="modal-card">
-            <div class="modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
-            <div class="modal-title">¡Atención!</div>
-            <div class="modal-text">El porcentaje de pérdida (PCL) no puede ser mayor al <b>100%</b>.<br><br>Por favor verifica el valor.</div>
-            <button class="modal-btn" onclick="cerrarModal()">Entendido</button>
+            <div style="font-size: 3rem; color: var(--error-color); margin-bottom: 10px;"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="modal-title" style="color: white; border: none;">¡Atención!</div>
+            <div style="font-size: 0.9rem; color: #ddd; margin-bottom: 20px;">El PCL no puede ser mayor al 100%.</div>
+            <button class="modal-btn" style="background: var(--error-color); color: white;" onclick="cerrarModalError()">Entendido</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="tarifasModal">
+        <div class="modal-card">
+            <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
+            
+            <div class="tarifa-row">
+                <div class="tarifa-label">Muerte / Funeral<span class="tarifa-sub">750 SMLDV</span></div>
+                <div class="tarifa-value" id="valMuerte">$ 0</div>
+            </div>
+
+            <div class="tarifa-row">
+                <div class="tarifa-label">Transporte<span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div>
+                <div class="tarifa-value" id="valTransporte">$ 0</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+            
+            <div style="font-size: 0.8rem; color: #aaa; margin-bottom: 5px; text-align: left;">Topes Gastos Médicos:</div>
+            <div class="tarifa-row" style="margin-bottom: 5px;">
+                <div class="tarifa-label" style="font-size: 0.75rem;">Motos &lt; 200cc</div>
+                <div class="tarifa-value" style="font-size: 0.85rem; color: white;">300 SMLDV</div>
+            </div>
+            <div class="tarifa-row">
+                <div class="tarifa-label" style="font-size: 0.75rem;">Otros / &gt; 200cc</div>
+                <div class="tarifa-value" style="font-size: 0.85rem; color: white;">800 SMLDV</div>
+            </div>
+
+            <button class="modal-btn" onclick="cerrarModalTarifas()">Cerrar</button>
         </div>
     </div>
     
     <script>
-        // Lógica de Registro SW
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registrado', reg))
-                    .catch(err => console.log('Error Service Worker', err));
-            });
+        // Registro SW
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); }
+
+        // DATOS OFICIALES Y PROYECCIONES UVT
+        const smmlvValues = { '2024': 1300000, '2025': 1423500, '2026': 1750905 };
+        // OJO INGENIERO: Actualizar UVT 2026 con dato oficial DIAN cuando salga.
+        const uvtValues = { '2024': 47065, '2025': 49799, '2026': 53000 }; 
+
+        const anioSelect = document.getElementById('anio'); 
+        const inputPCL = document.getElementById('porcentajePCL'); 
+        const errorModal = document.getElementById('errorModal');
+        const tarifasModal = document.getElementById('tarifasModal');
+        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+
+        // Cálculo PCL
+        function actualizarCalculos() {
+            let anio = anioSelect.value;
+            let smmlv = smmlvValues[anio];
+            let valorDia = smmlv / 30;
+            document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
+            
+            let pcl = parseFloat(inputPCL.value.replace(',', '.'));
+            
+            if (pcl > 100) { errorModal.classList.add('active'); return; }
+
+            if (!isNaN(pcl) && pcl > 0) {
+                let dias = (pcl <= 5) ? 14 : (pcl > 50 ? 180 : 14 + ((Math.ceil(pcl) - 5) * 3.5));
+                if (pcl % 1 === 0 && pcl <= 50 && pcl > 5) dias = 14 + ((pcl - 5) * 3.5); // Ajuste exactos
+                
+                document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
+                document.getElementById('labelEquivalencia').classList.add('visible');
+                document.getElementById('resultadoPcl').value = formatter.format(valorDia * dias);
+            } else {
+                document.getElementById('resultadoPcl').value = "$ 0";
+                document.getElementById('labelEquivalencia').classList.remove('visible');
+            }
         }
 
-        // Lógica de la Calculadora
-        const smmlvValues = { '2024': 1300000, '2025': 1423500, '2026': 1750905 };
-        const anioSelect = document.getElementById('anio'); const inputPCL = document.getElementById('porcentajePCL'); const inputGroupPCL = document.getElementById('pclGroup'); const labelEquivalencia = document.getElementById('labelEquivalencia'); const valorDiaInput = document.getElementById('valorDia'); const resultadoInput = document.getElementById('resultadoPcl'); const btnCalcular = document.getElementById('btnCalcular'); const errorModal = document.getElementById('errorModal'); const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
-        function mostrarModal() { errorModal.classList.add('active'); inputGroupPCL.classList.add('error'); inputPCL.blur(); }
-        function cerrarModal() { errorModal.classList.remove('active'); inputPCL.value = ""; inputPCL.focus(); inputGroupPCL.classList.remove('error'); actualizarCalculos(); }
-        function obtenerDiasIndemnizacion(porcentaje) {
-            if (porcentaje < 1) return 0; if (porcentaje <= 5) return 14; if (porcentaje > 50) return 180;
-            let rangoSuperior = Math.ceil(porcentaje); if (porcentaje % 1 === 0) rangoSuperior = porcentaje; return 14 + ((rangoSuperior - 5) * 3.5);
+        // Lógica de Tarifas Fijas
+        function abrirTarifas() {
+            let anio = anioSelect.value;
+            let smmlv = smmlvValues[anio];
+            let uvt = uvtValues[anio];
+            let valorDia = smmlv / 30;
+
+            // Cálculos Fijos
+            let muerte = valorDia * 750;
+            let transporte = uvt * 8.77; // 8.77 UVT según nueva norma
+
+            document.getElementById('yearLabel').innerText = anio;
+            document.getElementById('valMuerte').innerText = formatter.format(muerte);
+            document.getElementById('valTransporte').innerText = formatter.format(transporte);
+            
+            tarifasModal.classList.add('active');
         }
-        function limpiarInputPCL(valor) { return valor.replace(',', '.').replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'); }
-        function actualizarCalculos() {
-            let anio = anioSelect.value; let smmlv = smmlvValues[anio]; let valorRaw = limpiarInputPCL(inputPCL.value); let pcl = parseFloat(valorRaw); let valorDia = smmlv / 30; valorDiaInput.value = `${formatter.format(valorDia)} / día`;
-            if (pcl > 100) { mostrarModal(); resultadoInput.value = "$ 0"; labelEquivalencia.classList.remove('visible'); return; } else { inputGroupPCL.classList.remove('error'); }
-            if (!isNaN(pcl) && pcl > 0 && pcl <= 100) { let diasIndemnizacion = obtenerDiasIndemnizacion(pcl); labelEquivalencia.innerText = `Tabla: ${diasIndemnizacion} días de salario`; labelEquivalencia.classList.add('visible'); let total = valorDia * diasIndemnizacion; resultadoInput.value = formatter.format(total); } else { resultadoInput.value = "$ 0"; labelEquivalencia.classList.remove('visible'); }
-        }
-        anioSelect.addEventListener('change', actualizarCalculos); btnCalcular.addEventListener('click', actualizarCalculos);
-        inputPCL.addEventListener('input', (e) => { if(parseFloat(e.target.value) > 100) mostrarModal(); });
-        inputPCL.addEventListener('blur', (e) => { e.target.value = limpiarInputPCL(e.target.value); actualizarCalculos(); });
-        errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModal(); });
+
+        function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; }
+        function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
+
+        // Eventos
+        anioSelect.addEventListener('change', actualizarCalculos);
+        document.getElementById('btnCalcular').addEventListener('click', actualizarCalculos);
+        document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
+        
+        inputPCL.addEventListener('input', (e) => { 
+            e.target.value = e.target.value.replace(/[^0-9.,]/g, '');
+            if(parseFloat(e.target.value) > 100) errorModal.classList.add('active');
+        });
+        
+        inputPCL.addEventListener('blur', actualizarCalculos);
+        
+        // Cerrar al tocar fuera
+        tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
         actualizarCalculos();
     </script>
 </body>
