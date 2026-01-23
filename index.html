@@ -26,6 +26,7 @@
             --input-border-color: rgba(255, 255, 255, 0.3);
             --highlight-color: #4facfe; /* AZUL DE LA APP */
             --error-color: #ff4b4b;
+            --whatsapp-color: #25D366;
             --glass-effect: blur(12px);
         }
 
@@ -79,10 +80,35 @@
         .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
-        /* Botón Tarifas (Ahora es el único botón principal) */
+        /* Contenedor Resultado + Share */
+        .result-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        /* Botón WhatsApp */
+        .btn-share {
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid var(--whatsapp-color);
+            color: var(--whatsapp-color);
+            border-radius: 12px;
+            width: 55px;
+            height: 55px; /* Misma altura que el input */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: var(--glass-effect);
+        }
+        .btn-share:active { transform: scale(0.90); background: rgba(37, 211, 102, 0.3); }
+
+        /* Botón Tarifas */
         .btn-tarifas {
-            width: 100%; padding: 18px; margin-top: 10px;
-            background: rgba(79, 172, 254, 0.15); /* Fondo sutil */
+            width: 100%; padding: 18px; margin-top: 15px;
+            background: rgba(79, 172, 254, 0.15);
             border: 1px solid rgba(79, 172, 254, 0.6);
             color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px;
             border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation;
@@ -96,12 +122,11 @@
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
-        /* Modal Tarifas */
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* Estructura de Filas */
+        /* Estilos Tabla Modal (Restaurados V5) */
         .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
         .tarifa-left { display: flex; flex-direction: column; }
         .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
@@ -147,15 +172,20 @@
                 <input type="text" id="valorDia" class="custom-field readonly-field" readonly value="$ 0">
             </div>
 
-            <div class="input-group" style="border-color: var(--highlight-color); background: rgba(79, 172, 254, 0.12);">
-                <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
-                <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
+            <div class="result-container">
+                <div class="input-group" style="border-color: var(--highlight-color); background: rgba(79, 172, 254, 0.12); flex-grow: 1; margin-bottom: 0;">
+                    <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
+                    <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
+                </div>
+                <button type="button" class="btn-share" id="btnShare" title="Compartir Reporte Contable">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </button>
             </div>
 
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 6.0</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 8.0 (Contador)</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -188,49 +218,30 @@
             </div>
 
             <hr class="modal-divider">
-            
             <div class="medical-header">Topes Gastos Médicos:</div>
-
+            
             <div class="tarifa-row">
-                <div class="tarifa-left">
-                    <span class="tarifa-label">Motos &lt; 200cc</span>
-                    <span class="tarifa-sub">300 SMLDV</span>
-                </div>
+                <div class="tarifa-left"><span class="tarifa-label">Motos &lt; 200cc</span><span class="tarifa-sub">300 SMLDV</span></div>
                 <div class="tarifa-value" id="valMedicoBajo">$ 0</div>
             </div>
-
             <div class="tarifa-row">
-                <div class="tarifa-left">
-                    <span class="tarifa-label">Otros / &gt; 200cc</span>
-                    <span class="tarifa-sub">800 SMLDV</span>
-                </div>
+                <div class="tarifa-left"><span class="tarifa-label">Otros / &gt; 200cc</span><span class="tarifa-sub">800 SMLDV</span></div>
                 <div class="tarifa-value" id="valMedicoAlto">$ 0</div>
             </div>
-
+            
             <button class="modal-btn" onclick="cerrarModalTarifas()">CERRAR</button>
         </div>
     </div>
     
     <script>
-        // --- LOGICA DEL SISTEMA (AUTOMATIZADA) ---
+        // --- LOGICA DEL SISTEMA ---
         
         if ('serviceWorker' in navigator) { 
-            window.addEventListener('load', () => { 
-                navigator.serviceWorker.register('./sw.js'); 
-            }); 
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); }); 
         }
 
-        const smmlvValues = { 
-            '2024': 1300000, 
-            '2025': 1423500, 
-            '2026': 1750905 
-        };
-        
-        const uvtValues = { 
-            '2024': 47065, 
-            '2025': 49799, 
-            '2026': 53000 
-        }; 
+        const smmlvValues = { '2024': 1300000, '2025': 1423500, '2026': 1750905 };
+        const uvtValues = { '2024': 47065, '2025': 49799, '2026': 53000 }; 
 
         const anioSelect = document.getElementById('anio'); 
         const inputPCL = document.getElementById('porcentajePCL'); 
@@ -238,7 +249,7 @@
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // CALCULO PCL (AHORA SE LLAMA AL ESCRIBIR)
+        // CALCULO PCL (REACTIVO)
         function actualizarCalculos() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
@@ -250,7 +261,6 @@
             
             if (pcl > 100) { errorModal.classList.add('active'); return; }
 
-            // Lógica Reactiva: Si hay número, calcula. Si borra, pone $0.
             if (!isNaN(pcl) && pcl > 0 && inputPCL.value !== "") {
                 let dias = 0;
                 if (pcl <= 5) dias = 14; 
@@ -270,7 +280,7 @@
             }
         }
 
-        // CALCULO TARIFAS FIJAS
+        // CALCULO TARIFAS FIJAS (VISUALIZACIÓN)
         function abrirTarifas() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
@@ -291,25 +301,67 @@
             tarifasModal.classList.add('active');
         }
 
+        // --- FUNCIÓN COMPARTIR: ESTILO CONTADOR / FINANCIERO ---
+        function compartirResultado() {
+            // 1. Recolectar datos básicos
+            let pcl = inputPCL.value;
+            let resultado = document.getElementById('resultadoPcl').value;
+            let anio = anioSelect.value.replace("Año Gravable ", "");
+            let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
+
+            if (resultado === "$ 0" || pcl === "") {
+                alert("Primero ingresa un % PCL para generar el reporte.");
+                return;
+            }
+
+            // 2. Calcular Tarifas de Referencia (Internamente)
+            let smmlv = smmlvValues[anioSelect.value];
+            let uvt = uvtValues[anioSelect.value];
+            let valorDia = smmlv / 30;
+
+            let valTransporte = formatter.format(uvt * 8.77);
+            let valClinica = formatter.format(valorDia * 800);
+            let valMuerte = formatter.format(valorDia * 750);
+
+            // 3. CONSTRUCCIÓN DEL MENSAJE "TIPO CONTADOR"
+            // Usa saltos de línea %0A y negritas *
+            
+            let mensaje = `*ESTADO DE CUENTA PROYECTADO - SOAT ${anio}*%0A`;
+            mensaje += `-----------------------------------------%0A`;
+            mensaje += `📉 *DICTAMEN PCL:* ${pcl}%%0A`;
+            mensaje += `-----------------------------------------%0A%0A`;
+            
+            mensaje += `*1. LIQUIDACIÓN A PAGAR A LA VÍCTIMA:*%0A`;
+            mensaje += `   • Concepto: Incapacidad Permanente%0A`;
+            mensaje += `   • Base Legal: ${diasTexto} (SMLDV)%0A`;
+            mensaje += `   💰 *TOTAL: ${resultado} COP*%0A%0A`;
+            
+            mensaje += `*2. COBERTURAS GLOBALES (REFERENCIA):*%0A`;
+            mensaje += `   🚑 Transporte: ${valTransporte} (8.77 UVT)%0A`;
+            mensaje += `   🏥 Clínica: ${valClinica} (800 SMLDV)%0A`;
+            mensaje += `   🕊️ Muerte: ${valMuerte} (750 SMLDV)%0A%0A`;
+            
+            mensaje += `-----------------------------------------%0A`;
+            mensaje += `_Cifras oficiales de Ley. Nada inventado._%0A`;
+            mensaje += `🔗 www.sistrovial.legal`;
+
+            // Enviar
+            window.open(`https://wa.me/?text=${mensaje}`, '_blank');
+        }
+
+        // EVENTOS
         function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
         function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
 
-        // LISTENERS REACTIVOS
         anioSelect.addEventListener('change', actualizarCalculos);
         document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
+        document.getElementById('btnShare').addEventListener('click', compartirResultado);
         
-        // ¡LA MAGIA DE LA AUTOMATIZACIÓN!
-        // El evento 'input' dispara el cálculo en cada tecla.
         inputPCL.addEventListener('input', (e) => { 
-            // Limpia caracteres no numéricos al vuelo
             let val = e.target.value.replace(/[^0-9.,]/g, '');
             e.target.value = val;
-            
-            if(parseFloat(val) > 100) {
-                errorModal.classList.add('active');
-            } else {
-                actualizarCalculos(); // CALCULA EN VIVO
-            }
+            if(parseFloat(val) > 100) { errorModal.classList.add('active'); } 
+            else { actualizarCalculos(); }
         });
         
         tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
