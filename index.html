@@ -24,9 +24,8 @@
             --text-color: #ffffff;
             --input-bg: rgba(255, 255, 255, 0.08); 
             --input-border-color: rgba(255, 255, 255, 0.3);
-            --highlight-color: #4facfe;
+            --highlight-color: #4facfe; /* AZUL DE LA APP */
             --error-color: #ff4b4b;
-            --money-color: #4caf50; /* Verde Dinero */
             --glass-effect: blur(12px);
         }
 
@@ -40,7 +39,7 @@
             overflow-x: hidden; position: relative;
         }
 
-        /* FONDO (Asegurado Diosa.png) */
+        /* FONDO */
         .background-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             background-image: url('Diosa.png'); 
@@ -84,7 +83,7 @@
         .btn-calcular { width: 100%; padding: 18px; background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.25)); border: 1px solid rgba(255, 255, 255, 0.5); color: var(--text-color); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 5px; border-radius: 30px; font-family: inherit; box-shadow: 0 4px 15px rgba(0,0,0,0.2); touch-action: manipulation; }
         .btn-calcular:active { transform: scale(0.98); }
 
-        /* Botón Secundario (Outline) */
+        /* Botón Secundario */
         .btn-tarifas {
             width: 100%; padding: 15px; margin-top: 15px;
             background: transparent; border: 1px solid rgba(79, 172, 254, 0.5);
@@ -94,23 +93,26 @@
 
         .footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
 
-        /* MODAL GENERAl */
+        /* MODALES */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         
-        /* ESTILO DEL MODAL TARIFAS (Premium) */
+        /* Modal Tarifas */
         .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .modal-overlay.active .modal-card { transform: scale(1); }
         .modal-title { font-size: 1.2rem; font-weight: 700; color: white; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         
-        /* Filas de la tabla Modal */
-        .tarifa-row { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+        .section-header { text-align: left; font-size: 0.8rem; color: #aaa; text-transform: uppercase; margin-bottom: 10px; margin-top: 15px; border-left: 2px solid var(--highlight-color); padding-left: 8px; }
+
+        /* Filas Modal */
+        .tarifa-row { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
         .tarifa-row:last-child { border-bottom: none; }
-        .tarifa-label { font-size: 0.9rem; color: #ccc; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-        .tarifa-sub { font-size: 0.75rem; color: var(--highlight-color); opacity: 0.8; font-weight: normal; margin-left: 5px; text-transform: none; }
         
-        /* PRECIO EN GRANDE Y VERDE */
-        .tarifa-value { font-size: 1.5rem; color: var(--money-color); font-weight: 900; width: 100%; text-align: left; text-shadow: 0 2px 10px rgba(76, 175, 80, 0.2); font-family: 'Roboto', sans-serif; }
+        .tarifa-label { font-size: 0.85rem; color: #ddd; margin-bottom: 3px; }
+        .tarifa-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); }
+        
+        /* PRECIO EN AZUL DE LA APP */
+        .tarifa-value { font-size: 1.3rem; color: var(--highlight-color); font-weight: 900; width: 100%; text-align: left; font-family: 'Roboto', sans-serif; text-shadow: 0 0 10px rgba(79, 172, 254, 0.2); }
 
         .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 12px 25px; border-radius: 25px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 10px; }
     </style>
@@ -158,7 +160,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas"><i class="fa-solid fa-book-medical"></i> Ver Tarifas Fijas</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 4.0</div>
+        <div class="footer">© 2026 Ing John A. Skinner S. | Versión PWA 4.1</div>
     </div>
 
     <div class="modal-overlay" id="errorModal">
@@ -184,8 +186,16 @@
                 <div class="tarifa-value" id="valTransporte">$ 0</div>
             </div>
 
-            <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; font-size: 0.75rem; color: #aaa; text-align: left; margin-top: 10px;">
-                <i class="fa-solid fa-info-circle"></i> <b>Nota Legal:</b> Valores automáticos según Decretos y UVT del año seleccionado.
+            <div class="section-header">Topes Gastos Médicos (Clínica)</div>
+
+            <div class="tarifa-row">
+                <div class="tarifa-label">Motos &lt; 200cc / Microbuses <span class="tarifa-sub">(300 SMLDV)</span></div>
+                <div class="tarifa-value" id="valMedicoBajo">$ 0</div>
+            </div>
+
+            <div class="tarifa-row">
+                <div class="tarifa-label">Motos &gt; 200cc / Particulares <span class="tarifa-sub">(800 SMLDV)</span></div>
+                <div class="tarifa-value" id="valMedicoAlto">$ 0</div>
             </div>
 
             <button class="modal-btn" onclick="cerrarModalTarifas()">Cerrar</button>
@@ -195,7 +205,6 @@
     <script>
         // --- LOGICA DEL SISTEMA ---
         
-        // 1. Registro del Service Worker (Para modo Offline)
         if ('serviceWorker' in navigator) { 
             window.addEventListener('load', () => { 
                 navigator.serviceWorker.register('./sw.js')
@@ -204,109 +213,96 @@
             }); 
         }
 
-        // 2. BASE DE DATOS LEGAL (Sintaxis Corregida y Valores Oficiales)
+        // BASE DE DATOS LEGAL
         const smmlvValues = { 
             '2024': 1300000, 
             '2025': 1423500, 
-            '2026': 1750905 // Dato Oficial Decreto 2025
+            '2026': 1750905 
         };
         
         const uvtValues = { 
             '2024': 47065, 
             '2025': 49799, 
-            '2026': 53000 // Proyección Enero 2026
+            '2026': 53000 
         }; 
 
-        // 3. Variables del DOM
         const anioSelect = document.getElementById('anio'); 
         const inputPCL = document.getElementById('porcentajePCL'); 
         const errorModal = document.getElementById('errorModal');
         const tarifasModal = document.getElementById('tarifasModal');
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
-        // 4. Función Principal: Calcular PCL
+        // CALCULO PCL
         function actualizarCalculos() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
             let valorDia = smmlv / 30;
             
-            // Mostrar valor día
             document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
-            
-            // Obtener PCL limpio
             let pcl = parseFloat(inputPCL.value.replace(',', '.'));
             
-            // Validación > 100
             if (pcl > 100) { errorModal.classList.add('active'); return; }
 
-            // Lógica Matemática Decreto 780
             if (!isNaN(pcl) && pcl > 0) {
                 let dias = 0;
-                if (pcl <= 5) {
-                    dias = 14; // Mínimo
-                } else if (pcl > 50) {
-                    dias = 180; // Máximo (Invalidez)
-                } else {
-                    // Fórmula Tabla: 14 + (PuntosAdicionales * 3.5)
-                    // Nota: Usamos Math.ceil para el rango superior si tiene decimales, salvo exactos.
+                if (pcl <= 5) dias = 14; 
+                else if (pcl > 50) dias = 180; 
+                else {
                     let rangoSuperior = Math.ceil(pcl); 
-                    if (pcl % 1 === 0) rangoSuperior = pcl; // Si es entero, se queda igual
+                    if (pcl % 1 === 0) rangoSuperior = pcl;
                     dias = 14 + ((rangoSuperior - 5) * 3.5);
                 }
                 
                 document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
                 document.getElementById('labelEquivalencia').classList.add('visible');
-                
-                let total = valorDia * dias;
-                document.getElementById('resultadoPcl').value = formatter.format(total);
+                document.getElementById('resultadoPcl').value = formatter.format(valorDia * dias);
             } else {
                 document.getElementById('resultadoPcl').value = "$ 0";
                 document.getElementById('labelEquivalencia').classList.remove('visible');
             }
         }
 
-        // 5. Función Secundaria: Calcular Tarifas Fijas
+        // CALCULO TARIFAS FIJAS (CONVERTIDOR COMPLETO)
         function abrirTarifas() {
             let anio = anioSelect.value;
             let smmlv = smmlvValues[anio];
             let uvt = uvtValues[anio];
             let valorDia = smmlv / 30;
 
-            // Cálculos
-            let muerte = valorDia * 750; // Tope Muerte
-            let transporte = uvt * 8.77; // Tope Transporte
+            // Fórmulas
+            let muerte = valorDia * 750;
+            let transporte = uvt * 8.77;
+            let medicoBajo = valorDia * 300; // Tope < 200cc
+            let medicoAlto = valorDia * 800; // Tope > 200cc
 
-            // Inyectar en el Modal
+            // Inyectar
             document.getElementById('yearLabel').innerText = anio;
             document.getElementById('valMuerte').innerText = formatter.format(muerte);
             document.getElementById('valTransporte').innerText = formatter.format(transporte);
+            document.getElementById('valMedicoBajo').innerText = formatter.format(medicoBajo);
+            document.getElementById('valMedicoAlto').innerText = formatter.format(medicoAlto);
             
             tarifasModal.classList.add('active');
         }
 
-        // 6. Control de Modales
+        // EVENTOS
         function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; }
         function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
 
-        // 7. Listeners (Escuchadores de eventos)
         anioSelect.addEventListener('change', actualizarCalculos);
         document.getElementById('btnCalcular').addEventListener('click', actualizarCalculos);
         document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
         
-        // Input: Solo permite números y puntos
         inputPCL.addEventListener('input', (e) => { 
             e.target.value = e.target.value.replace(/[^0-9.,]/g, '');
             if(parseFloat(e.target.value) > 100) errorModal.classList.add('active');
         });
         
-        // Input: Recalcular al salir
         inputPCL.addEventListener('blur', actualizarCalculos);
         
-        // Cerrar modales tocando fuera
         tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
         errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
 
-        // Inicializar
         actualizarCalculos();
     </script>
 </body>
