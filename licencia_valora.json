@@ -1,7 +1,20 @@
 {
-  "estado": "activo",
-  "plan": "pro",
-  "vencimiento": "2026-12-31",
-  "cliente": "Dr. Carlos Pérez",
-  "mensaje": "Bienvenido, Doctor. Su licencia PRO está activa."
+  "VS-ADMIN": {
+    "nombre": "Ing. John Skinner (CEO)",
+    "estado": "activo",
+    "plan": "master",
+    "vencimiento": "2030-12-31",
+    "mensaje": "Bienvenido Creador."
+  },
+  "VS-001": {
+    "nombre": "Dr. Ángel Peralta",
+    "estado": "activo",
+    "plan": "pro",
+    "vencimiento": "2026-12-31"
+  },
+  "VS-TEST": {
+    "nombre": "Usuario Moroso S.A.S.",
+    "estado": "suspendido",
+    "mensaje": "Su licencia anual ha vencido. Por favor contacte a Forensics Crash para renovar."
+  }
 }
