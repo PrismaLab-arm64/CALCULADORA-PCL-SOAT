@@ -9,13 +9,13 @@
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
 
-<title>Calculadora PCL SOAT | SISTROVIAL.LEGAL</title>
+<title>Calculadora PCL SOAT | SISTROVIAL</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* --- TU DISEÑO ORIGINAL AZUL PREMIUM (INTACTO) --- */
+/* --- ESTILOS PREMIUM (AZUL CRISTAL) --- */
 :root {
     --bg-overlay-start: rgba(10, 25, 49, 0.95); 
     --bg-overlay-end: rgba(28, 66, 120, 0.95);
@@ -24,7 +24,6 @@
     --input-border-color: rgba(255, 255, 255, 0.3);
     --highlight-color: #4facfe;
     --gold: #D4AF37;
-    --error-color: #ff4b4b;
     --glass-effect: blur(12px);
 }
 
@@ -33,13 +32,11 @@
 body {
     margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
     display: flex; flex-direction: column; align-items: center;
-    min-height: 100vh; 
-    padding: 20px;
-    background-color: #0a1931; 
-    overflow-x: hidden;
+    min-height: 100vh; padding: 20px;
+    background-color: #0a1931; overflow-x: hidden;
 }
 
-/* --- PANTALLA DE CARGA (CON TU MARCA FORENSICS) --- */
+/* --- PANTALLA DE CARGA --- */
 #splash-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #081222; z-index: 99999;
@@ -47,82 +44,83 @@ body {
     transition: opacity 0.6s ease-out, visibility 0.6s;
 }
 .splash-logo { width: 90px; height: 90px; margin-bottom: 25px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; }
-.splash-title { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 5px; }
 .loading-bar-container { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 20px; }
 .loading-bar { height: 100%; width: 0%; background: var(--highlight-color); transition: width 0.5s ease; }
-
 @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-/* --- PANTALLA DE LOGIN (PROTECCIÓN DE LICENCIA) --- */
+/* --- LOGIN PROTECTOR --- */
 #loginScreen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: 5000; background: rgba(10, 25, 49, 0.98);
-    display: none; /* Se activa con JS */
-    flex-direction: column; justify-content: center; align-items: center;
+    display: none; flex-direction: column; justify-content: center; align-items: center;
     padding: 30px; backdrop-filter: blur(10px);
 }
 
-/* --- APP UI (TU DISEÑO EXACTO) --- */
-.background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center; filter: blur(3px); opacity: 0.6; }
-.gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%); }
-
-.app-container { width: 100%; max-width: 420px; text-align: center; position: relative; z-index: 10; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; display: none; }
+/* --- APP CONTAINER --- */
+.app-container { width: 100%; max-width: 420px; text-align: center; position: relative; z-index: 10; opacity: 0; transform: translateY(20px); transition: 0.8s; display: none; }
 .app-container.visible { opacity: 1; transform: translateY(0); display: block; }
 
-.title-container { margin-bottom: 30px; margin-top: 20px; }
+.title-container { margin-bottom: 20px; margin-top: 20px; }
 h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 2.5rem; margin: 0; text-shadow: 0 4px 20px rgba(0,0,0,0.4); }
 h2.company-name { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 1rem; letter-spacing: 3px; margin-top: 5px; color: var(--highlight-color); }
 .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #aaa; font-size: 0.9rem; margin-bottom: 5px; }
 
-/* INPUTS ESTILO CRISTAL */
-.input-group { position: relative; margin-bottom: 20px; background: var(--input-bg); border-radius: 12px; border: 1px solid var(--input-border-color); backdrop-filter: var(--glass-effect); transition: 0.3s; }
+/* INPUTS */
+.input-group { position: relative; margin-bottom: 15px; background: var(--input-bg); border-radius: 12px; border: 1px solid var(--input-border-color); backdrop-filter: var(--glass-effect); }
 .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; color: var(--highlight-color); font-size: 1.1rem; }
-.custom-field { width: 100%; background: transparent; border: none; padding: 18px 18px 18px 50px; color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif; }
-
-/* SELECTOR SIN DOBLE FLECHA */
+.custom-field { width: 100%; background: transparent; border: none; padding: 16px 16px 16px 50px; color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif; }
 select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointer; }
 select.custom-field option { background: #0a1931; color: white; }
 .select-arrow { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
 
+/* BOTÓN VER TABLA (EL QUE FALTABA) */
+.btn-table {
+    width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    border-radius: 10px; color: #aaa; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px;
+    display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s;
+}
+.btn-table:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* MODAL TABLA DE VALORES */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.modal-content { background: #111; border: 1px solid var(--gold); padding: 15px; border-radius: 15px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.ref-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; color: #ccc; margin-top: 10px; }
+.ref-table th { background: #222; padding: 8px; color: var(--gold); }
+.ref-table td { padding: 8px; border-bottom: 1px solid #333; text-align: center; }
+
 /* RESULTADO */
 .result-card {
     background: rgba(0,0,0,0.3); border: 1px solid var(--highlight-color);
-    border-radius: 15px; padding: 25px; margin-top: 30px;
-    position: relative; overflow: hidden;
+    border-radius: 15px; padding: 25px; margin-top: 10px; position: relative;
 }
 .result-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--highlight-color); }
-.result-label { font-size: 0.8rem; color: #ccc; text-transform: uppercase; letter-spacing: 2px; }
 .result-value { font-size: 2.8rem; font-weight: 700; color: white; margin: 15px 0; text-shadow: 0 0 20px rgba(79, 172, 254, 0.5); }
 
-.btn-primary {
-    width: 100%; padding: 15px; background: var(--highlight-color); border: none; border-radius: 10px;
-    color: #0a1931; font-weight: 900; font-size: 1rem; text-transform: uppercase; cursor: pointer;
-    box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4); margin-top: 10px;
-}
+/* BOTONES PRINCIPALES */
+.btn-primary { width: 100%; padding: 15px; background: var(--highlight-color); border: none; border-radius: 10px; color: #0a1931; font-weight: 900; text-transform: uppercase; cursor: pointer; }
 
-.footer { margin-top: 40px; font-size: 0.7rem; opacity: 0.5; }
-a { color: var(--highlight-color); text-decoration: none; }
+/* FONDOS */
+.background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center; filter: blur(3px); opacity: 0.6; }
+.gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%); }
 </style>
 </head>
 <body>
 
     <div id="splash-screen">
         <img src="icon.png" alt="Logo" class="splash-logo" onerror="this.style.display='none'">
-        <div class="splash-title">VALORA SOAT</div>
-        <div style="font-size:0.8rem; color:#888; font-style:italic;">Powered by Forensics Crash</div>
-        <div class="loading-bar-container">
-            <div class="loading-bar" id="loadBar"></div>
-        </div>
+        <div style="font-weight:900; letter-spacing:2px; font-size:1.2rem;">VALORA SOAT</div>
+        <div style="font-size:0.8rem; color:#888;">Powered by Forensics Crash</div>
+        <div class="loading-bar-container"><div class="loading-bar" id="loadBar"></div></div>
     </div>
 
     <div id="loginScreen">
-        <h2 style="color:white; margin-bottom:30px; letter-spacing: 2px;">ACCESO SEGURO</h2>
+        <h2 style="color:white; margin-bottom:30px;">ACCESO SEGURO</h2>
         <div class="input-group" style="width:100%; max-width:300px;">
             <i class="fa-solid fa-key input-icon"></i>
             <input type="text" id="licenseCode" class="custom-field" placeholder="CÓDIGO DE LICENCIA">
         </div>
         <button class="btn-primary" style="max-width:300px;" onclick="verificarLicencia()">VALIDAR</button>
-        <p id="loginMsg" style="color:var(--error-color); margin-top:15px; display:none; text-align:center;"></p>
+        <p id="loginMsg" style="color:#ff4b4b; margin-top:15px; display:none;"></p>
         <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">SISTROVIAL.LEGAL</div>
     </div>
 
@@ -132,149 +130,161 @@ a { color: var(--highlight-color); text-decoration: none; }
     <div class="app-container" id="mainAppContainer">
         
         <div class="title-container">
-            <h1 class="top-label" style="font-size:0.8rem; letter-spacing:4px; opacity:0.7; margin-bottom:5px;">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
-            <div class="tagline" style="margin-top:10px;">App desarrollada para</div>
+            <div class="tagline">App desarrollada para</div>
             <h2 class="company-name">SISTROVIAL.LEGAL</h2>
-            <a href="https://www.sistrovial.legal" style="font-size:0.75rem; opacity:0.8;">www.sistrovial.legal</a>
+            <a href="https://www.sistrovial.legal" style="font-size:0.75rem; opacity:0.8; color:var(--highlight-color); text-decoration:none;">www.sistrovial.legal</a>
         </div>
 
         <div class="input-group">
             <i class="fa-regular fa-calendar input-icon"></i>
             <select id="yearSelect" class="custom-field" onchange="calcular()">
-                <option value="2026">AÑO GRAVABLE 2026</option>
+                <option value="2027">AÑO GRAVABLE 2027 (Proyección)</option>
+                <option value="2026" selected>AÑO GRAVABLE 2026 (Actual)</option>
                 <option value="2025">AÑO GRAVABLE 2025</option>
                 <option value="2024">AÑO GRAVABLE 2024</option>
-                <option value="2027" disabled style="color:#888;">📅 2027 (Próximamente)</option>
+                <option value="2023">AÑO GRAVABLE 2023</option>
             </select>
             <i class="fa-solid fa-chevron-down select-arrow"></i>
         </div>
 
+        <button class="btn-table" onclick="document.getElementById('tableModal').style.display='flex'">
+            <i class="fa-solid fa-table"></i> Ver Tabla de Valores Históricos
+        </button>
+
         <div class="input-group">
             <i class="fa-solid fa-money-bill-wave input-icon"></i>
-            <input type="tel" id="salaryInput" class="custom-field" placeholder="Salario Base (IBC)" oninput="formatoMoneda(this)">
+            <input type="tel" id="salaryInput" class="custom-field" placeholder="Ingreso Base (Salario)" oninput="formatoMoneda(this)">
         </div>
 
         <div class="input-group">
             <i class="fa-solid fa-percent input-icon"></i>
-            <input type="number" id="pclInput" class="custom-field" placeholder="% Pérdida Capacidad (Ej: 18.5)" step="0.1" oninput="calcular()">
+            <input type="number" id="pclInput" class="custom-field" placeholder="% PCL (Ej: 15.5)" step="0.1" oninput="calcular()">
         </div>
 
         <div class="result-card">
-            <div class="result-label">Indemnización Estimada</div>
+            <div style="font-size:0.8rem; color:#ccc; letter-spacing:2px; text-transform:uppercase;">Indemnización Estimada</div>
             <div class="result-value" id="totalResult">$ 0</div>
-            <div style="font-size:0.75rem; color:#aaa;" id="infoText">Calculado con valores oficiales 2026</div>
+            <div style="font-size:0.75rem; color:#aaa; font-style:italic;" id="infoText">SMLMV 2026: $1.750.905</div>
         </div>
 
-        <div class="footer">
-            &copy; 2026 Forensics Crash S.A.S.<br>
-            Todos los derechos reservados.
+        <div style="margin-top:40px; font-size:0.7rem; opacity:0.5;">
+            &copy; 2026 Forensics Crash S.A.S.<br>Todos los derechos reservados.
+        </div>
+    </div>
+
+    <div id="tableModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">HISTÓRICO DE VALORES</h3>
+            <table class="ref-table">
+                <thead>
+                    <tr>
+                        <th>Año</th>
+                        <th>SMLMV</th>
+                        <th>UVT</th>
+                        <th>Aux. Transp</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+            <button class="btn-primary" style="margin-top:20px; padding:10px;" onclick="document.getElementById('tableModal').style.display='none'">CERRAR</button>
         </div>
     </div>
 
     <script>
-        // --- VALORES OFICIALES (FIJOS 2026) ---
-        const VALORES = {
-            2026: { smlmv: 1750905, uvt: 52374 }, 
-            2025: { smlmv: 1423500, uvt: 49799 },
-            2024: { smlmv: 1300000, uvt: 47065 }
+        // --- BASE DE DATOS MAESTRA (LO QUE YA TENÍAS) ---
+        const DATA_HISTORICA = {
+            //'2027': { smlmv: 0, uvt: 0, aux: 280000 }, // Proyección
+            '2026': { smlmv: 1750905, uvt: 52374 }, // ACTUAL
+            '2025': { smlmv: 1423500, uvt: 49799 },
+            '2024': { smlmv: 1300000, uvt: 47065 },
+            '2023': { smlmv: 1160000, uvt: 42412 }
         };
 
-        // --- ANIMACIÓN DE INICIO ---
+        // --- LLENAR TABLA Y ANIMACIONES ---
         window.onload = function() {
+            // Llenar tabla modal
+            const tbody = document.getElementById('tableBody');
+            Object.keys(DATA_HISTORICA).reverse().forEach(year => {
+                const row = `<tr>
+                    <td style="color:#fff; font-weight:bold;">${year}</td>
+                    <td>${DATA_HISTORICA[year].smlmv.toLocaleString()}</td>
+                    <td>${DATA_HISTORICA[year].uvt.toLocaleString()}</td>
+                    <td>${DATA_HISTORICA[year].aux.toLocaleString()}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+
+            // Animación Carga
             const bar = document.getElementById('loadBar');
-            const splash = document.getElementById('splash-screen');
-            const login = document.getElementById('loginScreen');
-            const app = document.getElementById('mainAppContainer');
-            
-            // Simulación de carga
-            setTimeout(() => { bar.style.width = "60%"; }, 300);
-            setTimeout(() => { bar.style.width = "100%"; }, 1000);
-            
+            setTimeout(() => { bar.style.width = "100%"; }, 500);
             setTimeout(() => {
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                
-                // Si ya ingresó licencia, entra directo
+                document.getElementById('splash-screen').style.display = 'none';
                 if(localStorage.getItem('valora_user')) {
-                    app.classList.add('visible');
-                    login.style.display = 'none';
+                    document.getElementById('mainAppContainer').classList.add('visible');
                 } else {
-                    // Si no, muestra el login
-                    login.style.display = 'flex';
+                    document.getElementById('loginScreen').style.display = 'flex';
                 }
-            }, 1500);
+            }, 1200);
         };
 
-        // --- CONEXIÓN CON EXCEL (NO TOCAR) ---
+        // --- CONEXIÓN EXCEL ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
             const btn = document.querySelector('.btn-primary');
             const msg = document.getElementById('loginMsg');
 
             if (!codigo) return;
-            
-            const textoOriginal = btn.innerText;
             btn.innerText = "VERIFICANDO...";
             msg.style.display = 'none';
 
             try {
-                // TU ENLACE CON GITHUB (EXCEL)
                 const response = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await response.json();
 
-                if (data[codigo]) {
-                    if (data[codigo].estado === 'activo') {
-                        // LICENCIA OK
-                        localStorage.setItem('valora_user', JSON.stringify(data[codigo]));
-                        document.getElementById('loginScreen').style.display = 'none';
-                        document.getElementById('mainAppContainer').classList.add('visible');
-                    } else {
-                        msg.innerText = "⚠️ Licencia SUSPENDIDA";
-                        msg.style.display = 'block';
-                    }
+                if (data[codigo] && data[codigo].estado === 'activo') {
+                    localStorage.setItem('valora_user', JSON.stringify(data[codigo]));
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('mainAppContainer').classList.add('visible');
                 } else {
-                    msg.innerText = "❌ Código NO EXISTE";
-                    msg.style.display = 'block';
+                    msg.innerText = "❌ Licencia Inválida"; msg.style.display = 'block';
                 }
             } catch (e) {
-                msg.innerText = "⚠️ Error de conexión";
-                msg.style.display = 'block';
+                msg.innerText = "⚠️ Error de conexión"; msg.style.display = 'block';
             } finally {
-                btn.innerText = textoOriginal;
+                btn.innerText = "VALIDAR";
             }
         }
 
         // --- CÁLCULO ---
         function formatoMoneda(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value === '') { 
-                input.value = ''; 
-                calcular(); 
-                return; 
-            }
-            input.value = parseInt(value).toLocaleString('es-CO');
+            let val = input.value.replace(/\D/g, '');
+            if(val === '') { input.value = ''; calcular(); return; }
+            input.value = parseInt(val).toLocaleString('es-CO');
             calcular();
         }
 
         function calcular() {
             const year = document.getElementById('yearSelect').value;
-            const salarioStr = document.getElementById('salaryInput').value.replace(/\./g, '');
-            const pclStr = document.getElementById('pclInput').value;
+            const ibc = parseFloat(document.getElementById('salaryInput').value.replace(/\./g, '')) || 0;
+            const pcl = parseFloat(document.getElementById('pclInput').value) || 0;
+            const datos = DATA_HISTORICA[year];
 
-            const salario = parseFloat(salarioStr) || 0;
-            const pcl = parseFloat(pclStr) || 0;
-            
+            // AQUÍ PUEDES USAR EL DATO HISTÓRICO SI LA FÓRMULA LO REQUIERE
+            // Por ejemplo, si el salario es menor al mínimo de ese año, se ajusta
+            let baseCalculo = ibc;
+            if(baseCalculo < datos.smlmv && baseCalculo > 0) {
+                // Opcional: Avisar que es menos del mínimo
+            }
+
             let resultado = 0;
-
-            if (salario > 0 && pcl > 0) {
-                // FÓRMULA PROPORCIONAL SIMPLE (Para que veas números)
-                const factor = pcl / 100; 
-                resultado = salario * factor; 
+            if (ibc > 0 && pcl > 0) {
+                resultado = ibc * (pcl / 100);
             }
 
             document.getElementById('totalResult').innerText = "$ " + Math.round(resultado).toLocaleString('es-CO');
-            document.getElementById('infoText').innerText = "SMLMV " + year + ": $" + VALORES[year].smlmv.toLocaleString();
+            document.getElementById('infoText').innerText = `SMLMV ${year}: $${datos.smlmv.toLocaleString()} | UVT: $${datos.uvt.toLocaleString()}`;
         }
     </script>
 </body>
