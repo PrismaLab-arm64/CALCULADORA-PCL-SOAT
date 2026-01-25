@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0a1931">
 
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://PrismaLab-arm64.github.io; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;">
+
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="icon" type="image/png" href="icon.png">
@@ -48,7 +50,7 @@ body {
 .loading-bar { height: 100%; width: 0%; background: var(--highlight-color); transition: width 0.5s ease; }
 @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-/* --- LOGIN PROTECTOR --- */
+/* --- LOGIN PROTECTOR (ACCESO SEGURO) --- */
 #loginScreen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: 5000; background: rgba(10, 25, 49, 0.98);
@@ -73,7 +75,7 @@ select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointe
 select.custom-field option { background: #0a1931; color: white; }
 .select-arrow { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
 
-/* BOTÓN VER TABLA (EL QUE FALTABA) */
+/* BOTÓN VER TABLA */
 .btn-table {
     width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
     border-radius: 10px; color: #aaa; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px;
@@ -81,9 +83,9 @@ select.custom-field option { background: #0a1931; color: white; }
 }
 .btn-table:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-/* MODAL TABLA DE VALORES */
-.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
-.modal-content { background: #111; border: 1px solid var(--gold); padding: 15px; border-radius: 15px; width: 100%; max-height: 80vh; overflow-y: auto; }
+/* MODAL TABLA */
+.modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
+.modal-content { background: #111; border: 1px solid var(--gold); padding: 20px; border-radius: 15px; width: 100%; max-height: 80vh; overflow-y: auto; text-align:left; }
 .ref-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; color: #ccc; margin-top: 10px; }
 .ref-table th { background: #222; padding: 8px; color: var(--gold); }
 .ref-table td { padding: 8px; border-bottom: 1px solid #333; text-align: center; }
@@ -98,6 +100,7 @@ select.custom-field option { background: #0a1931; color: white; }
 
 /* BOTONES PRINCIPALES */
 .btn-primary { width: 100%; padding: 15px; background: var(--highlight-color); border: none; border-radius: 10px; color: #0a1931; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+.btn-legal { background: transparent; border: 1px solid #444; color: #888; margin-top: 20px; font-size: 0.7rem; }
 
 /* FONDOS */
 .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center; filter: blur(3px); opacity: 0.6; }
@@ -114,14 +117,15 @@ select.custom-field option { background: #0a1931; color: white; }
     </div>
 
     <div id="loginScreen">
-        <h2 style="color:white; margin-bottom:30px;">ACCESO SEGURO</h2>
+        <i class="fa-solid fa-shield-halved" style="font-size:3rem; color:var(--gold); margin-bottom:20px;"></i>
+        <h2 style="color:white; margin-bottom:20px; letter-spacing:1px;">ACCESO SEGURO</h2>
         <div class="input-group" style="width:100%; max-width:300px;">
             <i class="fa-solid fa-key input-icon"></i>
             <input type="text" id="licenseCode" class="custom-field" placeholder="CÓDIGO DE LICENCIA">
         </div>
         <button class="btn-primary" style="max-width:300px;" onclick="verificarLicencia()">VALIDAR</button>
         <p id="loginMsg" style="color:#ff4b4b; margin-top:15px; display:none;"></p>
-        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">SISTROVIAL.LEGAL</div>
+        <div style="margin-top:30px; font-size:0.6rem; opacity:0.5;">Secure Patch CSP v1.0</div>
     </div>
 
     <div class="background-layer"></div>
@@ -139,11 +143,10 @@ select.custom-field option { background: #0a1931; color: white; }
         <div class="input-group">
             <i class="fa-regular fa-calendar input-icon"></i>
             <select id="yearSelect" class="custom-field" onchange="calcular()">
-                <option value="2027">AÑO GRAVABLE 2027 (Proyección)</option>
-                <option value="2026" selected>AÑO GRAVABLE 2026 (Actual)</option>
+                <option value="2026" selected>AÑO GRAVABLE 2026</option>
                 <option value="2025">AÑO GRAVABLE 2025</option>
                 <option value="2024">AÑO GRAVABLE 2024</option>
-                <option value="2023">AÑO GRAVABLE 2023</option>
+                <option value="2027">AÑO GRAVABLE 2027 (Proyección)</option>
             </select>
             <i class="fa-solid fa-chevron-down select-arrow"></i>
         </div>
@@ -165,10 +168,14 @@ select.custom-field option { background: #0a1931; color: white; }
         <div class="result-card">
             <div style="font-size:0.8rem; color:#ccc; letter-spacing:2px; text-transform:uppercase;">Indemnización Estimada</div>
             <div class="result-value" id="totalResult">$ 0</div>
-            <div style="font-size:0.75rem; color:#aaa; font-style:italic;" id="infoText">SMLMV 2026: $1.750.905</div>
+            <div style="font-size:0.75rem; color:#aaa; font-style:italic;" id="infoText">Valores ± por redondeo bancario</div>
         </div>
 
-        <div style="margin-top:40px; font-size:0.7rem; opacity:0.5;">
+        <button class="btn-primary btn-legal" onclick="document.getElementById('legalModal').style.display='flex'">
+            <i class="fa-solid fa-scale-balanced"></i> TÉRMINOS Y AVISO LEGAL
+        </button>
+
+        <div style="margin-top:30px; font-size:0.7rem; opacity:0.5;">
             &copy; 2026 Forensics Crash S.A.S.<br>Todos los derechos reservados.
         </div>
     </div>
@@ -178,47 +185,51 @@ select.custom-field option { background: #0a1931; color: white; }
             <h3 style="color:var(--gold); text-align:center; margin-bottom:15px;">HISTÓRICO DE VALORES</h3>
             <table class="ref-table">
                 <thead>
-                    <tr>
-                        <th>Año</th>
-                        <th>SMLMV</th>
-                        <th>UVT</th>
-                        <th>Aux. Transp</th>
-                    </tr>
+                    <tr><th>Año</th><th>SMLMV</th><th>UVT</th></tr>
                 </thead>
-                <tbody id="tableBody">
-                    </tbody>
+                <tbody id="tableBody"></tbody>
             </table>
             <button class="btn-primary" style="margin-top:20px; padding:10px;" onclick="document.getElementById('tableModal').style.display='none'">CERRAR</button>
         </div>
     </div>
 
+    <div id="legalModal" class="modal">
+        <div class="modal-content" style="max-width:350px;">
+            <h3 style="color:var(--gold); font-size:1rem; margin-bottom:15px;">AVISO LEGAL Y EXENCIÓN</h3>
+            <div style="font-size:0.8rem; color:#ccc; line-height:1.4;">
+                <p><strong>1. LICENCIAMIENTO:</strong> Uso Temporal, Revocable y No Exclusivo. Propiedad de Ing. John A. Skinner S.</p>
+                <p><strong>2. EXENCIÓN "AS IS":</strong> Esta herramienta es auxiliar. El autor no responde por decisiones jurídicas basadas en estos cálculos.</p>
+                <p><strong>3. CONTINUIDAD:</strong> Forensics Crash se reserva el derecho de suspender el servicio sin previo aviso.</p>
+            </div>
+            <button class="btn-primary" style="margin-top:20px; padding:10px;" onclick="document.getElementById('legalModal').style.display='none'">ENTENDIDO</button>
+        </div>
+    </div>
+
     <script>
-        // --- BASE DE DATOS MAESTRA (LO QUE YA TENÍAS) ---
+        // --- BASE DE DATOS MAESTRA (CORREGIDA PARA QUE NO SE BLOQUEE) ---
         const DATA_HISTORICA = {
-            //'2027': { smlmv: 0, uvt: 0, aux: 280000 }, // Proyección
+            '2027': { smlmv: 1900000, uvt: 56000 }, // PROYECCIÓN ACTIVADA (Ya no bloquea)
             '2026': { smlmv: 1750905, uvt: 52374 }, // ACTUAL
             '2025': { smlmv: 1423500, uvt: 49799 },
             '2024': { smlmv: 1300000, uvt: 47065 },
             '2023': { smlmv: 1160000, uvt: 42412 }
         };
 
-        // --- LLENAR TABLA Y ANIMACIONES ---
+        // --- INICIO ---
         window.onload = function() {
-            // Llenar tabla modal
+            // Llenar tabla
             const tbody = document.getElementById('tableBody');
-            Object.keys(DATA_HISTORICA).reverse().forEach(year => {
+            Object.keys(DATA_HISTORICA).sort().reverse().forEach(year => {
                 const row = `<tr>
                     <td style="color:#fff; font-weight:bold;">${year}</td>
                     <td>${DATA_HISTORICA[year].smlmv.toLocaleString()}</td>
                     <td>${DATA_HISTORICA[year].uvt.toLocaleString()}</td>
-                    <td>${DATA_HISTORICA[year].aux.toLocaleString()}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
 
             // Animación Carga
-            const bar = document.getElementById('loadBar');
-            setTimeout(() => { bar.style.width = "100%"; }, 500);
+            setTimeout(() => { document.getElementById('loadBar').style.width = "100%"; }, 300);
             setTimeout(() => {
                 document.getElementById('splash-screen').style.display = 'none';
                 if(localStorage.getItem('valora_user')) {
@@ -226,7 +237,7 @@ select.custom-field option { background: #0a1931; color: white; }
                 } else {
                     document.getElementById('loginScreen').style.display = 'flex';
                 }
-            }, 1200);
+            }, 1500);
         };
 
         // --- CONEXIÓN EXCEL ---
@@ -240,6 +251,7 @@ select.custom-field option { background: #0a1931; color: white; }
             msg.style.display = 'none';
 
             try {
+                // Enlace a tu repositorio
                 const response = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await response.json();
 
@@ -257,7 +269,7 @@ select.custom-field option { background: #0a1931; color: white; }
             }
         }
 
-        // --- CÁLCULO ---
+        // --- CÁLCULO (LIVE-TYPING) ---
         function formatoMoneda(input) {
             let val = input.value.replace(/\D/g, '');
             if(val === '') { input.value = ''; calcular(); return; }
@@ -271,20 +283,16 @@ select.custom-field option { background: #0a1931; color: white; }
             const pcl = parseFloat(document.getElementById('pclInput').value) || 0;
             const datos = DATA_HISTORICA[year];
 
-            // AQUÍ PUEDES USAR EL DATO HISTÓRICO SI LA FÓRMULA LO REQUIERE
-            // Por ejemplo, si el salario es menor al mínimo de ese año, se ajusta
-            let baseCalculo = ibc;
-            if(baseCalculo < datos.smlmv && baseCalculo > 0) {
-                // Opcional: Avisar que es menos del mínimo
-            }
-
+            // AQUÍ VA TU FÓRMULA REAL. Por ahora hace la multiplicación básica.
             let resultado = 0;
             if (ibc > 0 && pcl > 0) {
                 resultado = ibc * (pcl / 100);
             }
 
             document.getElementById('totalResult').innerText = "$ " + Math.round(resultado).toLocaleString('es-CO');
-            document.getElementById('infoText').innerText = `SMLMV ${year}: $${datos.smlmv.toLocaleString()} | UVT: $${datos.uvt.toLocaleString()}`;
+            if(datos) {
+                document.getElementById('infoText').innerText = `Base ${year}: SMLMV $${datos.smlmv.toLocaleString()} | UVT $${datos.uvt.toLocaleString()}`;
+            }
         }
     </script>
 </body>
