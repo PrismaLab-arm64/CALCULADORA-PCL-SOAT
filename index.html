@@ -17,14 +17,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- ESTILOS SISTROVIAL FINAL --- */
+        /* --- ESTÉTICA SISTROVIAL (AZUL PROFUNDO) --- */
         :root {
             --bg-dark: #0a1931;
-            --highlight: #4facfe;
+            --highlight: #4facfe; /* Azul Neón */
+            --gold: #D4AF37;      /* Detalles Premium */
+            --error: #ff4b4b;
+            --glass: blur(12px);
             --input-bg: rgba(255, 255, 255, 0.08);
             --border: rgba(255, 255, 255, 0.3);
-            --glass: blur(12px);
-            --gold: #D4AF37;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
@@ -36,7 +37,7 @@
             background-color: var(--bg-dark); overflow-x: hidden;
         }
 
-        /* --- SPLASH SCREEN --- */
+        /* --- PANTALLA DE CARGA (Anti-Trauma) --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #081222; z-index: 99999;
@@ -44,12 +45,12 @@
             transition: opacity 0.5s ease-out, visibility 0.5s;
         }
         .splash-logo { width: 100px; height: 100px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; }
-        .loading-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 20px; }
+        .loading-bar-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 20px; }
         .loading-bar { height: 100%; width: 0%; background: var(--highlight); transition: width 0.4s ease; box-shadow: 0 0 10px var(--highlight); }
         .loading-text { margin-top: 15px; font-size: 0.8rem; color: var(--highlight); opacity: 0.8; }
         @keyframes pulseLogo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } }
 
-        /* --- LOGIN (CANDADO REAL) --- */
+        /* --- LOGIN (REGLAS STRICTAS DE LA VERSIÓN NEGRA) --- */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(8, 18, 34, 0.98); z-index: 50000;
@@ -81,7 +82,7 @@
         select.custom-field option { background-color: var(--bg-dark); }
         .select-arrow { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
 
-        /* BOTONES Y RESULTADOS */
+        /* RESULTADOS Y BOTONES */
         .result-row { display: flex; gap: 10px; align-items: center; margin-top: 20px; }
         
         .btn-share { 
@@ -90,15 +91,14 @@
             font-size: 1.5rem; cursor: pointer; transition: 0.2s; backdrop-filter: var(--glass);
         }
         
-        /* BOTÓN TABLA (RECUPERADO) */
-        .btn-table {
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+        .btn-action {
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
             border-radius: 10px; color: #aaa; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px;
             display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s;
         }
-        .btn-table:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-action:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-        /* MODAL (TABLA) */
+        /* MODAL (TABLAS) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(5px); }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
         .modal-card { background: #101c36; border: 1px solid var(--highlight); width: 90%; max-width: 350px; padding: 20px; border-radius: 15px; transform: scale(0.9); transition: 0.3s; }
@@ -108,7 +108,7 @@
         .tarifa-val { color: var(--highlight); font-weight: bold; }
 
         /* BOTÓN LOGIN */
-        .btn-login { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 10px; color: #000; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+        .btn-login { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 10px; color: #0a1931; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
         
     </style>
 </head>
@@ -119,7 +119,7 @@
         <div style="font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;">VALORA SOAT</div>
         <div style="color: #8899a6; font-style: italic; margin-bottom: 30px;">Ingeniería Forense & Tasación</div>
         <div class="loading-container"><div class="loading-bar" id="loadBar"></div></div>
-        <div class="loading-text" id="loadText">Conectando...</div>
+        <div class="loading-text" id="loadText">Sincronizando licencia...</div>
     </div>
 
     <div id="loginScreen">
@@ -129,8 +129,8 @@
             <input type="text" id="licenseCode" class="custom-field" placeholder="CÓDIGO DE LICENCIA">
         </div>
         <button class="btn-login" style="max-width:300px;" onclick="verificarLicencia()">VALIDAR</button>
-        <p id="msg" style="color:#ff5555; margin-top:10px; font-size:0.9rem; display:none;"></p>
-        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">Verificación GitHub v1.3</div>
+        <p id="msg" style="color:#ff5555; margin-top:10px; font-size:0.9rem; display:none; text-align: center;"></p>
+        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">Verificación Remota v2.0</div>
     </div>
 
     <div class="background-layer"></div>
@@ -152,7 +152,7 @@
             <i class="fa-solid fa-chevron-down select-arrow"></i>
         </div>
 
-        <button class="btn-table" onclick="verTarifas()">
+        <button class="btn-action" onclick="verTarifas()">
             <i class="fa-solid fa-table"></i> Ver Tabla de Valores Certificados
         </button>
 
@@ -183,12 +183,13 @@
     <div class="modal-overlay" id="modalTarifas">
         <div class="modal-card">
             <h3 style="color:white; margin-bottom: 20px;">HISTÓRICO <span id="lblAnioTarifa"></span></h3>
-            
             <div class="tarifa-row"><span>SMLMV</span><span class="tarifa-val" id="valSalario"></span></div>
             <div class="tarifa-row"><span>Aux. Transporte</span><span class="tarifa-val" id="valAuxilio"></span></div>
             <div class="tarifa-row"><span>UVT</span><span class="tarifa-val" id="valUVT"></span></div>
-            
-            <button class="btn-table" style="margin-top:20px; width:100%; border:1px solid var(--highlight); color:white;" onclick="document.getElementById('modalTarifas').classList.remove('active')">CERRAR</button>
+            <div style="text-align:left; color:#8899a6; font-size:0.8rem; margin: 15px 0 5px; border-top:1px solid #333; padding-top:10px;">Topes Gastos Médicos:</div>
+            <div class="tarifa-row"><span>Motos &lt; 200cc</span><span class="tarifa-val" id="valMedicoBajo"></span></div>
+            <div class="tarifa-row"><span>Otros / &gt; 200cc</span><span class="tarifa-val" id="valMedicoAlto"></span></div>
+            <button class="btn-action" style="margin-top:15px; width:100%; border:1px solid var(--highlight); color:white;" onclick="document.getElementById('modalTarifas').classList.remove('active')">CERRAR</button>
         </div>
     </div>
 
@@ -201,7 +202,7 @@
     </div>
 
     <script>
-        // --- DATOS CERTIFICADOS (SIN 2027) ---
+        // --- 1. BASE DE DATOS MAESTRA (CERTIFICADA) ---
         const CONFIG = {
             data: {
                 '2026': { smmlv: 1750905, uvt: 52374, aux: 249095 },
@@ -213,7 +214,9 @@
 
         const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
 
+        // --- 2. INICIALIZACIÓN ---
         window.onload = function() {
+            // Llenar Select
             const select = document.getElementById('anio');
             Object.keys(CONFIG.data).sort((a,b) => b - a).forEach(anio => {
                 let opt = document.createElement('option');
@@ -222,15 +225,20 @@
                 select.appendChild(opt);
             });
 
-            // Animación
+            // Animación Carga
             setTimeout(() => { document.getElementById('loadBar').style.width = "100%"; }, 500);
 
-            // Verificación Inicial
+            // Verificación de Sesión (Lógica Negra: Guarda CODIGO y USUARIO)
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('splash-screen').style.display = 'none';
-                    if(localStorage.getItem('valora_user')) {
+                    
+                    // Verificamos si hay usuario Y código guardado
+                    const user = localStorage.getItem('valora_user');
+                    const code = localStorage.getItem('valora_code');
+                    
+                    if(user && code) {
                         document.getElementById('mainAppContainer').classList.add('visible');
                     } else {
                         document.getElementById('loginScreen').style.display = 'flex';
@@ -239,7 +247,7 @@
             }, 1500);
         };
 
-        // --- CONEXIÓN REAL CON EXCEL ---
+        // --- 3. CONEXIÓN EXCEL (LÓGICA MEJORADA DE LA VERSIÓN NEGRA) ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
             const btn = document.querySelector('.btn-login');
@@ -249,25 +257,38 @@
             btn.innerText = "VERIFICANDO..."; msg.style.display = 'none';
 
             try {
-                // TU RUTA DE GITHUB
+                // Fetch al JSON en GitHub
                 const res = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await res.json();
                 
-                if(data[codigo] && data[codigo].estado === 'activo') {
-                    localStorage.setItem('valora_user', JSON.stringify(data[codigo]));
-                    document.getElementById('loginScreen').style.display = 'none';
-                    document.getElementById('mainAppContainer').classList.add('visible');
+                if(data[codigo]) {
+                    const cliente = data[codigo];
+                    
+                    // LÓGICA NEGRA: Validar estado y mostrar mensaje específico
+                    if(cliente.estado === 'activo') {
+                        localStorage.setItem('valora_user', JSON.stringify(cliente));
+                        localStorage.setItem('valora_code', codigo); // Guardamos el código también
+                        
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('mainAppContainer').classList.add('visible');
+                    } else {
+                        // Muestra el mensaje del Excel si existe, sino uno genérico
+                        msg.innerText = cliente.mensaje || "⚠️ Licencia SUSPENDIDA temporalmente";
+                        msg.style.display = 'block';
+                    }
                 } else {
-                    msg.innerText = "❌ Licencia no válida o suspendida"; msg.style.display = 'block';
+                    msg.innerText = "❌ Código de licencia NO encontrado";
+                    msg.style.display = 'block';
                 }
             } catch(e) {
-                msg.innerText = "⚠️ Error de conexión"; msg.style.display = 'block';
+                msg.innerText = "⚠️ Error de conexión. Verifique su internet.";
+                msg.style.display = 'block';
             } finally {
                 btn.innerText = "VALIDAR";
             }
         }
 
-        // --- LÓGICA V26.2 (COMPLETA) ---
+        // --- 4. CÁLCULO PCL (DECRETO 780 REAL) ---
         const inputs = ['anio', 'pclInput'];
         inputs.forEach(id => document.getElementById(id).addEventListener(id === 'anio' ? 'change' : 'input', calcular));
 
@@ -286,12 +307,13 @@
             const valorDia = data.smmlv / 30;
             document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
 
-            // Lógica Decreto 780
+            // Lógica Matemática Decreto 780 (Curva de Indemnización)
             let dias = 0;
             if (pcl > 0) {
                 if (pcl <= 5) dias = 14;
                 else if (pcl > 50) dias = 180;
                 else {
+                    // Si es decimal, redondea hacia arriba para el cálculo
                     if (pcl % 1 === 0) dias = 14 + ((pcl - 5) * 3.5);
                     else dias = 14 + ((Math.ceil(pcl) - 5) * 3.5);
                 }
@@ -309,14 +331,20 @@
             }
         }
 
+        // --- 5. TARIFAS Y WHATSAPP ---
         function verTarifas() {
             const anio = document.getElementById('anio').value;
             const data = CONFIG.data[anio];
+            const dia = data.smmlv / 30;
 
             document.getElementById('lblAnioTarifa').innerText = anio;
             document.getElementById('valSalario').innerText = formatter.format(data.smmlv);
             document.getElementById('valAuxilio').innerText = formatter.format(data.aux);
             document.getElementById('valUVT').innerText = formatter.format(data.uvt);
+            
+            // Cálculos Médicos
+            document.getElementById('valMedicoBajo').innerText = formatter.format(dia * 300);
+            document.getElementById('valMedicoAlto').innerText = formatter.format(dia * 800);
 
             document.getElementById('modalTarifas').classList.add('active');
         }
@@ -327,12 +355,13 @@
             const anio = document.getElementById('anio').value;
             const diasTxt = document.getElementById('labelDias').innerText.replace("Tabla: ", "");
 
-            if (!pcl || total === "$ 0") return alert("Calcule un valor primero");
+            if (!pcl || total === "$ 0") return alert("Realice un cálculo primero");
 
             let msg = `*LIQUIDACIÓN TÉCNICA PCL (SOAT ${anio})*\n\n`;
-            msg += `*DICTAMEN:* PCL ${pcl}%\n`;
-            msg += `*CONVERSIÓN:* ${diasTxt} (SMLDV)\n`;
-            msg += `*VALOR:* ± ${total} COP\n\n`;
+            msg += `*DICTAMEN PRELIMINAR:*\nPérdida Capacidad Laboral: ${pcl}%\n`;
+            msg += `*CONVERSIÓN NORMATIVA:*\nEquivale a ${diasTxt} (SMLDV)\n\n`;
+            msg += `*VALOR ESTIMADO A PAGAR:*\n*± ${total} COP*\n\n`;
+            msg += `*FUNDAMENTO JURÍDICO:*\nDecreto 780 de 2016 y Tabla de Valuación de Invalidez.\n\n`;
             msg += `Generado por SISTROVIAL.LEGAL`;
 
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
