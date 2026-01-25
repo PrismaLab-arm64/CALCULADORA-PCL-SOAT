@@ -5,26 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a1931">
     
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://www.forensics-crash.com https://forensics-crash.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://www.forensics-crash.com;">
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PCL SOAT">
-    <link rel="apple-touch-icon" href="icon.png"> <title>Calculadora PCL SOAT | SISTROVIAL.LEGAL</title>
+    <meta name="apple-mobile-web-app-title" content="VALORA SOAT">
+    <link rel="apple-touch-icon" href="icon.png">
+    
+    <title>VALORA SOAT | Herramienta Pericial</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS OPTIMIZADOS --- */
+        /* --- ESTILOS OPTIMIZADOS (V26.3 - Identidad) --- */
         :root {
             --bg-dark: #0a1931;
             --text-color: #ffffff;
-            --highlight: #4facfe;
+            --highlight: #4facfe; /* Azul Forense */
+            --gold: #FFD700;      /* Color Premium */
             --error: #ff4b4b;
             --success: #00e676; 
-            --warning: #ffbb00;
             --whatsapp: #25D366;
             --glass: blur(12px);
         }
@@ -38,7 +40,18 @@
             overflow-x: hidden; background-color: var(--bg-dark);
         }
 
-        /* SPLASH SCREEN */
+        /* FONDO */
+        .background-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
+            background: url('Diosa.png') center top/cover no-repeat; 
+            filter: blur(3px); transform: scale(1.02); 
+        }
+        .gradient-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+            background: linear-gradient(135deg, rgba(10, 25, 49, 0.95) 0%, rgba(28, 66, 120, 0.92) 100%); 
+        }
+
+        /* SPLASH SCREEN (REBRANDING) */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #081222; z-index: 99999;
@@ -50,31 +63,16 @@
         .splash-logo { 
             width: 100px; height: 100px; margin-bottom: 30px; border-radius: 20px; 
             box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; 
-            object-fit: contain; /* Ayuda si la imagen no es cuadrada perfecta */
+            object-fit: contain;
         }
-        .splash-title { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; color: white; margin-bottom: 5px;}
+        .splash-title { font-weight: 900; font-size: 1.8rem; letter-spacing: 3px; color: white; margin-bottom: 5px; text-transform: uppercase;}
         .splash-subtitle { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; margin-bottom: 40px; }
 
         .loading-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; position: relative;}
         .loading-bar { height: 100%; width: 0%; background: var(--highlight); transition: width 0.4s ease; box-shadow: 0 0 10px var(--highlight); }
         .loading-text { margin-top: 20px; font-size: 0.9rem; color: var(--highlight); min-height: 1.2em; transition: color 0.3s ease; }
 
-        /* ESTADOS DE CARGA */
-        .splash-locked .loading-bar { background: var(--error); box-shadow: 0 0 15px var(--error); }
-        .splash-locked .loading-text { color: var(--error); font-weight: 700; text-transform: uppercase; }
-        .splash-locked .splash-logo { animation: none; filter: grayscale(100%); }
-
-        /* FONDO Y APP */
-        .background-layer { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
-            background: url('Diosa.png') center top/cover no-repeat; /* Shorthand CSS */
-            filter: blur(3px); transform: scale(1.02); 
-        }
-        .gradient-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
-            background: linear-gradient(135deg, rgba(10, 25, 49, 0.92) 0%, rgba(28, 66, 120, 0.90) 100%); 
-        }
-
+        /* APP CONTAINER */
         .app-container { 
             width: 100%; max-width: 400px; text-align: center; 
             opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; 
@@ -82,11 +80,24 @@
         }
         .app-container.visible { opacity: 1; transform: translateY(0); }
 
-        /* TEXTOS */
-        .main-title { font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); line-height: 1.1; margin: 8px 0; text-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .company-name { font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
-        .website-url { font-weight: 300; font-size: 0.85rem; color: var(--highlight); text-decoration: none; }
+        /* TITULOS Y IDENTIDAD */
+        .main-title { font-weight: 900; font-size: clamp(2.5rem, 8vw, 3.5rem); line-height: 1; margin: 0; text-shadow: 0 4px 20px rgba(0,0,0,0.5); letter-spacing: -1px; background: -webkit-linear-gradient(#fff, #a1c4fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
         
+        .identity-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 8px 15px;
+            margin: 15px auto 25px auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        .identity-icon { color: var(--gold); font-size: 0.9rem; }
+        .identity-text { font-size: 0.8rem; color: rgba(255,255,255,0.8); letter-spacing: 0.5px; text-transform: uppercase; font-weight: 500;}
+        .identity-name { color: white; font-weight: 700; }
+
         /* INPUTS */
         .input-group { 
             position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; 
@@ -100,7 +111,7 @@
         }
         select.custom-field option { background-color: var(--bg-dark); }
         
-        /* RESULTADOS Y BOTONES */
+        /* RESULTADOS */
         .dynamic-label { font-size: 0.8rem; color: var(--highlight); font-weight: 500; opacity: 0; transform: translateY(-5px); transition: 0.3s; display: block; text-align: right; margin-bottom: 15px; margin-top: -15px; padding-right: 10px;}
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
@@ -131,14 +142,9 @@
         .tarifa-row { display: flex; justify-content: space-between; margin-bottom: 15px; text-align: left; color: white;}
         .tarifa-value { color: var(--highlight); font-weight: 700; }
         
-        /* TOAST */
-        #subscription-toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: rgba(255, 187, 0, 0.15); border: 1px solid var(--warning); color: var(--warning);
-            padding: 10px 20px; border-radius: 30px; font-size: 0.85rem; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #subscription-toast.active { transform: translateX(-50%) translateY(0); }
-
+        /* FOOTER DISCRETO */
+        .footer-brand { margin-top: 40px; font-size: 0.7rem; opacity: 0.4; letter-spacing: 1px; }
+        
         @keyframes pulseLogo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } }
     </style>
 </head>
@@ -147,16 +153,12 @@
     <div id="splash-screen">
         <img src="icon.png" alt="Logo" class="splash-logo" onerror="this.style.display='none'"> 
         <div class="splash-title">VALORA SOAT</div>
-        <div class="splash-subtitle">Ingeniería Forense & Tasación</div>
+        <div class="splash-subtitle">Iniciando sistema seguro...</div>
         
         <div class="loading-container">
             <div class="loading-bar" id="loadBar"></div>
         </div>
-        <div class="loading-text" id="loadText">Iniciando sistema...</div>
-    </div>
-
-    <div id="subscription-toast">
-        <i class="fa-solid fa-clock-rotate-left"></i> <span id="toast-message">Verificando licencia...</span>
+        <div class="loading-text" id="loadText">Verificando credenciales...</div>
     </div>
 
     <div class="background-layer"></div>
@@ -164,10 +166,13 @@
     
     <div class="app-container" id="mainAppContainer">
         <div class="title-container">
-            <h1 class="main-title">PCL SOAT</h1>
-            <h2 class="company-name">SISTROVIAL.LEGAL</h2>
-            <h3 class="tagline" style="font-size: 0.8rem; margin-top:5px;">Calculadora de Pérdida de Capacidad Laboral</h3>
-            <a href="https://www.sistrovial.legal" class="website-url">www.sistrovial.legal</a>
+            <h1 class="main-title">VALORA SOAT</h1>
+            
+            <div class="identity-badge" id="identityBadge" style="display:none;">
+                <i class="fa-solid fa-crown identity-icon"></i>
+                <span class="identity-text">Licencia activa:</span>
+                <span class="identity-name" id="licenseeName">...</span>
+            </div>
         </div>
 
         <form id="pclForm">
@@ -199,7 +204,7 @@
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div style="margin-top: 30px; font-size: 0.7rem; opacity: 0.5;">© 2026 Ing John A. Skinner S. | V26.2 (Optimized)</div>
+        <div class="footer-brand">POWERED BY JOHN SKINNER | FORENSICS CRASH S.A.S.</div>
     </div>
 
     <div class="modal-overlay" id="errorModal" onclick="this.classList.remove('active')">
@@ -216,9 +221,7 @@
             <div class="tarifa-row"><span>Muerte / Funeral</span><span class="tarifa-value" id="valMuerte">$ 0</span></div>
             <div class="tarifa-row"><span>Transporte (8.77 UVT)</span><span class="tarifa-value" id="valTransporte">$ 0</span></div>
             <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
-            <div style="text-align:left; color:#8899a6; font-size:0.8rem; margin-bottom:10px;">Gastos Médicos (Topes):</div>
-            <div class="tarifa-row"><span>Motos &lt; 200cc</span><span class="tarifa-value" id="valMedicoBajo">$ 0</span></div>
-            <div class="tarifa-row"><span>Otros / &gt; 200cc</span><span class="tarifa-value" id="valMedicoAlto">$ 0</span></div>
+            <div class="tarifa-row"><span>Gastos Médicos (Topes)</span><span class="tarifa-value" id="valMedicoAlto">$ 0</span></div>
             <button class="btn-tarifas" onclick="document.getElementById('tarifasModal').classList.remove('active')" style="margin-top:20px; padding:12px;">CERRAR</button>
         </div>
     </div>
@@ -226,8 +229,9 @@
     <script>
         // CONFIGURACIÓN CENTRALIZADA
         const CONFIG = {
-            licenseUrl: "https://www.forensics-crash.com/licencia.json", // Tu endpoint futuro
-            minSplashTime: 2500, // Tiempo mínimo de marca (Anti-trauma)
+            // Aquí pondrás la URL real de tu JSON en el futuro
+            licenseUrl: "https://www.forensics-crash.com/licencia_valora.json", 
+            minSplashTime: 2500,
             dataHistorica: {
                 '2023': { smmlv: 1160000, uvt: 42412 },
                 '2024': { smmlv: 1300000, uvt: 47065 },
@@ -236,27 +240,25 @@
             }
         };
 
-        // --- GESTOR DE LICENCIAS (PREPARADO PARA FUTURO) ---
+        // --- GESTOR DE LICENCIAS (Personalización) ---
         const LicenseManager = {
             check: async () => {
-                // 1. Simular carga de red y tiempo mínimo visual simultáneamente
                 const minTimePromise = new Promise(resolve => setTimeout(resolve, CONFIG.minSplashTime));
                 
-                // 2. Intentar fetch (Aquí implementarás la lógica compleja más adelante)
-                // Estructura futura recomendada: { status: 'active', plan: 'pro', expires: '2026-12-31' }
-                const fetchPromise = fetch(CONFIG.licenseUrl + '?t=' + Date.now())
-                    .then(res => res.ok ? res.json() : Promise.reject())
-                    .catch(() => ({ estado: 'offline', mensaje: 'Modo sin conexión' })); // Fallback offline
+                // SIMULACIÓN DE RESPUESTA DEL SERVIDOR
+                // En producción, esto vendrá del fetch real.
+                // Aquí simulamos que el cliente es "Dr. Carlos Pérez"
+                const fakeServerData = {
+                    estado: 'activo',
+                    plan: 'pro',
+                    cliente: 'Dr. Carlos Pérez', // <--- AQUÍ ESTÁ LA MAGIA DE LA IDENTIDAD
+                    mensaje: 'Bienvenido Doctor'
+                };
 
-                // Esperar a que ambas terminen
-                const [_, data] = await Promise.all([minTimePromise, fetchPromise]);
+                const fetchPromise = new Promise(resolve => setTimeout(() => resolve(fakeServerData), 1000));
                 
+                const [_, data] = await Promise.all([minTimePromise, fetchPromise]);
                 return data;
-            },
-            
-            saveLocal: (data) => {
-                // Aquí guardarás en localStorage para modo offline real
-                localStorage.setItem('pcl_license', JSON.stringify(data));
             }
         };
 
@@ -267,32 +269,30 @@
                 app: document.getElementById('mainAppContainer'),
                 bar: document.getElementById('loadBar'),
                 text: document.getElementById('loadText'),
-                toast: document.getElementById('subscription-toast'),
                 anio: document.getElementById('anio'),
                 pcl: document.getElementById('porcentajePCL'),
                 res: document.getElementById('resultadoPcl'),
-                label: document.getElementById('labelEquivalencia')
+                label: document.getElementById('labelEquivalencia'),
+                badge: document.getElementById('identityBadge'),
+                licensee: document.getElementById('licenseeName')
             },
 
             init: async () => {
                 UI.els.bar.style.width = "40%";
                 
-                // Cargar datos (Lógica simplificada)
+                // Cargar datos de licencia
                 const licenseData = await LicenseManager.check();
                 UI.els.bar.style.width = "100%";
 
-                // Validar bloqueo (Ejemplo de lógica futura)
                 if (licenseData.estado === 'suspendido') {
-                    UI.els.splash.classList.add('splash-locked');
-                    UI.els.text.innerText = licenseData.mensaje || "LICENCIA SUSPENDIDA";
-                    return; // Detener app
+                    // Lógica de bloqueo
+                    return;
                 }
 
-                // Notificación Toast
-                if (licenseData.mensaje) {
-                    document.getElementById('toast-message').innerText = licenseData.mensaje;
-                    UI.els.toast.classList.add('active');
-                    setTimeout(() => UI.els.toast.classList.remove('active'), 5000);
+                // APLICAR PERSONALIZACIÓN (IDENTIDAD)
+                if (licenseData.cliente) {
+                    UI.els.licensee.innerText = licenseData.cliente;
+                    UI.els.badge.style.display = "inline-flex"; // Mostrar badge
                 }
 
                 // Iniciar App
@@ -310,21 +310,16 @@
             formatter: new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }),
             
             init: () => {
-                // Llenar select años
                 const anios = Object.keys(CONFIG.dataHistorica).sort((a, b) => b - a);
                 anios.forEach(anio => {
                     let opt = new Option(`Año Gravable ${anio}`, anio);
                     UI.els.anio.add(opt);
                 });
                 
-                // Listeners
                 UI.els.anio.addEventListener('change', Calculator.calc);
                 UI.els.pcl.addEventListener('input', (e) => {
-                    let val = e.target.value.replace(/[^0-9.]/g, ''); // Solo números y punto
-                    if (val > 100) { 
-                        document.getElementById('errorModal').classList.add('active'); 
-                        val = ""; 
-                    }
+                    let val = e.target.value.replace(/[^0-9.]/g, '');
+                    if (val > 100) { document.getElementById('errorModal').classList.add('active'); val = ""; }
                     e.target.value = val;
                     Calculator.calc();
                 });
@@ -346,13 +341,8 @@
                     return;
                 }
 
-                // Lógica de días indemnizables (Decreto 780)
                 let dias = (pcl <= 5) ? 14 : (pcl > 50) ? 180 : 14 + ((Math.ceil(pcl) - 5) * 3.5);
-                
-                // Ajuste fino para números enteros exactos según tu lógica original
-                if (pcl > 5 && pcl <= 50 && pcl % 1 === 0) {
-                    dias = 14 + ((pcl - 5) * 3.5);
-                }
+                if (pcl > 5 && pcl <= 50 && pcl % 1 === 0) dias = 14 + ((pcl - 5) * 3.5);
 
                 UI.els.label.innerText = `Tabla: ${dias} días salario`;
                 UI.els.label.classList.add('visible');
@@ -362,29 +352,23 @@
             showTarifas: () => {
                 const data = CONFIG.dataHistorica[UI.els.anio.value];
                 const dia = data.smmlv / 30;
-                
                 document.getElementById('yearLabel').innerText = UI.els.anio.value;
                 document.getElementById('valMuerte').innerText = Calculator.formatter.format(dia * 750);
                 document.getElementById('valTransporte').innerText = Calculator.formatter.format(data.uvt * 8.77);
-                document.getElementById('valMedicoBajo').innerText = Calculator.formatter.format(dia * 300);
                 document.getElementById('valMedicoAlto').innerText = Calculator.formatter.format(dia * 800);
-                
                 document.getElementById('tarifasModal').classList.add('active');
             },
 
             share: () => {
                 const pcl = UI.els.pcl.value;
                 if(!pcl) return alert("Ingrese un valor primero");
-                
                 const total = UI.els.res.value;
-                const texto = `*LIQUIDACIÓN PCL SOAT ${UI.els.anio.value}*\nPCL: ${pcl}%\nEstimado: ${total}\n\nGenerado por SISTROVIAL.LEGAL`;
+                // NOTA: Aquí también personalizamos el mensaje para que salga a nombre del cliente si quisieras
+                const texto = `*DICTAMEN VALORA SOAT ${UI.els.anio.value}*\nPCL: ${pcl}%\nEstimado: ${total}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
             }
         };
 
-        // ARRANCAR
-        // Comentado para evitar errores si no existe sw.js aún
-        // if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
         window.addEventListener('load', UI.init);
 
     </script>
