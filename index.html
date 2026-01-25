@@ -3,26 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#0a1931">
+    <meta name="theme-color" content="#08142b">
     
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://PrismaLab-arm64.github.io; img-src 'self' data:; connect-src 'self' https://PrismaLab-arm64.github.io https://wa.me;">
+
     <title>Calculadora PCL | PRO</title>
 
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="icon" type="image/png" href="icon.png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- DISEÑO BASADO 100% EN TUS CAPTURAS --- */
+        /* --- ESTILOS NEUTROS (PARA VENTA) --- */
         :root {
-            --bg-dark: #08142b; /* Azul muy oscuro (Tu fondo) */
-            --highlight: #4facfe; /* Azul Neón (Tus bordes) */
-            --input-bg: rgba(255, 255, 255, 0.1); 
+            --bg-dark: #08142b;
+            --highlight: #4facfe;
+            --input-bg: rgba(255, 255, 255, 0.08);
             --border: rgba(255, 255, 255, 0.15);
             --text-color: #ffffff;
-            --modal-bg: #000000; /* Fondo negro para la tabla */
+            --modal-bg: #000000;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
@@ -32,10 +34,10 @@
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; padding: 20px;
             background-color: var(--bg-dark); overflow-x: hidden;
-            background-image: radial-gradient(circle at top, #10254a 0%, #050a15 100%); /* Tu degradado */
+            background-image: radial-gradient(circle at top, #10254a 0%, #050a15 100%);
         }
 
-        /* --- LOGIN MINIMALISTA (NO INVASIVO) --- */
+        /* --- LOGIN (LIMPIO Y NEUTRO) --- */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #050a15; z-index: 50000;
@@ -45,67 +47,71 @@
         
         .login-input {
             background: transparent; border: none; border-bottom: 1px solid var(--highlight);
-            color: white; font-size: 1.2rem; padding: 10px; text-align: center; width: 200px;
-            margin-bottom: 20px; outline: none; letter-spacing: 2px;
+            color: white; font-size: 1.1rem; padding: 12px; text-align: center; width: 100%; max-width: 250px;
+            margin-bottom: 25px; outline: none; letter-spacing: 2px;
         }
         .btn-enter {
             background: transparent; border: 1px solid var(--highlight); color: var(--highlight);
-            padding: 10px 30px; border-radius: 30px; cursor: pointer; font-weight: bold;
+            padding: 12px 40px; border-radius: 30px; cursor: pointer; font-weight: bold; letter-spacing: 1px;
             transition: 0.3s;
         }
         .btn-enter:active { background: var(--highlight); color: #000; }
 
-        /* --- APP CONTAINER --- */
-        .app-container { width: 100%; max-width: 450px; text-align: center; display: none; opacity: 0; transition: opacity 0.5s; }
-        .app-container.visible { display: block; opacity: 1; }
+        /* --- APP UI --- */
+        .app-container { width: 100%; max-width: 450px; text-align: center; display: none; opacity: 0; animation: fade 0.8s forwards; }
+        @keyframes fade { to { opacity: 1; } }
 
-        /* HEADER (COMO TU FOTO) */
-        .main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        /* HEADER NEUTRO */
+        .main-title { font-weight: 900; font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
         .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; font-size: 0.9rem; margin-top: 5px; opacity: 0.7; }
-        .brand-link { color: var(--highlight); text-decoration: none; font-size: 0.9rem; letter-spacing: 2px; display: block; margin-top: 5px; text-transform: uppercase; font-weight: 500; }
-        .website-link { color: #556; font-size: 0.75rem; text-decoration: none; display: block; margin-bottom: 25px; }
+        .pro-badge { 
+            color: var(--highlight); font-size: 0.8rem; letter-spacing: 3px; 
+            text-transform: uppercase; margin-top: 5px; display: block; font-weight: 500;
+        }
 
-        /* BOTÓN SALIR */
-        .logout-icon { position: absolute; top: 20px; right: 20px; color: #ff4b4b; font-size: 1.2rem; cursor: pointer; opacity: 0.7; border: 1px solid #ff4b4b; border-radius: 50%; width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; }
+        /* BOTÓN SALIR (ROJO, ESQUINA) */
+        .logout-btn { 
+            position: absolute; top: 20px; right: 20px; color: #ff4b4b; 
+            font-size: 1.2rem; cursor: pointer; opacity: 0.8; 
+            border: 1px solid rgba(255, 75, 75, 0.3); border-radius: 50%; 
+            width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; 
+        }
 
-        /* INPUTS (ESTILO FOTO) */
-        .input-group { position: relative; margin-bottom: 12px; }
+        /* INPUTS */
+        .input-group { position: relative; margin-bottom: 15px; }
         .input-field {
             width: 100%; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 8px; padding: 16px 16px 16px 50px;
+            border-radius: 10px; padding: 18px 18px 18px 50px;
             color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif;
         }
-        .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--highlight); font-size: 1.1rem; }
+        .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--highlight); font-size: 1.2rem; }
 
         select.input-field { -webkit-appearance: none; cursor: pointer; font-weight: 700; text-transform: uppercase; }
         .select-arrow { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); pointer-events: none; }
 
-        /* BOTÓN TABLA (ESTILO FOTO) */
+        /* BOTÓN TABLA */
         .btn-table {
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid transparent;
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid transparent;
             border-radius: 8px; color: #ccc; font-size: 0.9rem; cursor: pointer; margin-bottom: 15px;
             display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;
         }
-        .btn-table:active { background: rgba(255,255,255,0.1); }
+        .btn-table:active { background: rgba(255,255,255,0.1); border-color: var(--highlight); }
 
-        /* CAJA RESULTADO (ESTILO FOTO EXACTO) */
+        /* RESULTADO (COMO TU FOTO) */
         .result-box {
             border: 1px solid var(--highlight); border-radius: 15px;
             background: rgba(16, 32, 60, 0.4); padding: 30px 20px; margin-top: 25px;
             position: relative; box-shadow: 0 0 25px rgba(79, 172, 254, 0.15);
         }
         .result-label { font-size: 0.8rem; color: #ccc; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: 500; }
-        
-        .result-flex { display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .result-flex { display: flex; justify-content: center; align-items: center; gap: 8px; }
         .symbol { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 5px; }
-        .result-value { font-size: 3.5rem; font-weight: 900; color: white; margin: 0; text-shadow: 0 0 20px rgba(79, 172, 254, 0.6); line-height: 1; }
-        
-        .result-base { font-size: 0.75rem; color: #778; font-style: italic; margin-top: 15px; }
+        .result-value { font-size: 3.2rem; font-weight: 900; color: white; margin: 0; text-shadow: 0 0 20px rgba(79, 172, 254, 0.6); line-height: 1; }
+        .result-base { font-size: 0.7rem; color: #778; font-style: italic; margin-top: 15px; }
 
-        /* MODAL TABLA (NEGRA COMO TU FOTO) */
+        /* MODAL TABLA (FONDO NEGRO EXACTO) */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #000; border: 1px solid #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; }
-        
+        .modal-content { background: #000000; border: 1px solid #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; }
         .modal-title { color: var(--highlight); text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; font-size: 1.1rem; letter-spacing: 1px; }
         
         .ref-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #ccc; }
@@ -113,34 +119,34 @@
         .ref-table td { padding: 12px 0; border-bottom: 1px solid #111; font-weight: 500; }
         .ref-table td:first-child { font-weight: 900; color: #fff; }
 
-        .btn-close { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 8px; color: #000; font-weight: 900; margin-top: 25px; cursor: pointer; }
+        .btn-close { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 8px; color: #000; font-weight: 900; margin-top: 25px; cursor: pointer; text-transform: uppercase;}
 
-        .footer { margin-top: 40px; font-size: 0.7rem; color: #556; line-height: 1.5; }
+        .footer { margin-top: 40px; font-size: 0.65rem; color: #556; line-height: 1.5; opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <div id="loginScreen">
-        <div style="margin-bottom:30px; font-size:2rem; color:var(--highlight);"><i class="fa-solid fa-lock"></i></div>
-        <input type="text" id="licenseCode" class="login-input" placeholder="CLAVE DE ACCESO">
-        <button class="btn-enter" onclick="verificarLicencia()">ENTRAR</button>
-        <p id="msgError" style="color:#ff4b4b; margin-top:20px; font-size:0.8rem; display:none;"></p>
+        <div style="margin-bottom:30px; font-size:2rem; color:var(--highlight); opacity:0.8;"><i class="fa-solid fa-shield-halved"></i></div>
+        <input type="text" id="licenseCode" class="login-input" placeholder="LICENCIA DE USO">
+        <button class="btn-enter" onclick="verificarLicencia()">ACCEDER</button>
+        <p id="msgError" style="color:var(--error); margin-top:20px; font-size:0.8rem; display:none;"></p>
     </div>
 
     <div class="app-container" id="mainAppContainer">
         
-        <div class="logout-icon" onclick="cerrarSesion()"><i class="fa-solid fa-power-off"></i></div>
+        <div class="logout-btn" onclick="cerrarSesion()"><i class="fa-solid fa-power-off"></i></div>
 
-        <div class="title-container" style="margin-top: 10px;">
+        <div style="margin-top: 20px; margin-bottom: 25px;">
             <h1 class="main-title">PCL SOAT</h1>
             <div class="tagline">App desarrollada para</div>
-            <a href="#" class="brand-link">SISTROVIAL.LEGAL</a>
-            <a href="#" class="website-link">www.sistrovial.legal</a>
+            <div class="pro-badge">EDICIÓN PROFESIONAL</div> 
+            <div id="clientName" style="font-size:0.8rem; color:white; margin-top:5px; font-weight:bold;"></div>
         </div>
 
         <div class="input-group">
             <i class="fa-regular fa-calendar input-icon"></i>
-            <select id="yearSelect" class="input-field" onchange="actualizarSalarioBase()">
+            <select id="yearSelect" class="input-field" onchange="actualizarSalarioAutomatico()">
                 <option value="2026">AÑO GRAVABLE 2026</option>
                 <option value="2025">AÑO GRAVABLE 2025</option>
                 <option value="2024">AÑO GRAVABLE 2024</option>
@@ -181,13 +187,7 @@
         <div class="modal-content">
             <div class="modal-title">HISTÓRICO OFICIAL</div>
             <table class="ref-table">
-                <thead>
-                    <tr>
-                        <th>Año</th>
-                        <th>SMLMV</th>
-                        <th>UVT</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Año</th><th>SMLMV</th><th>UVT</th></tr></thead>
                 <tbody id="tableBody"></tbody>
             </table>
             <button class="btn-close" onclick="document.getElementById('tableModal').style.display='none'">CERRAR</button>
@@ -195,7 +195,7 @@
     </div>
 
     <script>
-        // --- TUS DATOS OFICIALES ---
+        // --- BASE DE DATOS MAESTRA ---
         const DATA = {
             '2026': { smlmv: 1750905, uvt: 52374 },
             '2025': { smlmv: 1423500, uvt: 49799 },
@@ -205,23 +205,23 @@
 
         // --- INICIO ---
         window.onload = function() {
-            // 1. Llenar la tabla modal negra
+            // Llenar tabla modal
             const tbody = document.getElementById('tableBody');
             Object.keys(DATA).sort().reverse().forEach(year => {
                 tbody.innerHTML += `<tr>
                     <td>${year}</td>
-                    <td>$${DATA[year].smlmv.toLocaleString()}</td>
-                    <td>$${DATA[year].uvt.toLocaleString()}</td>
+                    <td>$${DATA[year].smlmv.toLocaleString('es-CO')}</td>
+                    <td>$${DATA[year].uvt.toLocaleString('es-CO')}</td>
                 </tr>`;
             });
 
-            // 2. Revisar si ya ingresó (Persistencia)
+            // Verificar Login
             const savedUser = localStorage.getItem('valora_user');
             if (savedUser) {
                 try {
                     const user = JSON.parse(savedUser);
                     if(user.estado === 'activo') {
-                        document.getElementById('mainAppContainer').classList.add('visible');
+                        entrarApp(user);
                     } else {
                         document.getElementById('loginScreen').style.display = 'flex';
                     }
@@ -229,66 +229,63 @@
             } else {
                 document.getElementById('loginScreen').style.display = 'flex';
             }
-
-            // 3. AUTO-LLENAR EL SALARIO CON EL AÑO ACTUAL (2026) AL INICIAR
-            actualizarSalarioBase();
         };
 
-        // --- AUTOMATIZACIÓN DE SALARIO (LO QUE FALTABA) ---
-        function actualizarSalarioBase() {
+        // --- FUNCIÓN CLAVE: AUTOMATIZAR SALARIO ---
+        function actualizarSalarioAutomatico() {
             const year = document.getElementById('yearSelect').value;
             const base = DATA[year].smlmv;
             
-            // Pone el valor formateado automáticamente
-            const input = document.getElementById('salaryInput');
-            input.value = base.toLocaleString('es-CO');
+            // Llenar input automáticamente
+            document.getElementById('salaryInput').value = base.toLocaleString('es-CO');
             
-            // Recalcula inmediatamente
+            // Recalcular con el nuevo valor
             calcular();
         }
 
-        // --- CONEXIÓN EXCEL BLINDADA ---
+        // --- VERIFICACIÓN LICENCIA ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
             const btn = document.querySelector('.btn-enter');
             const msg = document.getElementById('msgError');
 
             if (!codigo) return;
-            
-            const txtOriginal = btn.innerText;
-            btn.innerText = "...";
-            msg.style.display = 'none';
+            btn.innerText = "..."; msg.style.display = 'none';
 
             try {
-                // TU RUTA DE GITHUB
                 const res = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await res.json();
 
                 if (data[codigo]) {
                     const cliente = data[codigo];
                     if (cliente.estado === 'activo') {
-                        // Guardar y Entrar
                         localStorage.setItem('valora_user', JSON.stringify(cliente));
-                        document.getElementById('loginScreen').style.display = 'none';
-                        document.getElementById('mainAppContainer').classList.add('visible');
-                        
-                        // Asegurar que el salario esté cargado
-                        actualizarSalarioBase();
+                        entrarApp(cliente);
                     } else {
-                        // Mostrar mensaje del Excel (Columna E)
                         msg.innerText = cliente.mensaje || "Acceso Denegado";
                         msg.style.display = 'block';
                     }
                 } else {
-                    msg.innerText = "Clave incorrecta";
-                    msg.style.display = 'block';
+                    msg.innerText = "Clave incorrecta"; msg.style.display = 'block';
                 }
             } catch (e) {
-                msg.innerText = "Sin conexión";
-                msg.style.display = 'block';
+                msg.innerText = "Sin conexión"; msg.style.display = 'block';
             } finally {
-                btn.innerText = txtOriginal;
+                btn.innerText = "ENTRAR";
             }
+        }
+
+        function entrarApp(cliente) {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainAppContainer').classList.add('visible');
+            
+            // PERSONALIZACIÓN DINÁMICA (Si quieres que aparezca el nombre del cliente)
+            if(cliente.nombre) {
+                document.getElementById('clientName').innerText = cliente.nombre;
+            }
+
+            // AUTO-EJECUTAR SALARIO 2026 AL ENTRAR
+            actualizarSalarioAutomatico();
         }
 
         function cerrarSesion() {
@@ -310,15 +307,13 @@
             const pcl = parseFloat(document.getElementById('pclInput').value) || 0;
             
             let resultado = 0;
+            // TU FÓRMULA (Salario * %)
             if (salario > 0 && pcl > 0) {
-                // TU FÓRMULA DECRETO 780
-                // (Si tienes la lógica de días compleja, la ponemos aquí. 
-                // Por ahora uso la proporcional para que coincida con tu foto de 11.111.111 * 10%)
                 resultado = salario * (pcl / 100);
             }
 
             document.getElementById('totalResult').innerText = Math.round(resultado).toLocaleString('es-CO');
-            document.getElementById('infoText').innerText = `Base ${year}: SMLMV $${DATA[year].smlmv.toLocaleString()}`;
+            document.getElementById('infoText').innerText = `Base ${year}: SMLMV $${DATA[year].smlmv.toLocaleString('es-CO')}`;
         }
     </script>
 </body>
