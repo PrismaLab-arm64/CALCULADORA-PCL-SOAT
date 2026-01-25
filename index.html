@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#08142b">
     
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://PrismaLab-arm64.github.io; img-src 'self' data:; connect-src 'self' https://PrismaLab-arm64.github.io https://wa.me;">
+
     <title>Calculadora PCL | PRO</title>
 
     <link rel="manifest" href="manifest.json">
@@ -15,120 +17,160 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- ESTILOS SISTROVIAL (AZUL) --- */
+        /* --- DISEÑO SISTROVIAL PRO (V3.1) --- */
         :root {
-            --bg-dark: #08142b; 
-            --highlight: #4facfe; 
-            --input-bg: rgba(255, 255, 255, 0.08); 
-            --border: rgba(255, 255, 255, 0.15);
-            --text: #ffffff;
+            --bg-dark: #08142b;
+            --highlight: #4facfe; /* Azul Neón */
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
+            --error: #ff4b4b;
+            --success: #00e676;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
         body {
-            margin: 0; font-family: 'Roboto', sans-serif; color: var(--text);
+            margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; padding: 20px;
             background-color: var(--bg-dark); overflow-x: hidden;
             background-image: radial-gradient(circle at top, #10254a 0%, #050a15 100%);
         }
 
-        /* --- LOGIN (MARCA BLANCA) --- */
+        /* --- 1. PANTALLA DE CARGA (CORREGIDA: Z-INDEX MÁS ALTO) --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #050a15; z-index: 999999; /* Z-INDEX MÁXIMO PARA NO BLOQUEARSE */
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .splash-logo { width: 110px; margin-bottom: 25px; border-radius: 22px; box-shadow: 0 0 40px rgba(79, 172, 254, 0.4); animation: pulse 2s infinite; }
+        .loading-text { margin-top: 20px; font-size: 0.9rem; color: var(--highlight); opacity: 0.8; letter-spacing: 2px; text-transform: uppercase; }
+        
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(79, 172, 254, 0.6); } 100% { transform: scale(1); } }
+
+        /* --- 2. LOGIN (MARCA BLANCA - SEGURO) --- */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #050a15; z-index: 50000;
+            background: #050a15; z-index: 100000;
             display: none; flex-direction: column; justify-content: center; align-items: center;
-            padding: 30px;
+            padding: 40px; backdrop-filter: blur(20px);
         }
+        
         .login-input {
-            background: transparent; border: none; border-bottom: 1px solid var(--highlight);
-            color: white; font-size: 1.2rem; padding: 10px; text-align: center; width: 100%; max-width: 250px;
-            margin-bottom: 25px; outline: none; letter-spacing: 2px;
-        }
-        .btn-enter {
-            background: transparent; border: 1px solid var(--highlight); color: var(--highlight);
-            padding: 12px 40px; border-radius: 30px; cursor: pointer; font-weight: bold; letter-spacing: 1px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--highlight);
+            color: white; font-size: 1.3rem; padding: 15px; text-align: center; width: 100%; max-width: 280px;
+            margin-bottom: 30px; outline: none; letter-spacing: 3px; border-radius: 10px;
             transition: 0.3s;
         }
-        .btn-enter:active { background: var(--highlight); color: #000; }
+        .login-input:focus { box-shadow: 0 0 20px rgba(79, 172, 254, 0.3); background: rgba(255,255,255,0.1); }
+        
+        .btn-enter {
+            background: var(--highlight); border: none; color: #000;
+            padding: 15px 50px; border-radius: 50px; cursor: pointer; font-weight: 900; letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4); transition: 0.3s;
+        }
+        .btn-enter:active { transform: scale(0.95); }
 
-        /* --- APP UI --- */
-        .app-container { width: 100%; max-width: 450px; text-align: center; display: none; opacity: 0; animation: fade 0.8s forwards; }
-        @keyframes fade { to { opacity: 1; } }
+        /* --- 3. APP PRINCIPAL --- */
+        .app-container { width: 100%; max-width: 480px; text-align: center; display: none; opacity: 0; animation: fadeUp 0.8s forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         /* HEADER */
-        .main-title { font-weight: 900; font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
-        .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; font-size: 0.9rem; margin-top: 5px; opacity: 0.7; }
-        .pro-badge { color: var(--highlight); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; display: block; font-weight: 500; }
-
+        .main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; line-height: 1; }
+        .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; font-size: 0.9rem; margin-top: 8px; opacity: 0.8; }
+        .brand-link { color: var(--highlight); text-decoration: none; font-size: 0.85rem; letter-spacing: 3px; display: block; margin-top: 8px; text-transform: uppercase; font-weight: 700; }
+        
         /* BOTÓN SALIR */
         .logout-btn { 
             position: absolute; top: 20px; right: 20px; color: #ff4b4b; 
-            font-size: 1.2rem; cursor: pointer; opacity: 0.8; 
-            border: 1px solid rgba(255, 75, 75, 0.3); border-radius: 50%; 
-            width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; 
+            font-size: 1.1rem; cursor: pointer; opacity: 0.9; 
+            border: 1px solid rgba(255, 75, 75, 0.4); border-radius: 12px; 
+            width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; 
+            background: rgba(255,0,0,0.1);
         }
 
         /* INPUTS */
-        .input-group { position: relative; margin-bottom: 15px; }
+        .input-group { position: relative; margin-bottom: 20px; }
         .input-field {
             width: 100%; background: var(--input-bg); border: 1px solid var(--border);
-            border-radius: 10px; padding: 18px 18px 18px 50px;
+            border-radius: 12px; padding: 20px 20px 20px 55px;
             color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif;
+            transition: 0.3s;
         }
-        .readonly { color: var(--highlight); font-weight: bold; cursor: not-allowed; }
-        .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--highlight); font-size: 1.2rem; }
+        .input-field:focus { border-color: var(--highlight); box-shadow: 0 0 15px rgba(79, 172, 254, 0.1); }
+        
+        /* CAMPO SOLO LECTURA (PARA EL VALOR DÍA) */
+        .readonly { background: rgba(0,0,0,0.3); color: var(--highlight); font-weight: bold; border-color: rgba(79, 172, 254, 0.3); pointer-events: none; }
+        
+        .input-icon { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--highlight); font-size: 1.3rem; }
 
         select.input-field { -webkit-appearance: none; cursor: pointer; font-weight: 700; text-transform: uppercase; }
-        .select-arrow { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); pointer-events: none; }
+        .select-arrow { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.7); pointer-events: none; }
 
-        /* BOTÓN TABLA */
+        /* BOTÓN TABLA (ESTILO FOTO) */
         .btn-table {
-            width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 1px solid transparent;
-            border-radius: 8px; color: #ccc; font-size: 0.9rem; cursor: pointer; margin-bottom: 15px;
-            display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.3s;
+            width: 100%; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 12px; color: #ccc; font-size: 0.95rem; cursor: pointer; margin-bottom: 25px;
+            display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; font-weight: 500;
         }
-        .btn-table:active { background: rgba(255,255,255,0.1); border-color: var(--highlight); }
+        .btn-table:active { background: rgba(255,255,255,0.1); }
 
-        /* RESULTADO (TU DISEÑO) */
+        /* CAJA RESULTADO (ESTILO FOTO EXACTO) */
         .result-box {
-            border: 1px solid var(--highlight); border-radius: 15px;
-            background: rgba(16, 32, 60, 0.4); padding: 30px 20px; margin-top: 25px;
-            position: relative; box-shadow: 0 0 25px rgba(79, 172, 254, 0.15);
+            border: 2px solid var(--highlight); border-radius: 18px;
+            background: rgba(16, 32, 60, 0.6); padding: 35px 20px; margin-top: 30px;
+            position: relative; box-shadow: 0 0 30px rgba(79, 172, 254, 0.2);
         }
-        .result-label { font-size: 0.8rem; color: #ccc; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: 500; }
-        .result-value { font-size: 3.2rem; font-weight: 900; color: white; margin: 0; text-shadow: 0 0 20px rgba(79, 172, 254, 0.6); line-height: 1; }
-        .result-base { font-size: 0.7rem; color: #778; font-style: italic; margin-top: 15px; }
+        .result-label { font-size: 0.85rem; color: #ccc; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: 500; }
+        
+        .result-flex { display: flex; justify-content: center; align-items: flex-start; gap: 5px; }
+        .symbol { font-size: 2.5rem; font-weight: 300; color: white; margin-top: 5px; opacity: 0.8; }
+        .result-value { font-size: 4rem; font-weight: 900; color: white; margin: 0; text-shadow: 0 0 25px rgba(79, 172, 254, 0.7); line-height: 1; }
+        
+        .result-base { font-size: 0.75rem; color: #8899a6; font-style: italic; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; display: inline-block; }
 
-        /* MODAL */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #000; border: 1px solid #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; }
-        .ref-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #ccc; }
-        .ref-table th { text-align: left; padding: 12px 0; border-bottom: 1px solid #333; color: var(--highlight); font-size: 0.8rem; text-transform: uppercase; }
-        .ref-table td { padding: 12px 0; border-bottom: 1px solid #111; font-weight: 500; }
-        .btn-close { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 8px; color: #000; font-weight: 900; margin-top: 25px; cursor: pointer; }
+        /* MODAL TABLA (NEGRA COMO TU FOTO) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 200000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #000; border: 1px solid #333; padding: 30px; border-radius: 20px; width: 100%; max-width: 400px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        
+        .modal-title { color: var(--highlight); text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; font-size: 1.2rem; letter-spacing: 1px; }
+        
+        .ref-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; color: #ccc; }
+        .ref-table th { text-align: left; padding: 15px 0; border-bottom: 1px solid #333; color: var(--highlight); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .ref-table td { padding: 15px 0; border-bottom: 1px solid #111; font-weight: 500; }
+        .ref-table td:first-child { font-weight: 900; color: #fff; }
 
-        .footer { margin-top: 40px; font-size: 0.65rem; color: #556; line-height: 1.5; opacity: 0.5; }
+        .btn-close { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 12px; color: #000; font-weight: 900; margin-top: 30px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+
+        .footer { margin-top: 50px; font-size: 0.65rem; color: #556; line-height: 1.6; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
+    <div id="splash-screen">
+        <img src="icon.png" alt="Logo" class="splash-logo" onerror="this.style.display='none'">
+        <h2 style="color:white; margin:0; letter-spacing:3px; font-weight:900; font-size:1.8rem;">VALORA SOAT</h2>
+        <div class="loading-text">Cargando Sistema Forense...</div>
+    </div>
+
     <div id="loginScreen">
-        <div style="margin-bottom:30px; font-size:2rem; color:var(--highlight); opacity:0.8;"><i class="fa-solid fa-lock"></i></div>
-        <input type="text" id="licenseCode" class="login-input" placeholder="CLAVE DE ACCESO">
-        <button class="btn-enter" onclick="verificarLicencia()">ENTRAR</button>
-        <p id="msgError" style="color:var(--error); margin-top:20px; font-size:0.8rem; display:none;"></p>
+        <div style="margin-bottom:40px; font-size:2.5rem; color:var(--highlight); opacity:0.9; filter: drop-shadow(0 0 10px var(--highlight));"><i class="fa-solid fa-fingerprint"></i></div>
+        <input type="text" id="licenseCode" class="login-input" placeholder="LICENCIA DE ACCESO">
+        <button class="btn-enter" onclick="verificarLicencia()">INGRESAR</button>
+        <p id="msgError" style="color:var(--error); margin-top:25px; font-size:0.9rem; display:none; background:rgba(255,0,0,0.1); padding:10px; border-radius:5px;"></p>
+        <div style="margin-top:40px; font-size:0.7rem; opacity:0.3; color:white;">Secure Access v3.1</div>
     </div>
 
     <div class="app-container" id="mainAppContainer">
         
-        <div class="logout-btn" onclick="cerrarSesion()"><i class="fa-solid fa-power-off"></i></div>
+        <div class="logout-btn" onclick="cerrarSesion()" title="Cerrar Sesión"><i class="fa-solid fa-power-off"></i></div>
 
-        <div style="margin-top: 20px; margin-bottom: 25px;">
+        <div style="margin-top: 20px; margin-bottom: 30px;">
             <h1 class="main-title">PCL SOAT</h1>
             <div class="tagline">App desarrollada para</div>
-            <div class="pro-badge">EDICIÓN PROFESIONAL</div> 
+            <a href="#" class="brand-link">EDICIÓN PROFESIONAL</a>
         </div>
 
         <div class="input-group">
@@ -153,12 +195,15 @@
 
         <div class="input-group">
             <i class="fa-solid fa-percent input-icon"></i>
-            <input type="number" id="pclInput" class="input-field" placeholder="10" step="0.1" oninput="calcular()">
+            <input type="number" id="pclInput" class="input-field" placeholder="Ingrese % PCL (Ej: 15.5)" step="0.1" oninput="calcular()">
         </div>
 
         <div class="result-box">
             <div class="result-label">INDEMNIZACIÓN ESTIMADA</div>
-            <div class="result-value" id="totalResult">± $ 0</div>
+            <div class="result-flex">
+                <span class="symbol">± $</span>
+                <span class="result-value" id="totalResult">0</span>
+            </div>
             <div class="result-base" id="infoText">Calculado sobre SMLDV 2026</div>
         </div>
 
@@ -169,7 +214,7 @@
 
     <div id="tableModal" class="modal">
         <div class="modal-content">
-            <div style="color:var(--highlight); text-align:center; font-weight:900; margin-bottom:20px; letter-spacing:1px;">HISTÓRICO OFICIAL</div>
+            <div class="modal-title">HISTÓRICO OFICIAL</div>
             <table class="ref-table">
                 <thead><tr><th>Año</th><th>SMLMV</th><th>UVT</th></tr></thead>
                 <tbody id="tableBody"></tbody>
@@ -189,7 +234,7 @@
 
         // --- INICIO ---
         window.onload = function() {
-            // Llenar tabla
+            // 1. Llenar tabla
             const tbody = document.getElementById('tableBody');
             Object.keys(DATA).sort().reverse().forEach(year => {
                 tbody.innerHTML += `<tr>
@@ -199,22 +244,28 @@
                 </tr>`;
             });
 
-            // Verificar Login
-            const savedUser = localStorage.getItem('valora_user');
-            if (savedUser) {
-                try {
-                    const user = JSON.parse(savedUser);
-                    if(user.estado === 'activo') {
-                        document.getElementById('loginScreen').style.display = 'none';
-                        document.getElementById('mainAppContainer').classList.add('visible');
-                        actualizarBase(); // Carga el valor día del año actual
+            // 2. Verificar Login con RETRASO para que se vea el logo
+            setTimeout(() => {
+                const savedUser = localStorage.getItem('valora_user');
+                // SIEMPRE OCULTA EL SPLASH SCREEN A LOS 2 SEGUNDOS PARA EVITAR BLOQUEO AZUL
+                document.getElementById('splash-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    if (savedUser) {
+                        try {
+                            const user = JSON.parse(savedUser);
+                            if(user.estado === 'activo') {
+                                document.getElementById('mainAppContainer').classList.add('visible');
+                                actualizarBase(); // Carga valores iniciales
+                            } else {
+                                document.getElementById('loginScreen').style.display = 'flex';
+                            }
+                        } catch(e) { document.getElementById('loginScreen').style.display = 'flex'; }
                     } else {
                         document.getElementById('loginScreen').style.display = 'flex';
                     }
-                } catch(e) { document.getElementById('loginScreen').style.display = 'flex'; }
-            } else {
-                document.getElementById('loginScreen').style.display = 'flex';
-            }
+                }, 500);
+            }, 2000);
         };
 
         // --- LÓGICA AUTOMÁTICA (SMLMV / 30) ---
@@ -224,7 +275,7 @@
             const smldv = smlmv / 30; // Valor Día
             
             // Mostrar Valor Día en el campo readonly
-            document.getElementById('dailyValue').value = "Día: $ " + smldv.toLocaleString('es-CO', {maximumFractionDigits: 0});
+            document.getElementById('dailyValue').value = "Valor Día: $ " + smldv.toLocaleString('es-CO', {maximumFractionDigits: 0});
             
             calcular();
         }
@@ -236,9 +287,13 @@
             const msg = document.getElementById('msgError');
 
             if (!codigo) return;
-            btn.innerText = "..."; msg.style.display = 'none';
+            
+            const txtOriginal = btn.innerText;
+            btn.innerText = "VERIFICANDO...";
+            msg.style.display = 'none';
 
             try {
+                // TU RUTA DE GITHUB (NO TOCAR)
                 const res = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await res.json();
 
@@ -250,24 +305,30 @@
                         document.getElementById('mainAppContainer').classList.add('visible');
                         actualizarBase();
                     } else {
-                        msg.innerText = cliente.mensaje || "Acceso Denegado"; msg.style.display = 'block';
+                        // Mensaje personalizado del Excel
+                        msg.innerText = cliente.mensaje || "Acceso Denegado por el Administrador";
+                        msg.style.display = 'block';
                     }
                 } else {
-                    msg.innerText = "Clave incorrecta"; msg.style.display = 'block';
+                    msg.innerText = "Licencia incorrecta o no existe";
+                    msg.style.display = 'block';
                 }
             } catch (e) {
-                msg.innerText = "Sin conexión"; msg.style.display = 'block';
+                msg.innerText = "Error de conexión. Verifique su internet.";
+                msg.style.display = 'block';
             } finally {
-                btn.innerText = "ENTRAR";
+                btn.innerText = txtOriginal;
             }
         }
 
         function cerrarSesion() {
-            localStorage.removeItem('valora_user');
-            location.reload();
+            if(confirm("¿Desea cerrar su sesión segura?")) {
+                localStorage.removeItem('valora_user');
+                location.reload();
+            }
         }
 
-        // --- CÁLCULO DECRETO 780 (CURVA REAL) ---
+        // --- CÁLCULO DECRETO 780 (CURVA DE INDEMNIZACIÓN) ---
         function calcular() {
             const year = document.getElementById('yearSelect').value;
             const pcl = parseFloat(document.getElementById('pclInput').value) || 0;
@@ -276,17 +337,17 @@
 
             let diasAPagar = 0;
 
-            // MATEMÁTICA DECRETO 780 (TABLA DE VALUACIÓN)
+            // MATEMÁTICA DECRETO 780
             if (pcl > 0) {
                 if (pcl <= 5) {
-                    diasAPagar = 14; // Mínimo
+                    diasAPagar = 14; 
                 } else if (pcl >= 50) {
-                    diasAPagar = 180; // Máximo (Simplificado para SOAT General)
+                    diasAPagar = 180; 
                 } else {
-                    // Fórmula Progresiva Aproximada: 
-                    // Si es número entero, usa la tabla exacta. Si es decimal, proyecta.
-                    // (Lógica V26.2 que aprobaste antes)
-                    diasAPagar = 14 + ((pcl - 5) * 3.5);
+                    // Fórmula Progresiva Lineal:
+                    // De 5% a 50% hay 45 puntos. De 14 a 180 días hay 166 días.
+                    // Factor aprox: 3.68 por punto. Usamos el estándar de la tabla:
+                    diasAPagar = 14 + ((pcl - 5) * 3.68);
                 }
             }
 
