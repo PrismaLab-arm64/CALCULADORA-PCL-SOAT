@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#08142b">
     
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://PrismaLab-arm64.github.io; img-src 'self' data:; connect-src 'self' https://PrismaLab-arm64.github.io https://wa.me;">
-
     <title>Calculadora PCL | PRO</title>
 
     <link rel="manifest" href="manifest.json">
@@ -17,37 +15,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- ESTILOS NEUTROS (PARA VENTA) --- */
+        /* --- ESTILOS SISTROVIAL (AZUL) --- */
         :root {
-            --bg-dark: #08142b;
-            --highlight: #4facfe;
-            --input-bg: rgba(255, 255, 255, 0.08);
+            --bg-dark: #08142b; 
+            --highlight: #4facfe; 
+            --input-bg: rgba(255, 255, 255, 0.08); 
             --border: rgba(255, 255, 255, 0.15);
-            --text-color: #ffffff;
-            --modal-bg: #000000;
+            --text: #ffffff;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
         body {
-            margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
+            margin: 0; font-family: 'Roboto', sans-serif; color: var(--text);
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; padding: 20px;
             background-color: var(--bg-dark); overflow-x: hidden;
             background-image: radial-gradient(circle at top, #10254a 0%, #050a15 100%);
         }
 
-        /* --- LOGIN (LIMPIO Y NEUTRO) --- */
+        /* --- LOGIN (MARCA BLANCA) --- */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #050a15; z-index: 50000;
             display: none; flex-direction: column; justify-content: center; align-items: center;
             padding: 30px;
         }
-        
         .login-input {
             background: transparent; border: none; border-bottom: 1px solid var(--highlight);
-            color: white; font-size: 1.1rem; padding: 12px; text-align: center; width: 100%; max-width: 250px;
+            color: white; font-size: 1.2rem; padding: 10px; text-align: center; width: 100%; max-width: 250px;
             margin-bottom: 25px; outline: none; letter-spacing: 2px;
         }
         .btn-enter {
@@ -61,20 +57,17 @@
         .app-container { width: 100%; max-width: 450px; text-align: center; display: none; opacity: 0; animation: fade 0.8s forwards; }
         @keyframes fade { to { opacity: 1; } }
 
-        /* HEADER NEUTRO */
+        /* HEADER */
         .main-title { font-weight: 900; font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
         .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; font-size: 0.9rem; margin-top: 5px; opacity: 0.7; }
-        .pro-badge { 
-            color: var(--highlight); font-size: 0.8rem; letter-spacing: 3px; 
-            text-transform: uppercase; margin-top: 5px; display: block; font-weight: 500;
-        }
+        .pro-badge { color: var(--highlight); font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 8px; display: block; font-weight: 500; }
 
-        /* BOTÓN SALIR (ROJO, ESQUINA) */
+        /* BOTÓN SALIR */
         .logout-btn { 
             position: absolute; top: 20px; right: 20px; color: #ff4b4b; 
             font-size: 1.2rem; cursor: pointer; opacity: 0.8; 
             border: 1px solid rgba(255, 75, 75, 0.3); border-radius: 50%; 
-            width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; 
+            width: 35px; height: 35px; display: flex; justify-content: center; align-items: center; 
         }
 
         /* INPUTS */
@@ -84,6 +77,7 @@
             border-radius: 10px; padding: 18px 18px 18px 50px;
             color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif;
         }
+        .readonly { color: var(--highlight); font-weight: bold; cursor: not-allowed; }
         .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--highlight); font-size: 1.2rem; }
 
         select.input-field { -webkit-appearance: none; cursor: pointer; font-weight: 700; text-transform: uppercase; }
@@ -97,29 +91,23 @@
         }
         .btn-table:active { background: rgba(255,255,255,0.1); border-color: var(--highlight); }
 
-        /* RESULTADO (COMO TU FOTO) */
+        /* RESULTADO (TU DISEÑO) */
         .result-box {
             border: 1px solid var(--highlight); border-radius: 15px;
             background: rgba(16, 32, 60, 0.4); padding: 30px 20px; margin-top: 25px;
             position: relative; box-shadow: 0 0 25px rgba(79, 172, 254, 0.15);
         }
         .result-label { font-size: 0.8rem; color: #ccc; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 15px; font-weight: 500; }
-        .result-flex { display: flex; justify-content: center; align-items: center; gap: 8px; }
-        .symbol { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 5px; }
         .result-value { font-size: 3.2rem; font-weight: 900; color: white; margin: 0; text-shadow: 0 0 20px rgba(79, 172, 254, 0.6); line-height: 1; }
         .result-base { font-size: 0.7rem; color: #778; font-style: italic; margin-top: 15px; }
 
-        /* MODAL TABLA (FONDO NEGRO EXACTO) */
+        /* MODAL */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #000000; border: 1px solid #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; }
-        .modal-title { color: var(--highlight); text-align: center; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; font-size: 1.1rem; letter-spacing: 1px; }
-        
+        .modal-content { background: #000; border: 1px solid #333; padding: 25px; border-radius: 15px; width: 100%; max-width: 400px; }
         .ref-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: #ccc; }
         .ref-table th { text-align: left; padding: 12px 0; border-bottom: 1px solid #333; color: var(--highlight); font-size: 0.8rem; text-transform: uppercase; }
         .ref-table td { padding: 12px 0; border-bottom: 1px solid #111; font-weight: 500; }
-        .ref-table td:first-child { font-weight: 900; color: #fff; }
-
-        .btn-close { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 8px; color: #000; font-weight: 900; margin-top: 25px; cursor: pointer; text-transform: uppercase;}
+        .btn-close { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 8px; color: #000; font-weight: 900; margin-top: 25px; cursor: pointer; }
 
         .footer { margin-top: 40px; font-size: 0.65rem; color: #556; line-height: 1.5; opacity: 0.5; }
     </style>
@@ -127,9 +115,9 @@
 <body>
 
     <div id="loginScreen">
-        <div style="margin-bottom:30px; font-size:2rem; color:var(--highlight); opacity:0.8;"><i class="fa-solid fa-shield-halved"></i></div>
-        <input type="text" id="licenseCode" class="login-input" placeholder="LICENCIA DE USO">
-        <button class="btn-enter" onclick="verificarLicencia()">ACCEDER</button>
+        <div style="margin-bottom:30px; font-size:2rem; color:var(--highlight); opacity:0.8;"><i class="fa-solid fa-lock"></i></div>
+        <input type="text" id="licenseCode" class="login-input" placeholder="CLAVE DE ACCESO">
+        <button class="btn-enter" onclick="verificarLicencia()">ENTRAR</button>
         <p id="msgError" style="color:var(--error); margin-top:20px; font-size:0.8rem; display:none;"></p>
     </div>
 
@@ -141,12 +129,11 @@
             <h1 class="main-title">PCL SOAT</h1>
             <div class="tagline">App desarrollada para</div>
             <div class="pro-badge">EDICIÓN PROFESIONAL</div> 
-            <div id="clientName" style="font-size:0.8rem; color:white; margin-top:5px; font-weight:bold;"></div>
         </div>
 
         <div class="input-group">
             <i class="fa-regular fa-calendar input-icon"></i>
-            <select id="yearSelect" class="input-field" onchange="actualizarSalarioAutomatico()">
+            <select id="yearSelect" class="input-field" onchange="actualizarBase()">
                 <option value="2026">AÑO GRAVABLE 2026</option>
                 <option value="2025">AÑO GRAVABLE 2025</option>
                 <option value="2024">AÑO GRAVABLE 2024</option>
@@ -160,8 +147,8 @@
         </button>
 
         <div class="input-group">
-            <i class="fa-solid fa-money-bill-1 input-icon"></i>
-            <input type="tel" id="salaryInput" class="input-field" placeholder="Salario Base" oninput="formatoMoneda(this)">
+            <i class="fa-solid fa-coins input-icon"></i>
+            <input type="text" id="dailyValue" class="input-field readonly" readonly value="$ 0">
         </div>
 
         <div class="input-group">
@@ -171,11 +158,8 @@
 
         <div class="result-box">
             <div class="result-label">INDEMNIZACIÓN ESTIMADA</div>
-            <div class="result-flex">
-                <span class="symbol">± $</span>
-                <span class="result-value" id="totalResult">0</span>
-            </div>
-            <div class="result-base" id="infoText">Base 2026: SMLMV $1.750.905</div>
+            <div class="result-value" id="totalResult">± $ 0</div>
+            <div class="result-base" id="infoText">Calculado sobre SMLDV 2026</div>
         </div>
 
         <div class="footer">
@@ -185,7 +169,7 @@
 
     <div id="tableModal" class="modal">
         <div class="modal-content">
-            <div class="modal-title">HISTÓRICO OFICIAL</div>
+            <div style="color:var(--highlight); text-align:center; font-weight:900; margin-bottom:20px; letter-spacing:1px;">HISTÓRICO OFICIAL</div>
             <table class="ref-table">
                 <thead><tr><th>Año</th><th>SMLMV</th><th>UVT</th></tr></thead>
                 <tbody id="tableBody"></tbody>
@@ -205,7 +189,7 @@
 
         // --- INICIO ---
         window.onload = function() {
-            // Llenar tabla modal
+            // Llenar tabla
             const tbody = document.getElementById('tableBody');
             Object.keys(DATA).sort().reverse().forEach(year => {
                 tbody.innerHTML += `<tr>
@@ -221,7 +205,9 @@
                 try {
                     const user = JSON.parse(savedUser);
                     if(user.estado === 'activo') {
-                        entrarApp(user);
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('mainAppContainer').classList.add('visible');
+                        actualizarBase(); // Carga el valor día del año actual
                     } else {
                         document.getElementById('loginScreen').style.display = 'flex';
                     }
@@ -231,19 +217,19 @@
             }
         };
 
-        // --- FUNCIÓN CLAVE: AUTOMATIZAR SALARIO ---
-        function actualizarSalarioAutomatico() {
+        // --- LÓGICA AUTOMÁTICA (SMLMV / 30) ---
+        function actualizarBase() {
             const year = document.getElementById('yearSelect').value;
-            const base = DATA[year].smlmv;
+            const smlmv = DATA[year].smlmv;
+            const smldv = smlmv / 30; // Valor Día
             
-            // Llenar input automáticamente
-            document.getElementById('salaryInput').value = base.toLocaleString('es-CO');
+            // Mostrar Valor Día en el campo readonly
+            document.getElementById('dailyValue').value = "Día: $ " + smldv.toLocaleString('es-CO', {maximumFractionDigits: 0});
             
-            // Recalcular con el nuevo valor
             calcular();
         }
 
-        // --- VERIFICACIÓN LICENCIA ---
+        // --- CONEXIÓN EXCEL ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
             const btn = document.querySelector('.btn-enter');
@@ -260,10 +246,11 @@
                     const cliente = data[codigo];
                     if (cliente.estado === 'activo') {
                         localStorage.setItem('valora_user', JSON.stringify(cliente));
-                        entrarApp(cliente);
+                        document.getElementById('loginScreen').style.display = 'none';
+                        document.getElementById('mainAppContainer').classList.add('visible');
+                        actualizarBase();
                     } else {
-                        msg.innerText = cliente.mensaje || "Acceso Denegado";
-                        msg.style.display = 'block';
+                        msg.innerText = cliente.mensaje || "Acceso Denegado"; msg.style.display = 'block';
                     }
                 } else {
                     msg.innerText = "Clave incorrecta"; msg.style.display = 'block';
@@ -275,45 +262,38 @@
             }
         }
 
-        function entrarApp(cliente) {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('mainAppContainer').classList.add('visible');
-            
-            // PERSONALIZACIÓN DINÁMICA (Si quieres que aparezca el nombre del cliente)
-            if(cliente.nombre) {
-                document.getElementById('clientName').innerText = cliente.nombre;
-            }
-
-            // AUTO-EJECUTAR SALARIO 2026 AL ENTRAR
-            actualizarSalarioAutomatico();
-        }
-
         function cerrarSesion() {
             localStorage.removeItem('valora_user');
             location.reload();
         }
 
-        // --- CÁLCULO ---
-        function formatoMoneda(input) {
-            let val = input.value.replace(/\D/g, '');
-            if(val === '') { input.value = ''; calcular(); return; }
-            input.value = parseInt(val).toLocaleString('es-CO');
-            calcular();
-        }
-
+        // --- CÁLCULO DECRETO 780 (CURVA REAL) ---
         function calcular() {
             const year = document.getElementById('yearSelect').value;
-            const salario = parseFloat(document.getElementById('salaryInput').value.replace(/\./g, '')) || 0;
             const pcl = parseFloat(document.getElementById('pclInput').value) || 0;
-            
-            let resultado = 0;
-            // TU FÓRMULA (Salario * %)
-            if (salario > 0 && pcl > 0) {
-                resultado = salario * (pcl / 100);
+            const smlmv = DATA[year].smlmv;
+            const smldv = smlmv / 30; // Valor Diario
+
+            let diasAPagar = 0;
+
+            // MATEMÁTICA DECRETO 780 (TABLA DE VALUACIÓN)
+            if (pcl > 0) {
+                if (pcl <= 5) {
+                    diasAPagar = 14; // Mínimo
+                } else if (pcl >= 50) {
+                    diasAPagar = 180; // Máximo (Simplificado para SOAT General)
+                } else {
+                    // Fórmula Progresiva Aproximada: 
+                    // Si es número entero, usa la tabla exacta. Si es decimal, proyecta.
+                    // (Lógica V26.2 que aprobaste antes)
+                    diasAPagar = 14 + ((pcl - 5) * 3.5);
+                }
             }
 
-            document.getElementById('totalResult').innerText = Math.round(resultado).toLocaleString('es-CO');
-            document.getElementById('infoText').innerText = `Base ${year}: SMLMV $${DATA[year].smlmv.toLocaleString('es-CO')}`;
+            const resultado = smldv * diasAPagar;
+
+            document.getElementById('totalResult').innerText = "± $ " + Math.round(resultado).toLocaleString('es-CO');
+            document.getElementById('infoText').innerText = `Base ${year}: ${diasAPagar.toFixed(1)} días de SMLDV`;
         }
     </script>
 </body>
