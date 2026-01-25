@@ -15,15 +15,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* --- ESTILOS PREMIUM (V26.1) --- */
+/* --- TU DISEÑO ORIGINAL (PREMIUM AZUL) --- */
 :root {
     --bg-overlay-start: rgba(10, 25, 49, 0.95); 
     --bg-overlay-end: rgba(28, 66, 120, 0.95);
     --text-color: #ffffff;
     --input-bg: rgba(255, 255, 255, 0.08); 
     --input-border-color: rgba(255, 255, 255, 0.3);
-    --highlight-color: #4facfe; /* Azul Neón */
-    --gold: #D4AF37; /* Dorado de lujo */
+    --highlight-color: #4facfe;
+    --gold: #D4AF37;
     --error-color: #ff4b4b;
     --glass-effect: blur(12px);
 }
@@ -39,7 +39,7 @@ body {
     overflow-x: hidden;
 }
 
-/* --- PANTALLA DE CARGA --- */
+/* --- PANTALLA DE CARGA (CON FORENSICS) --- */
 #splash-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #081222; z-index: 99999;
@@ -53,16 +53,16 @@ body {
 
 @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-/* --- LOGIN SCREEN --- */
+/* --- PANTALLA DE LOGIN (AGREGADA PARA PROTECCIÓN) --- */
 #loginScreen {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: 5000; background: rgba(10, 25, 49, 0.98);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    padding: 30px;
-    backdrop-filter: blur(10px);
+    display: none; /* Se activa con JS */
+    flex-direction: column; justify-content: center; align-items: center;
+    padding: 30px; backdrop-filter: blur(10px);
 }
 
-/* --- APP UI --- */
+/* --- APP UI (TU DISEÑO) --- */
 .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center; filter: blur(3px); opacity: 0.6; }
 .gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%); }
 
@@ -74,22 +74,19 @@ h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 
 h2.company-name { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 1rem; letter-spacing: 3px; margin-top: 5px; color: var(--highlight-color); }
 .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #aaa; font-size: 0.9rem; margin-bottom: 5px; }
 
-/* INPUTS DE LUJO */
+/* INPUTS ESTILO CRISTAL */
 .input-group { position: relative; margin-bottom: 20px; background: var(--input-bg); border-radius: 12px; border: 1px solid var(--input-border-color); backdrop-filter: var(--glass-effect); transition: 0.3s; }
-.input-group:focus-within { border-color: var(--highlight-color); box-shadow: 0 0 15px rgba(79, 172, 254, 0.3); }
-
 .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; color: var(--highlight-color); font-size: 1.1rem; }
 .custom-field { width: 100%; background: transparent; border: none; padding: 18px 18px 18px 50px; color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif; }
 
-/* SELECTOR */
+/* SELECTOR SIN DOBLE FLECHA */
 select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointer; }
 select.custom-field option { background: #0a1931; color: white; }
 .select-arrow { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
 
 /* RESULTADO */
 .result-card {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--highlight-color);
+    background: rgba(0,0,0,0.3); border: 1px solid var(--highlight-color);
     border-radius: 15px; padding: 25px; margin-top: 30px;
     position: relative; overflow: hidden;
 }
@@ -118,13 +115,15 @@ a { color: var(--highlight-color); text-decoration: none; }
         </div>
     </div>
 
-    <div id="loginScreen" style="display:none;"> <h2 style="color:white; margin-bottom:30px;">ACCESO SEGURO</h2>
+    <div id="loginScreen">
+        <h2 style="color:white; margin-bottom:30px; letter-spacing: 2px;">ACCESO SEGURO</h2>
         <div class="input-group" style="width:100%; max-width:300px;">
             <i class="fa-solid fa-key input-icon"></i>
             <input type="text" id="licenseCode" class="custom-field" placeholder="CÓDIGO DE LICENCIA">
         </div>
         <button class="btn-primary" style="max-width:300px;" onclick="verificarLicencia()">VALIDAR</button>
-        <p id="loginMsg" style="color:var(--error-color); margin-top:15px; display:none;"></p>
+        <p id="loginMsg" style="color:var(--error-color); margin-top:15px; display:none; text-align:center;"></p>
+        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">SISTROVIAL.LEGAL</div>
     </div>
 
     <div class="background-layer"></div>
@@ -133,7 +132,7 @@ a { color: var(--highlight-color); text-decoration: none; }
     <div class="app-container" id="mainAppContainer">
         
         <div class="title-container">
-            <h1 class="top-label" style="font-size:0.8rem; letter-spacing:4px; opacity:0.7;">CALCULADORA</h1>
+            <h1 class="top-label" style="font-size:0.8rem; letter-spacing:4px; opacity:0.7; margin-bottom:5px;">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
             <div class="tagline" style="margin-top:10px;">App desarrollada para</div>
             <h2 class="company-name">SISTROVIAL.LEGAL</h2>
@@ -174,9 +173,9 @@ a { color: var(--highlight-color); text-decoration: none; }
     </div>
 
     <script>
-        // --- CONFIGURACIÓN DE VALORES ---
+        // --- TUS VALORES (FIJOS 2026) ---
         const VALORES = {
-            2026: { smlmv: 1750905, uvt: 52374 }, // TUS VALORES CONFIRMADOS
+            2026: { smlmv: 1750905, uvt: 52374 }, 
             2025: { smlmv: 1423500, uvt: 49799 },
             2024: { smlmv: 1300000, uvt: 47065 }
         };
@@ -188,7 +187,7 @@ a { color: var(--highlight-color); text-decoration: none; }
             const login = document.getElementById('loginScreen');
             const app = document.getElementById('mainAppContainer');
             
-            // Animación barra
+            // Barra de carga
             setTimeout(() => { bar.style.width = "60%"; }, 300);
             setTimeout(() => { bar.style.width = "100%"; }, 1000);
             
@@ -196,16 +195,19 @@ a { color: var(--highlight-color); text-decoration: none; }
                 splash.style.opacity = '0';
                 splash.style.visibility = 'hidden';
                 
-                // Si ya está logueado, pasa directo a la App
+                // Si ya está logueado en este celular, pasa directo
                 if(localStorage.getItem('valora_user')) {
                     app.classList.add('visible');
+                    // Ocultamos login por si acaso
+                    login.style.display = 'none';
                 } else {
-                    login.style.display = 'flex'; // Muestra Login
+                    // Si no, muestra el candado
+                    login.style.display = 'flex';
                 }
             }, 1500);
         };
 
-        // --- CONEXIÓN CON EXCEL (GITHUB) ---
+        // --- CONEXIÓN CON TU EXCEL ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
             const btn = document.querySelector('.btn-primary');
@@ -218,33 +220,33 @@ a { color: var(--highlight-color); text-decoration: none; }
             msg.style.display = 'none';
 
             try {
-                // Tu archivo JSON real
+                // Tu archivo de licencias en GitHub
                 const response = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await response.json();
 
                 if (data[codigo]) {
                     if (data[codigo].estado === 'activo') {
-                        // EXITO
+                        // LICENCIA OK
                         localStorage.setItem('valora_user', JSON.stringify(data[codigo]));
                         document.getElementById('loginScreen').style.display = 'none';
                         document.getElementById('mainAppContainer').classList.add('visible');
                     } else {
-                        msg.innerText = "⚠️ Licencia SUSPENDIDA";
+                        msg.innerText = "⚠️ Licencia SUSPENDIDA por Admin";
                         msg.style.display = 'block';
                     }
                 } else {
-                    msg.innerText = "❌ Código NO EXISTE";
+                    msg.innerText = "❌ Código NO EXISTE en la base de datos";
                     msg.style.display = 'block';
                 }
             } catch (e) {
-                msg.innerText = "⚠️ Error de conexión";
+                msg.innerText = "⚠️ Error de conexión (Revise Internet)";
                 msg.style.display = 'block';
             } finally {
                 btn.innerText = textoOriginal;
             }
         }
 
-        // --- LÓGICA DE CÁLCULO ---
+        // --- FORMATEO DE MONEDA ($ 1.000.000) ---
         function formatoMoneda(input) {
             let value = input.value.replace(/\D/g, '');
             if (value === '') { 
@@ -256,6 +258,7 @@ a { color: var(--highlight-color); text-decoration: none; }
             calcular();
         }
 
+        // --- CÁLCULO PCL ---
         function calcular() {
             const year = document.getElementById('yearSelect').value;
             const salarioStr = document.getElementById('salaryInput').value.replace(/\./g, '');
@@ -267,10 +270,11 @@ a { color: var(--highlight-color); text-decoration: none; }
             let resultado = 0;
 
             if (salario > 0 && pcl > 0) {
-                // AQUÍ REACTIVÉ TU CÁLCULO
-                // Ejemplo simple mientras pones la tabla exacta:
-                // (Salario * %Pérdida)
-                resultado = salario * (pcl / 100); 
+                // Aquí usamos la fórmula básica por ahora.
+                // (Si tienes la tabla exacta del decreto, la pegamos después, 
+                // pero esto ya hace que la calculadora "funcione" y de números lógicos)
+                const factor = pcl / 100; 
+                resultado = salario * factor; 
             }
 
             document.getElementById('totalResult').innerText = "$ " + Math.round(resultado).toLocaleString('es-CO');
