@@ -1,20 +1,345 @@
 {
   "VS-ADMIN": {
-    "nombre": "Ing. John Skinner (CEO)",
-    "estado": "activo",
-    "plan": "master",
-    "vencimiento": "2030-12-31",
-    "mensaje": "Bienvenido Creador."
-  },
-  "VS-001": {
-    "nombre": "Dr. Ángel Peralta",
+    "nombre": "Ing John A. Skinner",
     "estado": "activo",
     "plan": "pro",
-    "vencimiento": "2026-12-31"
+    "vence": "2026-12-31",
+    "mensaje": "\"Licencia Activa\""
   },
   "VS-TEST": {
-    "nombre": "Usuario Moroso S.A.S.",
+    "nombre": "Codigo corriendo",
     "estado": "suspendido",
-    "mensaje": "Su licencia anual ha vencido. Por favor contacte a Forensics Crash para renovar."
+    "plan": "pro",
+    "vence": "Demo ",
+    "mensaje": "\"Pago pendiente. El servicio ha sido suspendido temporalmente.\""
+  },
+  "VS-ZH732": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-VA543": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-OQ536": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-IJ446": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-ER955": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-FC585": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-IM250": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-BH524": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-JX471": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-AA895": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-YP483": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-XJ255": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-LO777": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-ZE336": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-GL352": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-JT524": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-KX869": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-OT292": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-HT470": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-ZO873": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-TN657": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-DO547": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-YC955": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-NP119": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-MC287": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-RO339": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-GG371": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-UE464": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-VU906": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-AQ910": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-SM106": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-AO719": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-ZR729": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-QH379": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-EC485": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-SK570": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-CG796": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-EV551": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-CB300": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-IH797": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-AE412": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-AF320": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-YM148": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-GG102": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-NT484": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-OB893": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
+  },
+  "VS-YP858": {
+    "nombre": "",
+    "estado": "",
+    "plan": "pro",
+    "vence": "2026-12-31",
+    "mensaje": ""
   }
 }
