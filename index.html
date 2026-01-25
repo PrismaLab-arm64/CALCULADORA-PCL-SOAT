@@ -5,40 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a1931">
     
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self'; 
-        script-src 'self' 'unsafe-inline'; 
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; 
-        font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; 
-        img-src 'self' data:; 
-        connect-src 'self' https://www.forensics-crash.com https://forensics-crash.com; 
-    ">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://www.forensics-crash.com https://forensics-crash.com;">
     
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="PCL SOAT">
-    <link rel="apple-touch-icon" href="icon..png">
+    <link rel="apple-touch-icon" href="icon.png"> <title>Calculadora PCL SOAT | SISTROVIAL.LEGAL</title>
     
-    <title>Calculadora PCL SOAT | SISTROVIAL.LEGAL</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- ESTILOS GENERALES (V26.1 - Marketing) --- */
+        /* --- ESTILOS OPTIMIZADOS --- */
         :root {
-            --bg-overlay-start: rgba(10, 25, 49, 0.92); 
-            --bg-overlay-end: rgba(28, 66, 120, 0.90);
+            --bg-dark: #0a1931;
             --text-color: #ffffff;
-            --input-bg: rgba(255, 255, 255, 0.08); 
-            --input-border-color: rgba(255, 255, 255, 0.3);
-            --highlight-color: #4facfe;
-            --error-color: #ff4b4b;
-            --success-color: #00e676; 
-            --warning-color: #ffbb00;
-            --whatsapp-color: #25D366;
-            --glass-effect: blur(12px);
+            --highlight: #4facfe;
+            --error: #ff4b4b;
+            --success: #00e676; 
+            --warning: #ffbb00;
+            --whatsapp: #25D366;
+            --glass: blur(12px);
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
@@ -46,126 +34,129 @@
         body {
             margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            min-height: 100dvh; 
-            padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
-            overflow-x: hidden; position: relative;
-            background-color: #0a1931; 
+            min-height: 100dvh; padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom) 20px;
+            overflow-x: hidden; background-color: var(--bg-dark);
         }
 
-        /* --- PANTALLA DE CARGA Y BLOQUEO --- */
+        /* SPLASH SCREEN */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #081222; z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.6s ease-out, visibility 0.6s;
-            padding: 20px; text-align: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s; padding: 20px; text-align: center;
         }
         #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        .splash-logo { width: 100px; height: 100px; margin-bottom: 30px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; }
-        .splash-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 5px; color: white; }
-        .splash-subtitle { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; color: #8899a6; margin-bottom: 40px; }
-
-        .loading-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; position: relative; overflow: hidden; margin: 0 auto; }
-        .loading-bar { position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: var(--highlight-color); border-radius: 2px; box-shadow: 0 0 10px var(--highlight-color); transition: width 0.3s ease, background-color 0.3s ease; }
-        
-        .loading-text { 
-            margin-top: 20px; font-size: 0.9rem; color: var(--highlight-color); 
-            letter-spacing: 0.5px; min-height: 1.2em; font-weight: 400;
-            transition: color 0.3s ease;
+        .splash-logo { 
+            width: 100px; height: 100px; margin-bottom: 30px; border-radius: 20px; 
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; 
+            object-fit: contain; /* Ayuda si la imagen no es cuadrada perfecta */
         }
+        .splash-title { font-weight: 900; font-size: 1.5rem; letter-spacing: 2px; color: white; margin-bottom: 5px;}
+        .splash-subtitle { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; margin-bottom: 40px; }
 
-        /* ESTADOS */
-        .splash-locked .loading-bar { background: var(--error-color); box-shadow: 0 0 15px var(--error-color); }
-        .splash-locked .loading-text { color: var(--error-color); font-weight: 700; font-size: 1rem; text-transform: uppercase; }
+        .loading-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; position: relative;}
+        .loading-bar { height: 100%; width: 0%; background: var(--highlight); transition: width 0.4s ease; box-shadow: 0 0 10px var(--highlight); }
+        .loading-text { margin-top: 20px; font-size: 0.9rem; color: var(--highlight); min-height: 1.2em; transition: color 0.3s ease; }
+
+        /* ESTADOS DE CARGA */
+        .splash-locked .loading-bar { background: var(--error); box-shadow: 0 0 15px var(--error); }
+        .splash-locked .loading-text { color: var(--error); font-weight: 700; text-transform: uppercase; }
         .splash-locked .splash-logo { animation: none; filter: grayscale(100%); }
 
-        .splash-success .loading-bar { background: var(--success-color); box-shadow: 0 0 15px var(--success-color); }
-        .splash-success .loading-text { color: var(--success-color); font-weight: 500; }
-
-        /* --- NOTIFICACIÓN SUTIL (TOAST) --- */
-        #subscription-toast {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: rgba(255, 187, 0, 0.15); border: 1px solid var(--warning-color);
-            color: var(--warning-color); padding: 12px 20px; border-radius: 30px;
-            font-size: 0.85rem; font-weight: 500; backdrop-filter: blur(10px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 10000;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex; align-items: center; gap: 10px; width: 90%; max-width: 350px;
+        /* FONDO Y APP */
+        .background-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
+            background: url('Diosa.png') center top/cover no-repeat; /* Shorthand CSS */
+            filter: blur(3px); transform: scale(1.02); 
         }
-        #subscription-toast.active { transform: translateX(-50%) translateY(0); }
-        #subscription-toast i { font-size: 1rem; }
+        .gradient-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+            background: linear-gradient(135deg, rgba(10, 25, 49, 0.92) 0%, rgba(28, 66, 120, 0.90) 100%); 
+        }
 
-        @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } 100% { transform: scale(1); } }
-
-        /* --- RESTO DE LA APP --- */
-        .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center top; background-repeat: no-repeat; filter: blur(3px); transform: scale(1.02); }
-        .gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%); }
-
-        .app-container { width: 100%; max-width: 400px; text-align: center; position: relative; max-height: 100dvh; overflow-y: auto; scrollbar-width: none; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; }
+        .app-container { 
+            width: 100%; max-width: 400px; text-align: center; 
+            opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; 
+            max-height: 100dvh; overflow-y: auto; scrollbar-width: none;
+        }
         .app-container.visible { opacity: 1; transform: translateY(0); }
-        .app-container::-webkit-scrollbar { display: none; }
 
-        .title-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; margin-top: 10px; }
-        h1.top-label { font-family: 'Roboto', sans-serif; font-weight: 300; letter-spacing: 4px; font-size: 0.9rem; margin: 0; text-transform: uppercase; opacity: 0.7; margin-bottom: 5px; }
-        h1.main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); margin: 0; line-height: 1.1; letter-spacing: 1px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 8px; }
-        h2.company-name { font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 1rem; opacity: 0.95; letter-spacing: 2px; text-transform: uppercase; margin: 0; margin-bottom: 4px; }
-        h3.tagline { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; font-weight: 400; color: #e0e0e0; margin: 0; margin-bottom: 10px; opacity: 0.8; }
-        .website-url { font-family: 'Roboto', sans-serif; font-weight: 300; font-size: 0.85rem; color: var(--highlight-color); opacity: 0.9; letter-spacing: 1px; text-decoration: none; padding-bottom: 2px; border-bottom: 1px solid transparent; transition: all 0.3s; }
+        /* TEXTOS */
+        .main-title { font-weight: 900; font-size: clamp(2.2rem, 8vw, 3rem); line-height: 1.1; margin: 8px 0; text-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .company-name { font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+        .website-url { font-weight: 300; font-size: 0.85rem; color: var(--highlight); text-decoration: none; }
         
-        .input-group { position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; overflow: hidden; background: var(--input-bg); backdrop-filter: var(--glass-effect); -webkit-backdrop-filter: var(--glass-effect); border: 1px solid var(--input-border-color); transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .input-group.error { border-color: var(--error-color); box-shadow: 0 0 15px rgba(255, 75, 75, 0.4); animation: shake 0.4s ease-in-out; }
+        /* INPUTS */
+        .input-group { 
+            position: relative; margin-bottom: 20px; text-align: left; border-radius: 12px; 
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: var(--glass); 
+            border: 1px solid rgba(255, 255, 255, 0.3); transition: 0.3s; 
+        }
         .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; font-size: 1.2rem; color: rgba(255,255,255,0.7); }
-        .custom-field { width: 100%; background: transparent; border: none; font-size: 16px; padding: 18px 15px 18px 50px; color: var(--text-color); font-family: 'Roboto', sans-serif; font-weight: 400; outline: none; border-radius: 0; }
-        select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointer; color: white; }
-        select.custom-field option { background-color: #0a1931; color: white; padding: 10px; }
-        .select-arrow { position: absolute; top: 50%; transform: translateY(-50%); right: 15px; pointer-events: none; font-size: 0.9rem; color: rgba(255,255,255,0.6); }
-        .readonly-field { color: var(--highlight-color); font-weight: 500; cursor: not-allowed; background: rgba(0, 0, 0, 0.2); }
-        .dynamic-label-container { height: 18px; margin-top: -18px; margin-bottom: 20px; text-align: right; padding-right: 10px; }
-        .dynamic-label { font-size: 0.8rem; color: var(--highlight-color); font-weight: 500; opacity: 0; transition: all 0.3s ease; display: block; transform: translateY(-5px); }
+        .custom-field { 
+            width: 100%; background: transparent; border: none; font-size: 16px; 
+            padding: 18px 15px 18px 50px; color: white; outline: none; font-family: inherit;
+        }
+        select.custom-field option { background-color: var(--bg-dark); }
+        
+        /* RESULTADOS Y BOTONES */
+        .dynamic-label { font-size: 0.8rem; color: var(--highlight); font-weight: 500; opacity: 0; transform: translateY(-5px); transition: 0.3s; display: block; text-align: right; margin-bottom: 15px; margin-top: -15px; padding-right: 10px;}
         .dynamic-label.visible { opacity: 1; transform: translateY(0); }
 
         .result-container { display: flex; gap: 10px; align-items: center; }
-        .btn-share { background: rgba(37, 211, 102, 0.15); border: 1px solid var(--whatsapp-color); color: var(--whatsapp-color); border-radius: 12px; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; cursor: pointer; transition: all 0.2s; backdrop-filter: var(--glass-effect); }
-        .btn-share:active { transform: scale(0.90); background: rgba(37, 211, 102, 0.3); }
-        .btn-tarifas { width: 100%; padding: 18px; margin-top: 15px; background: rgba(79, 172, 254, 0.15); border: 1px solid rgba(79, 172, 254, 0.6); color: var(--highlight-color); font-size: 1rem; font-weight: 700; letter-spacing: 1px; border-radius: 30px; cursor: pointer; text-transform: uppercase; touch-action: manipulation; transition: all 0.2s; }
-        .btn-tarifas:active { background: rgba(79, 172, 254, 0.3); transform: scale(0.98); }
-        .footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.6; letter-spacing: 1px; padding-bottom: 10px; }
+        .btn-share { 
+            background: rgba(37, 211, 102, 0.15); border: 1px solid var(--whatsapp); color: var(--whatsapp); 
+            border-radius: 12px; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; 
+            font-size: 1.5rem; cursor: pointer; backdrop-filter: var(--glass); transition: 0.2s;
+        }
+        .btn-tarifas { 
+            width: 100%; padding: 18px; margin-top: 15px; 
+            background: rgba(79, 172, 254, 0.15); border: 1px solid rgba(79, 172, 254, 0.6); 
+            color: var(--highlight); font-weight: 700; border-radius: 30px; text-transform: uppercase; 
+        }
 
         /* MODALES */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.85); z-index: 999; display: flex; justify-content: center; align-items: center; 
+            opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(8px); 
+        }
         .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-card { background: #101c36; border: 1px solid var(--highlight-color); width: 90%; max-width: 350px; padding: 25px 20px; border-radius: 15px; text-align: center; transform: scale(0.8); transition: transform 0.3s; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .modal-card { 
+            background: #101c36; border: 1px solid var(--highlight); width: 90%; max-width: 350px; 
+            padding: 25px 20px; border-radius: 15px; transform: scale(0.8); transition: 0.3s; 
+        }
         .modal-overlay.active .modal-card { transform: scale(1); }
-        .modal-title { font-size: 1.3rem; font-weight: 700; color: white; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .tarifa-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left; }
-        .tarifa-left { display: flex; flex-direction: column; }
-        .tarifa-label { font-size: 0.95rem; color: #ffffff; font-weight: 400; }
-        .tarifa-sub { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 2px; }
-        .tarifa-value { font-size: 1.1rem; color: var(--highlight-color); font-weight: 700; text-align: right; font-family: 'Roboto', sans-serif; }
-        .modal-divider { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0; }
-        .medical-header { text-align: left; color: #8899a6; font-size: 0.85rem; margin-bottom: 15px; }
-        .modal-btn { background: var(--highlight-color); color: #0a1931; border: none; padding: 14px 0; border-radius: 25px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.9rem; width: 100%; margin-top: 25px; box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3); }
+        .tarifa-row { display: flex; justify-content: space-between; margin-bottom: 15px; text-align: left; color: white;}
+        .tarifa-value { color: var(--highlight); font-weight: 700; }
         
-        @media (max-height: 700px) { .title-container { margin-bottom: 10px; } h1.main-title { font-size: 2.2rem; } .input-group { margin-bottom: 15px; } .btn-tarifas { padding: 15px; } }
+        /* TOAST */
+        #subscription-toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: rgba(255, 187, 0, 0.15); border: 1px solid var(--warning); color: var(--warning);
+            padding: 10px 20px; border-radius: 30px; font-size: 0.85rem; z-index: 10000; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #subscription-toast.active { transform: translateX(-50%) translateY(0); }
+
+        @keyframes pulseLogo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } }
     </style>
 </head>
 <body>
     
     <div id="splash-screen">
-        <img src="icon..png" alt="Forensics Crash" class="splash-logo">
+        <img src="icon.png" alt="Logo" class="splash-logo" onerror="this.style.display='none'"> 
         <div class="splash-title">VALORA SOAT</div>
-        <div class="splash-subtitle">Perdida de capacidad laboral</div>
+        <div class="splash-subtitle">Ingeniería Forense & Tasación</div>
         
         <div class="loading-container">
             <div class="loading-bar" id="loadBar"></div>
         </div>
-        <div class="loading-text" id="loadText">Conectando con base de datos...</div>
+        <div class="loading-text" id="loadText">Iniciando sistema...</div>
     </div>
 
     <div id="subscription-toast">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        <span id="toast-message">Suscripción activa.</span>
+        <i class="fa-solid fa-clock-rotate-left"></i> <span id="toast-message">Verificando licencia...</span>
     </div>
 
     <div class="background-layer"></div>
@@ -173,266 +164,229 @@
     
     <div class="app-container" id="mainAppContainer">
         <div class="title-container">
-            <h1 class="top-label">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
-            <h3 class="tagline">APP Desarrillada para</h3>
-            <h2 class="company-name">"SISTROVIAL.LEGAL"</h2>
+            <h2 class="company-name">SISTROVIAL.LEGAL</h2>
+            <h3 class="tagline" style="font-size: 0.8rem; margin-top:5px;">Calculadora de Pérdida de Capacidad Laboral</h3>
             <a href="https://www.sistrovial.legal" class="website-url">www.sistrovial.legal</a>
         </div>
 
         <form id="pclForm">
             <div class="input-group">
-                <i class="fa-solid fa-calendar-circle-user input-icon"></i>
+                <i class="fa-solid fa-calendar-days input-icon"></i>
                 <select id="anio" class="custom-field"></select>
-                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                <i class="fa-solid fa-chevron-down select-arrow" style="right: 15px; position: absolute; top:50%; transform:translateY(-50%); pointer-events:none;"></i>
             </div>
 
-            <div class="input-group" id="pclGroup">
+            <div class="input-group">
                 <i class="fa-solid fa-percent input-icon"></i>
-                <input type="text" id="porcentajePCL" class="custom-field" placeholder="Ingrese % PCL (0 - 100)" inputmode="decimal" pattern="[0-9]*">
+                <input type="text" id="porcentajePCL" class="custom-field" placeholder="% PCL (0 - 100)" inputmode="decimal">
             </div>
-            <div class="dynamic-label-container"><span id="labelEquivalencia" class="dynamic-label">0 SMDLV</span></div>
+            <span id="labelEquivalencia" class="dynamic-label">0 Días SMDLV</span>
 
             <div class="input-group">
                 <i class="fa-solid fa-coins input-icon"></i>
-                <input type="text" id="valorDia" class="custom-field readonly-field" readonly value="$ 0">
+                <input type="text" id="valorDia" class="custom-field" readonly value="$ 0" style="color:var(--highlight); font-weight:500;">
             </div>
 
             <div class="result-container">
-                <div class="input-group" style="border-color: var(--highlight-color); background: rgba(79, 172, 254, 0.12); flex-grow: 1; margin-bottom: 0;">
-                    <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight-color);"></i>
-                    <input type="text" id="resultadoPcl" class="custom-field readonly-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700; background: transparent;">
+                <div class="input-group" style="border-color: var(--highlight); background: rgba(79, 172, 254, 0.12); flex-grow: 1; margin-bottom: 0;">
+                    <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight);"></i>
+                    <input type="text" id="resultadoPcl" class="custom-field" readonly value="$ 0" style="font-size: 1.3rem; font-weight: 700;">
                 </div>
-                <button type="button" class="btn-share" id="btnShare" title="Compartir Dictamen Final">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </button>
+                <button type="button" class="btn-share" id="btnShare"><i class="fa-brands fa-whatsapp"></i></button>
             </div>
 
             <button type="button" class="btn-tarifas" id="btnTarifas">VER TARIFAS FIJAS</button>
         </form>
 
-        <div class="footer">© 2026 Ing John A. Skinner S. | V26.1 (Licensed)</div>
+        <div style="margin-top: 30px; font-size: 0.7rem; opacity: 0.5;">© 2026 Ing John A. Skinner S. | V26.2 (Optimized)</div>
     </div>
 
-    <div class="modal-overlay" id="errorModal">
-        <div class="modal-card" style="border-color: var(--error-color);">
-            <div style="font-size: 3rem; color: var(--error-color); margin-bottom: 10px;"><i class="fa-solid fa-circle-exclamation"></i></div>
-            <div class="modal-title" style="color: white; border: none; margin-bottom: 5px;">¡Atención!</div>
-            <div style="font-size: 0.9rem; color: #ddd; margin-bottom: 20px;">El PCL no puede ser mayor al 100%.</div>
-            <button class="modal-btn" style="background: var(--error-color); color: white;" onclick="cerrarModalError()">Entendido</button>
+    <div class="modal-overlay" id="errorModal" onclick="this.classList.remove('active')">
+        <div class="modal-card" style="border-color: var(--error);">
+            <div style="font-size: 3rem; color: var(--error); margin-bottom: 10px;"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="modal-title" style="color: white; margin-bottom: 5px; font-weight:700;">ERROR</div>
+            <div style="color: #ddd; margin-bottom: 20px;">El PCL no puede exceder el 100%.</div>
         </div>
     </div>
 
     <div class="modal-overlay" id="tarifasModal">
         <div class="modal-card">
-            <div class="modal-title">TARIFAS FIJAS <span id="yearLabel">2026</span></div>
-            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Muerte / Funeral</span><span class="tarifa-sub">750 SMLDV</span></div><div class="tarifa-value" id="valMuerte">$ 0</div></div>
-            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Transporte</span><span class="tarifa-sub">8.77 UVT (Ambulancia)</span></div><div class="tarifa-value" id="valTransporte">$ 0</div></div>
-            <hr class="modal-divider">
-            <div class="medical-header">Topes Gastos Médicos:</div>
-            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Motos &lt; 200cc</span><span class="tarifa-sub">300 SMLDV</span></div><div class="tarifa-value" id="valMedicoBajo">$ 0</div></div>
-            <div class="tarifa-row"><div class="tarifa-left"><span class="tarifa-label">Otros / &gt; 200cc</span><span class="tarifa-sub">800 SMLDV</span></div><div class="tarifa-value" id="valMedicoAlto">$ 0</div></div>
-            <button class="modal-btn" onclick="cerrarModalTarifas()">CERRAR</button>
+            <div class="modal-title" style="color:white; font-weight:700; margin-bottom:20px;">TARIFAS <span id="yearLabel">2026</span></div>
+            <div class="tarifa-row"><span>Muerte / Funeral</span><span class="tarifa-value" id="valMuerte">$ 0</span></div>
+            <div class="tarifa-row"><span>Transporte (8.77 UVT)</span><span class="tarifa-value" id="valTransporte">$ 0</span></div>
+            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+            <div style="text-align:left; color:#8899a6; font-size:0.8rem; margin-bottom:10px;">Gastos Médicos (Topes):</div>
+            <div class="tarifa-row"><span>Motos &lt; 200cc</span><span class="tarifa-value" id="valMedicoBajo">$ 0</span></div>
+            <div class="tarifa-row"><span>Otros / &gt; 200cc</span><span class="tarifa-value" id="valMedicoAlto">$ 0</span></div>
+            <button class="btn-tarifas" onclick="document.getElementById('tarifasModal').classList.remove('active')" style="margin-top:20px; padding:12px;">CERRAR</button>
         </div>
     </div>
     
     <script>
-        // ==========================================
-        //  SISTEMA INTELIGENTE V26.1 (MARKETING + ANTI-TRAUMA)
-        // ==========================================
-        const LICENSE_URL = "https://www.forensics-crash.com/licencia.json"; 
-
-        function launchApp() {
-            const splash = document.getElementById('splash-screen');
-            const mainApp = document.getElementById('mainAppContainer');
-            splash.classList.add('hidden');
-            mainApp.classList.add('visible');
-        }
-
-        async function verificarYArrancar() {
-            const bar = document.getElementById('loadBar');
-            const text = document.getElementById('loadText');
-            const splash = document.getElementById('splash-screen');
-            const toast = document.getElementById('subscription-toast');
-            const toastMsg = document.getElementById('toast-message');
-
-            bar.style.width = "30%";
-            
-            // ANTI-TRAUMA (3 Segundos)
-            const failsafeTimer = setTimeout(() => {
-                console.log("Anti-Trauma activado.");
-                launchApp();
-            }, 3000);
-
-            try {
-                setTimeout(() => { if(!splash.classList.contains('hidden')) { bar.style.width = "50%"; } }, 800);
-                
-                const response = await fetch(LICENSE_URL + '?t=' + new Date().getTime());
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    clearTimeout(failsafeTimer);
-
-                    // --- CÁLCULO DE FECHAS ---
-                    let diasRestantes = 999;
-                    if (data.vencimiento) {
-                        const hoy = new Date();
-                        const vence = new Date(data.vencimiento);
-                        const diferencia = vence - hoy;
-                        diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
-                    }
-
-                    // 1. BLOQUEO (ROJO)
-                    if (data.estado === 'suspendido' || diasRestantes < 0) {
-                        bar.style.width = "100%";
-                        text.innerText = data.mensaje || "ACCESO DENEGADO / LICENCIA VENCIDA";
-                        splash.classList.add('splash-locked');
-                        return;
-                    }
-
-                    // 2. ÉXITO (VERDE)
-                    bar.style.width = "100%";
-                    splash.classList.add('splash-success');
-                    text.innerText = `✅ Licencia Activa (${diasRestantes} días restantes)`;
-
-                    if (diasRestantes <= 30 || data.estado === 'aviso') {
-                        let mensaje = data.mensaje || `Renovación pendiente: Quedan ${diasRestantes} días.`;
-                        toastMsg.innerText = mensaje;
-                        setTimeout(() => { toast.classList.add('active'); }, 4000);
-                        setTimeout(() => { toast.classList.remove('active'); }, 12000);
-                    }
-
-                    setTimeout(() => { launchApp(); }, 1500);
-
-                } else {
-                    throw new Error("No response");
-                }
-            } catch (error) {
-                console.log("Modo Offline");
-                // Failsafe abrirá la app
+        // CONFIGURACIÓN CENTRALIZADA
+        const CONFIG = {
+            licenseUrl: "https://www.forensics-crash.com/licencia.json", // Tu endpoint futuro
+            minSplashTime: 2500, // Tiempo mínimo de marca (Anti-trauma)
+            dataHistorica: {
+                '2023': { smmlv: 1160000, uvt: 42412 },
+                '2024': { smmlv: 1300000, uvt: 47065 },
+                '2025': { smmlv: 1423500, uvt: 49799 },
+                '2026': { smmlv: 1750905, uvt: 53000 }
             }
-        }
-
-        // --- CONFIGURACIÓN BASE ---
-        const DATA_HISTORICA = {
-            '2023': { smmlv: 1160000, uvt: 42412 },
-            '2024': { smmlv: 1300000, uvt: 47065 },
-            '2025': { smmlv: 1423500, uvt: 49799 },
-            '2026': { smmlv: 1750905, uvt: 52374 },
         };
 
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); verificarYArrancar(); }); } 
-        else { window.addEventListener('load', verificarYArrancar); }
+        // --- GESTOR DE LICENCIAS (PREPARADO PARA FUTURO) ---
+        const LicenseManager = {
+            check: async () => {
+                // 1. Simular carga de red y tiempo mínimo visual simultáneamente
+                const minTimePromise = new Promise(resolve => setTimeout(resolve, CONFIG.minSplashTime));
+                
+                // 2. Intentar fetch (Aquí implementarás la lógica compleja más adelante)
+                // Estructura futura recomendada: { status: 'active', plan: 'pro', expires: '2026-12-31' }
+                const fetchPromise = fetch(CONFIG.licenseUrl + '?t=' + Date.now())
+                    .then(res => res.ok ? res.json() : Promise.reject())
+                    .catch(() => ({ estado: 'offline', mensaje: 'Modo sin conexión' })); // Fallback offline
 
-        const anioSelect = document.getElementById('anio'); 
-        const inputPCL = document.getElementById('porcentajePCL'); 
-        const errorModal = document.getElementById('errorModal');
-        const tarifasModal = document.getElementById('tarifasModal');
-        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+                // Esperar a que ambas terminen
+                const [_, data] = await Promise.all([minTimePromise, fetchPromise]);
+                
+                return data;
+            },
+            
+            saveLocal: (data) => {
+                // Aquí guardarás en localStorage para modo offline real
+                localStorage.setItem('pcl_license', JSON.stringify(data));
+            }
+        };
 
-        function inicializarAnios() {
-            try {
-                // --- AÑO FANTASMA (MARKETING) ---
-                let futureOption = document.createElement('option');
-                futureOption.text = "2027 🔒 (Adquirir licencia)";
-                futureOption.disabled = true; // Inactivo (Gris)
-                futureOption.style.color = "rgba(255, 255, 255, 0.5)"; // Semitransparente visual (si el navegador lo permite)
-                anioSelect.appendChild(futureOption);
+        // --- UI MANAGER ---
+        const UI = {
+            els: {
+                splash: document.getElementById('splash-screen'),
+                app: document.getElementById('mainAppContainer'),
+                bar: document.getElementById('loadBar'),
+                text: document.getElementById('loadText'),
+                toast: document.getElementById('subscription-toast'),
+                anio: document.getElementById('anio'),
+                pcl: document.getElementById('porcentajePCL'),
+                res: document.getElementById('resultadoPcl'),
+                label: document.getElementById('labelEquivalencia')
+            },
 
-                // --- AÑOS REALES ---
-                const anios = Object.keys(DATA_HISTORICA).sort((a, b) => b - a);
+            init: async () => {
+                UI.els.bar.style.width = "40%";
+                
+                // Cargar datos (Lógica simplificada)
+                const licenseData = await LicenseManager.check();
+                UI.els.bar.style.width = "100%";
+
+                // Validar bloqueo (Ejemplo de lógica futura)
+                if (licenseData.estado === 'suspendido') {
+                    UI.els.splash.classList.add('splash-locked');
+                    UI.els.text.innerText = licenseData.mensaje || "LICENCIA SUSPENDIDA";
+                    return; // Detener app
+                }
+
+                // Notificación Toast
+                if (licenseData.mensaje) {
+                    document.getElementById('toast-message').innerText = licenseData.mensaje;
+                    UI.els.toast.classList.add('active');
+                    setTimeout(() => UI.els.toast.classList.remove('active'), 5000);
+                }
+
+                // Iniciar App
+                setTimeout(() => {
+                    UI.els.splash.classList.add('hidden');
+                    UI.els.app.classList.add('visible');
+                }, 500);
+
+                Calculator.init();
+            }
+        };
+
+        // --- LÓGICA DE NEGOCIO (CALCULADORA) ---
+        const Calculator = {
+            formatter: new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }),
+            
+            init: () => {
+                // Llenar select años
+                const anios = Object.keys(CONFIG.dataHistorica).sort((a, b) => b - a);
                 anios.forEach(anio => {
-                    let option = document.createElement('option');
-                    option.value = anio;
-                    option.text = `Año Gravable ${anio}`;
-                    anioSelect.appendChild(option);
+                    let opt = new Option(`Año Gravable ${anio}`, anio);
+                    UI.els.anio.add(opt);
                 });
                 
-                // Selecciona el 2026 por defecto (el primero de la lista real)
-                if (anios.length > 0) anioSelect.value = anios[0];
+                // Listeners
+                UI.els.anio.addEventListener('change', Calculator.calc);
+                UI.els.pcl.addEventListener('input', (e) => {
+                    let val = e.target.value.replace(/[^0-9.]/g, ''); // Solo números y punto
+                    if (val > 100) { 
+                        document.getElementById('errorModal').classList.add('active'); 
+                        val = ""; 
+                    }
+                    e.target.value = val;
+                    Calculator.calc();
+                });
                 
-            } catch(e) {}
-        }
+                document.getElementById('btnTarifas').addEventListener('click', Calculator.showTarifas);
+                document.getElementById('btnShare').addEventListener('click', Calculator.share);
+            },
 
-        function getDatosAnio() { return DATA_HISTORICA[anioSelect.value]; }
+            calc: () => {
+                const data = CONFIG.dataHistorica[UI.els.anio.value];
+                const pcl = parseFloat(UI.els.pcl.value);
+                const valorDia = data.smmlv / 30;
 
-        function actualizarCalculos() {
-            const datos = getDatosAnio();
-            if (!datos) return;
-            let smmlv = datos.smmlv;
-            let valorDia = smmlv / 30;
-            document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
-            let pclRaw = inputPCL.value.replace(',', '.');
-            let pcl = parseFloat(pclRaw);
-            if (pcl > 100) { errorModal.classList.add('active'); return; }
-            if (!isNaN(pcl) && pcl > 0 && inputPCL.value !== "") {
-                let dias = 0;
-                if (pcl <= 5) dias = 14; 
-                else if (pcl > 50) dias = 180; 
-                else {
-                    let rangoSuperior = Math.ceil(pcl); 
-                    if (pcl % 1 === 0) rangoSuperior = pcl;
-                    dias = 14 + ((rangoSuperior - 5) * 3.5);
+                document.getElementById('valorDia').value = `${Calculator.formatter.format(valorDia)} / día`;
+
+                if (!pcl || pcl <= 0) {
+                    UI.els.res.value = "$ 0";
+                    UI.els.label.classList.remove('visible');
+                    return;
                 }
-                document.getElementById('labelEquivalencia').innerText = `Tabla: ${dias} días de salario`;
-                document.getElementById('labelEquivalencia').classList.add('visible');
-                document.getElementById('resultadoPcl').value = "± " + formatter.format(valorDia * dias);
-            } else {
-                document.getElementById('resultadoPcl').value = "$ 0";
-                document.getElementById('labelEquivalencia').classList.remove('visible');
+
+                // Lógica de días indemnizables (Decreto 780)
+                let dias = (pcl <= 5) ? 14 : (pcl > 50) ? 180 : 14 + ((Math.ceil(pcl) - 5) * 3.5);
+                
+                // Ajuste fino para números enteros exactos según tu lógica original
+                if (pcl > 5 && pcl <= 50 && pcl % 1 === 0) {
+                    dias = 14 + ((pcl - 5) * 3.5);
+                }
+
+                UI.els.label.innerText = `Tabla: ${dias} días salario`;
+                UI.els.label.classList.add('visible');
+                UI.els.res.value = "± " + Calculator.formatter.format(valorDia * dias);
+            },
+
+            showTarifas: () => {
+                const data = CONFIG.dataHistorica[UI.els.anio.value];
+                const dia = data.smmlv / 30;
+                
+                document.getElementById('yearLabel').innerText = UI.els.anio.value;
+                document.getElementById('valMuerte').innerText = Calculator.formatter.format(dia * 750);
+                document.getElementById('valTransporte').innerText = Calculator.formatter.format(data.uvt * 8.77);
+                document.getElementById('valMedicoBajo').innerText = Calculator.formatter.format(dia * 300);
+                document.getElementById('valMedicoAlto').innerText = Calculator.formatter.format(dia * 800);
+                
+                document.getElementById('tarifasModal').classList.add('active');
+            },
+
+            share: () => {
+                const pcl = UI.els.pcl.value;
+                if(!pcl) return alert("Ingrese un valor primero");
+                
+                const total = UI.els.res.value;
+                const texto = `*LIQUIDACIÓN PCL SOAT ${UI.els.anio.value}*\nPCL: ${pcl}%\nEstimado: ${total}\n\nGenerado por SISTROVIAL.LEGAL`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
             }
-        }
+        };
 
-        function abrirTarifas() {
-            const datos = getDatosAnio();
-            if(!datos) return;
-            let smmlv = datos.smmlv;
-            let uvt = datos.uvt;
-            let valorDia = smmlv / 30;
-            let muerte = valorDia * 750;
-            let transporte = uvt * 8.77;
-            let medicoBajo = valorDia * 300; 
-            let medicoAlto = valorDia * 800; 
-            document.getElementById('yearLabel').innerText = anioSelect.value;
-            document.getElementById('valMuerte').innerText = "± " + formatter.format(muerte);
-            document.getElementById('valTransporte').innerText = "± " + formatter.format(transporte);
-            document.getElementById('valMedicoBajo').innerText = "± " + formatter.format(medicoBajo);
-            document.getElementById('valMedicoAlto').innerText = "± " + formatter.format(medicoAlto);
-            tarifasModal.classList.add('active');
-        }
+        // ARRANCAR
+        // Comentado para evitar errores si no existe sw.js aún
+        // if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+        window.addEventListener('load', UI.init);
 
-        function compartirResultado() {
-            let pcl = inputPCL.value;
-            let resultadoClean = document.getElementById('resultadoPcl').value.replace("± ", "").trim();
-            let anio = anioSelect.value;
-            let diasTexto = document.getElementById('labelEquivalencia').innerText.replace("Tabla: ", "");
-            if (resultadoClean === "$ 0" || pcl === "") { alert("Ingrese un porcentaje."); return; }
-            
-            let texto = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            texto += `*DICTAMEN PRELIMINAR:*\nAccording to PCL: ${pcl}%\n\n`; 
-            
-            let textoWA = `*LIQUIDACIÓN TÉCNICA DE INDEMNIZACIÓN (SOAT ${anio})*\n\n`;
-            textoWA += `*DICTAMEN PRELIMINAR:*\nSegún calificación de pérdida de capacidad laboral (PCL): ${pcl}%\n\n`;
-            textoWA += `*CONVERSIÓN NORMATIVA:*\nCorresponde a ${diasTexto} SMLDV (Días de Salario Mínimo Legal Diario Vigente).\n\n`;
-            textoWA += `*VALOR ESTIMADO A PAGAR:*\n*± ${resultadoClean} COP*\n\n`;
-            textoWA += `*FUNDAMENTO JURÍDICO:*\nCálculo realizado conforme a la Tabla de Indemnizaciones del Decreto 780 de 2016 (Art. 2.6.1.4.2.3) y valores oficiales ${anio}.\n\n`;
-            textoWA += `*¿DESEA ASEGURAR Y MATERIALIZAR ESTE PAGO?*\nNo arriesgue su indemnización. Contrate su defensa técnica hoy mismo y garantice el cobro efectivo sin trámites complejos.\n\n`;
-            textoWA += `*LÍNEAS DE ATENCIÓN:*\n315 314 5848\n310 330 3814\n314 294 8943\n\no Ingresa a: www.sistrovial.legal`;
-            
-            let url = `https://wa.me/?text=${encodeURIComponent(textoWA)}`;
-            window.open(url, '_blank');
-        }
-
-        inicializarAnios();
-        
-        function cerrarModalError() { errorModal.classList.remove('active'); inputPCL.value = ""; actualizarCalculos(); }
-        function cerrarModalTarifas() { tarifasModal.classList.remove('active'); }
-        anioSelect.addEventListener('change', actualizarCalculos);
-        document.getElementById('btnTarifas').addEventListener('click', abrirTarifas);
-        document.getElementById('btnShare').addEventListener('click', compartirResultado);
-        inputPCL.addEventListener('input', (e) => { let val = e.target.value.replace(/[^0-9.,]/g, ''); e.target.value = val; if(parseFloat(val) > 100) { errorModal.classList.add('active'); } else { actualizarCalculos(); } });
-        tarifasModal.addEventListener('click', (e) => { if (e.target === tarifasModal) cerrarModalTarifas(); });
-        errorModal.addEventListener('click', (e) => { if (e.target === errorModal) cerrarModalError(); });
     </script>
 </body>
 </html>
