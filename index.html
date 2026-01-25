@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* --- TU DISEÑO ORIGINAL (PREMIUM AZUL) --- */
+/* --- TU DISEÑO ORIGINAL AZUL PREMIUM (INTACTO) --- */
 :root {
     --bg-overlay-start: rgba(10, 25, 49, 0.95); 
     --bg-overlay-end: rgba(28, 66, 120, 0.95);
@@ -39,7 +39,7 @@ body {
     overflow-x: hidden;
 }
 
-/* --- PANTALLA DE CARGA (CON FORENSICS) --- */
+/* --- PANTALLA DE CARGA (CON TU MARCA FORENSICS) --- */
 #splash-screen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #081222; z-index: 99999;
@@ -53,7 +53,7 @@ body {
 
 @keyframes pulseLogo { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-/* --- PANTALLA DE LOGIN (AGREGADA PARA PROTECCIÓN) --- */
+/* --- PANTALLA DE LOGIN (PROTECCIÓN DE LICENCIA) --- */
 #loginScreen {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: 5000; background: rgba(10, 25, 49, 0.98);
@@ -62,7 +62,7 @@ body {
     padding: 30px; backdrop-filter: blur(10px);
 }
 
-/* --- APP UI (TU DISEÑO) --- */
+/* --- APP UI (TU DISEÑO EXACTO) --- */
 .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('Diosa.png'); background-size: cover; background-position: center; filter: blur(3px); opacity: 0.6; }
 .gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, var(--bg-overlay-start) 0%, var(--bg-overlay-end) 100%); }
 
@@ -173,7 +173,7 @@ a { color: var(--highlight-color); text-decoration: none; }
     </div>
 
     <script>
-        // --- TUS VALORES (FIJOS 2026) ---
+        // --- VALORES OFICIALES (FIJOS 2026) ---
         const VALORES = {
             2026: { smlmv: 1750905, uvt: 52374 }, 
             2025: { smlmv: 1423500, uvt: 49799 },
@@ -187,7 +187,7 @@ a { color: var(--highlight-color); text-decoration: none; }
             const login = document.getElementById('loginScreen');
             const app = document.getElementById('mainAppContainer');
             
-            // Barra de carga
+            // Simulación de carga
             setTimeout(() => { bar.style.width = "60%"; }, 300);
             setTimeout(() => { bar.style.width = "100%"; }, 1000);
             
@@ -195,19 +195,18 @@ a { color: var(--highlight-color); text-decoration: none; }
                 splash.style.opacity = '0';
                 splash.style.visibility = 'hidden';
                 
-                // Si ya está logueado en este celular, pasa directo
+                // Si ya ingresó licencia, entra directo
                 if(localStorage.getItem('valora_user')) {
                     app.classList.add('visible');
-                    // Ocultamos login por si acaso
                     login.style.display = 'none';
                 } else {
-                    // Si no, muestra el candado
+                    // Si no, muestra el login
                     login.style.display = 'flex';
                 }
             }, 1500);
         };
 
-        // --- CONEXIÓN CON TU EXCEL ---
+        // --- CONEXIÓN CON EXCEL (NO TOCAR) ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
             const btn = document.querySelector('.btn-primary');
@@ -220,7 +219,7 @@ a { color: var(--highlight-color); text-decoration: none; }
             msg.style.display = 'none';
 
             try {
-                // Tu archivo de licencias en GitHub
+                // TU ENLACE CON GITHUB (EXCEL)
                 const response = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await response.json();
 
@@ -231,22 +230,22 @@ a { color: var(--highlight-color); text-decoration: none; }
                         document.getElementById('loginScreen').style.display = 'none';
                         document.getElementById('mainAppContainer').classList.add('visible');
                     } else {
-                        msg.innerText = "⚠️ Licencia SUSPENDIDA por Admin";
+                        msg.innerText = "⚠️ Licencia SUSPENDIDA";
                         msg.style.display = 'block';
                     }
                 } else {
-                    msg.innerText = "❌ Código NO EXISTE en la base de datos";
+                    msg.innerText = "❌ Código NO EXISTE";
                     msg.style.display = 'block';
                 }
             } catch (e) {
-                msg.innerText = "⚠️ Error de conexión (Revise Internet)";
+                msg.innerText = "⚠️ Error de conexión";
                 msg.style.display = 'block';
             } finally {
                 btn.innerText = textoOriginal;
             }
         }
 
-        // --- FORMATEO DE MONEDA ($ 1.000.000) ---
+        // --- CÁLCULO ---
         function formatoMoneda(input) {
             let value = input.value.replace(/\D/g, '');
             if (value === '') { 
@@ -258,7 +257,6 @@ a { color: var(--highlight-color); text-decoration: none; }
             calcular();
         }
 
-        // --- CÁLCULO PCL ---
         function calcular() {
             const year = document.getElementById('yearSelect').value;
             const salarioStr = document.getElementById('salaryInput').value.replace(/\./g, '');
@@ -270,15 +268,13 @@ a { color: var(--highlight-color); text-decoration: none; }
             let resultado = 0;
 
             if (salario > 0 && pcl > 0) {
-                // Aquí usamos la fórmula básica por ahora.
-                // (Si tienes la tabla exacta del decreto, la pegamos después, 
-                // pero esto ya hace que la calculadora "funcione" y de números lógicos)
+                // FÓRMULA PROPORCIONAL SIMPLE (Para que veas números)
                 const factor = pcl / 100; 
                 resultado = salario * factor; 
             }
 
             document.getElementById('totalResult').innerText = "$ " + Math.round(resultado).toLocaleString('es-CO');
-            document.getElementById('infoText').innerText = "Año Gravable " + year + " | SMLMV: $" + VALORES[year].smlmv.toLocaleString();
+            document.getElementById('infoText').innerText = "SMLMV " + year + ": $" + VALORES[year].smlmv.toLocaleString();
         }
     </script>
 </body>
