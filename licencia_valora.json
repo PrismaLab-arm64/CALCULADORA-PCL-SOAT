@@ -1,0 +1,7 @@
+{
+  "estado": "activo",
+  "plan": "pro",
+  "vencimiento": "2026-12-31",
+  "cliente": "Dr. Carlos Pérez",
+  "mensaje": "Bienvenido, Doctor. Su licencia PRO está activa."
+}
