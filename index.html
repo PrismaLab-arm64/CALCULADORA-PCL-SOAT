@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0a1931">
     
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://www.forensics-crash.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://PrismaLab-arm64.github.io; img-src 'self' data:; connect-src 'self' https://PrismaLab-arm64.github.io;">
 
     <title>Calculadora PCL SOAT | SISTROVIAL</title>
 
@@ -17,12 +17,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- ESTILOS V26.2 OPTIMIZADOS --- */
+        /* --- ESTILOS V26.2 --- */
         :root {
             --bg-dark: #0a1931;
             --highlight: #4facfe;
             --error: #ff4b4b;
-            --success: #00e676; 
             --warning: #ffbb00;
             --whatsapp: #25D366;
             --glass: blur(12px);
@@ -50,8 +49,15 @@
         .loading-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 20px; }
         .loading-bar { height: 100%; width: 0%; background: var(--highlight); transition: width 0.4s ease; box-shadow: 0 0 10px var(--highlight); }
         .loading-text { margin-top: 15px; font-size: 0.8rem; color: var(--highlight); opacity: 0.8; }
-
         @keyframes pulseLogo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } }
+
+        /* --- LOGIN REAL (AGREGADO) --- */
+        #loginScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 18, 34, 0.98); z-index: 50000;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            padding: 30px; backdrop-filter: blur(15px);
+        }
 
         /* --- FONDOS --- */
         .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: url('Diosa.png') center top/cover no-repeat; filter: blur(3px); transform: scale(1.02); }
@@ -101,11 +107,10 @@
         
         .tarifa-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
         .tarifa-val { color: var(--highlight); font-weight: bold; }
-        
-        /* TOAST */
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: rgba(255, 187, 0, 0.2); border: 1px solid var(--warning); color: var(--warning); padding: 10px 20px; border-radius: 30px; font-size: 0.85rem; transition: 0.5s; z-index: 10000; display: flex; gap: 10px; align-items: center; backdrop-filter: blur(10px); }
-        #toast.active { transform: translateX(-50%) translateY(0); }
 
+        /* BOTÓN LOGIN */
+        .btn-login { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 10px; color: #000; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+        
     </style>
 </head>
 <body>
@@ -118,7 +123,16 @@
         <div class="loading-text" id="loadText">Iniciando sistema seguro...</div>
     </div>
 
-    <div id="toast"><i class="fa-solid fa-shield-halved"></i> <span id="toastMsg">Verificando licencia...</span></div>
+    <div id="loginScreen">
+        <h2 style="color:white; margin-bottom:20px; letter-spacing:1px;">ACCESO SEGURO</h2>
+        <div class="input-group" style="width:100%; max-width:300px;">
+            <i class="fa-solid fa-key input-icon"></i>
+            <input type="text" id="licenseCode" class="custom-field" placeholder="CÓDIGO DE LICENCIA">
+        </div>
+        <button class="btn-login" style="max-width:300px;" onclick="verificarLicencia()">VALIDAR</button>
+        <p id="msg" style="color:#ff5555; margin-top:10px; font-size:0.9rem; display:none;"></p>
+        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">Protección GitHub v1.2</div>
+    </div>
 
     <div class="background-layer"></div>
     <div class="gradient-overlay"></div>
@@ -161,7 +175,7 @@
         <button class="btn-tarifas" onclick="verTarifas()">VER TARIFAS FIJAS</button>
 
         <div style="margin-top: 30px; font-size: 0.7rem; opacity: 0.5;">
-            © 2026 Ing John A. Skinner S. | V26.2 (Optimized)
+            © 2026 Ing John A. Skinner S. | V26.2 (Secure)
         </div>
     </div>
 
@@ -195,7 +209,7 @@
                 '2023': { smmlv: 1160000, uvt: 42412 },
                 '2024': { smmlv: 1300000, uvt: 47065 },
                 '2025': { smmlv: 1423500, uvt: 49799 },
-                '2026': { smmlv: 1750905, uvt: 52374 } // Tu dato actualizado
+                '2026': { smmlv: 1750905, uvt: 52374 }
             }
         };
 
@@ -214,33 +228,54 @@
                 select.appendChild(opt);
             });
 
-            // Animación de Carga (Simulada para UX)
+            // Animación de Carga
             const bar = document.getElementById('loadBar');
-            setTimeout(() => { bar.style.width = "50%"; }, 500);
-            
-            // Simulación de "Check License" (Siempre activo por ahora)
-            setTimeout(() => {
-                bar.style.width = "100%";
-                document.getElementById('loadText').innerText = "Licencia Verificada";
-                
-                // Mostrar Toast
-                const toast = document.getElementById('toast');
-                document.getElementById('toastMsg').innerText = "Suscripción Activa";
-                toast.classList.add('active');
-                setTimeout(() => toast.classList.remove('active'), 4000);
+            setTimeout(() => { bar.style.width = "60%"; }, 500);
 
-                // Abrir App
+            // VERIFICAR SESIÓN PREVIA
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => {
-                    document.getElementById('splash-screen').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('splash-screen').style.display = 'none';
+                    
+                    if(localStorage.getItem('valora_user')) {
                         document.getElementById('mainAppContainer').classList.add('visible');
-                    }, 500);
-                }, 800);
-            }, 2000);
+                    } else {
+                        document.getElementById('loginScreen').style.display = 'flex';
+                    }
+                }, 500);
+            }, 1500);
         };
 
-        // --- LÓGICA DE CÁLCULO ---
+        // --- CONEXIÓN GITHUB (CANDADO REAL) ---
+        async function verificarLicencia() {
+            const codigo = document.getElementById('licenseCode').value.trim();
+            const btn = document.querySelector('.btn-login');
+            const msg = document.getElementById('msg');
+            
+            if(!codigo) return;
+            btn.innerText = "VERIFICANDO..."; msg.style.display = 'none';
+
+            try {
+                // AQUÍ ESTÁ LA CONEXIÓN CON TU EXCEL
+                const res = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
+                const data = await res.json();
+                
+                if(data[codigo] && data[codigo].estado === 'activo') {
+                    localStorage.setItem('valora_user', JSON.stringify(data[codigo]));
+                    document.getElementById('loginScreen').style.display = 'none';
+                    document.getElementById('mainAppContainer').classList.add('visible');
+                } else {
+                    msg.innerText = "❌ Licencia no válida o suspendida"; msg.style.display = 'block';
+                }
+            } catch(e) {
+                msg.innerText = "⚠️ Error de conexión"; msg.style.display = 'block';
+            } finally {
+                btn.innerText = "VALIDAR";
+            }
+        }
+
+        // --- LÓGICA DE CÁLCULO V26.2 ---
         const inputs = ['anio', 'pclInput'];
         inputs.forEach(id => document.getElementById(id).addEventListener(id === 'anio' ? 'change' : 'input', calcular));
 
@@ -249,7 +284,6 @@
             let pcl = parseFloat(document.getElementById('pclInput').value);
             const data = CONFIG.data[anio];
 
-            // Validaciones
             if (pcl > 100) {
                 document.getElementById('modalError').classList.add('active');
                 document.getElementById('pclInput').value = "";
