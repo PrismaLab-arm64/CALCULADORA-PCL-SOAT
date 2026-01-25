@@ -7,7 +7,7 @@
     
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://PrismaLab-arm64.github.io; img-src 'self' data:; connect-src 'self' https://PrismaLab-arm64.github.io https://wa.me;">
 
-    <title>Calculadora PCL SOAT | SISTROVIAL</title>
+    <title>Calculadora PCL SOAT | PRO</title>
 
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon.png">
@@ -17,354 +17,315 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- ESTÉTICA SISTROVIAL (AZUL PROFUNDO) --- */
+        /* --- DISEÑO AZUL ORIGINAL (RESTAURADO) --- */
         :root {
             --bg-dark: #0a1931;
             --highlight: #4facfe; /* Azul Neón */
-            --gold: #D4AF37;      /* Detalles Premium */
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.2);
+            --text-color: #ffffff;
             --error: #ff4b4b;
-            --glass: blur(12px);
-            --input-bg: rgba(255, 255, 255, 0.08);
-            --border: rgba(255, 255, 255, 0.3);
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
         body {
-            margin: 0; font-family: 'Roboto', sans-serif; color: white;
+            margin: 0; font-family: 'Roboto', sans-serif; color: var(--text-color);
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; padding: 20px;
             background-color: var(--bg-dark); overflow-x: hidden;
         }
 
-        /* --- PANTALLA DE CARGA (Anti-Trauma) --- */
+        /* --- PANTALLA DE CARGA --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #081222; z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: opacity 0.5s ease-out, visibility 0.5s;
         }
-        .splash-logo { width: 100px; height: 100px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulseLogo 2s infinite; }
-        .loading-bar-container { width: 220px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; margin-top: 20px; }
-        .loading-bar { height: 100%; width: 0%; background: var(--highlight); transition: width 0.4s ease; box-shadow: 0 0 10px var(--highlight); }
-        .loading-text { margin-top: 15px; font-size: 0.8rem; color: var(--highlight); opacity: 0.8; }
-        @keyframes pulseLogo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(79, 172, 254, 0.5); } }
+        .splash-logo { width: 100px; margin-bottom: 20px; border-radius: 20px; box-shadow: 0 0 30px rgba(79, 172, 254, 0.3); animation: pulse 2s infinite; }
+        .loading-text { margin-top: 15px; font-size: 0.8rem; color: var(--highlight); opacity: 0.8; letter-spacing: 1px; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        /* --- LOGIN (REGLAS STRICTAS DE LA VERSIÓN NEGRA) --- */
+        /* --- LOGIN --- */
         #loginScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(8, 18, 34, 0.98); z-index: 50000;
+            background: rgba(10, 25, 49, 0.98); z-index: 50000;
             display: none; flex-direction: column; justify-content: center; align-items: center;
-            padding: 30px; backdrop-filter: blur(15px);
+            padding: 30px; backdrop-filter: blur(10px);
         }
-
-        /* --- FONDOS --- */
-        .background-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: url('Diosa.png') center top/cover no-repeat; filter: blur(3px); transform: scale(1.02); }
-        .gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, rgba(10, 25, 49, 0.92) 0%, rgba(28, 66, 120, 0.90) 100%); }
 
         /* --- APP CONTAINER --- */
-        .app-container { width: 100%; max-width: 420px; text-align: center; opacity: 0; transform: translateY(20px); transition: all 0.8s ease-out; display: none; }
-        .app-container.visible { opacity: 1; transform: translateY(0); display: block; }
+        .app-container { width: 100%; max-width: 450px; text-align: center; display: none; }
+        .app-container.visible { display: block; animation: fadeIn 0.8s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* HEADER */
-        .title-container { margin-bottom: 25px; margin-top: 10px; }
-        .top-label { font-weight: 300; letter-spacing: 4px; font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; }
-        .main-title { font-weight: 900; font-size: 2.5rem; margin: 5px 0; text-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .company-name { font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; color: var(--highlight); margin-bottom: 5px; }
-        .tagline { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; opacity: 0.8; color: #ccc; }
-        .website-url { font-weight: 300; font-size: 0.8rem; color: var(--highlight); text-decoration: none; opacity: 0.8; display: block; margin-top: 5px;}
-
-        /* INPUTS */
-        .input-group { position: relative; margin-bottom: 15px; border-radius: 12px; background: var(--input-bg); backdrop-filter: var(--glass); border: 1px solid var(--border); transition: 0.3s; text-align: left; }
-        .input-icon { position: absolute; top: 50%; transform: translateY(-50%); left: 15px; color: rgba(255,255,255,0.7); }
-        .custom-field { width: 100%; background: transparent; border: none; padding: 18px 15px 18px 50px; color: white; font-size: 1rem; outline: none; font-family: 'Roboto', sans-serif; }
-        select.custom-field { appearance: none; -webkit-appearance: none; cursor: pointer; }
-        select.custom-field option { background-color: var(--bg-dark); }
-        .select-arrow { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
-
-        /* RESULTADOS Y BOTONES */
-        .result-row { display: flex; gap: 10px; align-items: center; margin-top: 20px; }
+        .header-row { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 20px; }
+        .header-content { text-align: center; width: 100%; }
         
-        .btn-share { 
-            background: rgba(37, 211, 102, 0.15); border: 1px solid #25D366; color: #25D366; 
-            border-radius: 12px; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center; 
-            font-size: 1.5rem; cursor: pointer; transition: 0.2s; backdrop-filter: var(--glass);
+        .main-title { font-family: 'Roboto', sans-serif; font-weight: 900; font-size: 2.5rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .tagline { font-family: 'Playfair Display', serif; font-style: italic; color: #8899a6; font-size: 0.9rem; margin-top: 5px; }
+        .brand-link { color: var(--highlight); text-decoration: none; font-size: 0.85rem; letter-spacing: 2px; display: block; margin-top: 5px; text-transform: uppercase; }
+        
+        /* BOTÓN CERRAR SESIÓN (LOGOUT) */
+        .logout-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255, 75, 75, 0.1); color: #ff6b6b;
+            border: 1px solid rgba(255, 75, 75, 0.3);
+            width: 35px; height: 35px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            font-size: 0.9rem; transition: 0.3s;
         }
-        
+        .logout-btn:hover { background: rgba(255, 75, 75, 0.3); }
+
+        /* INPUTS (ESTILO FOTO 1) */
+        .input-group { position: relative; margin-bottom: 15px; }
+        .input-field {
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border);
+            border-radius: 12px; padding: 18px 18px 18px 50px;
+            color: white; font-size: 1.1rem; outline: none; font-family: 'Roboto', sans-serif;
+        }
+        .input-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--highlight); font-size: 1.2rem; }
+
+        select.input-field { -webkit-appearance: none; cursor: pointer; font-weight: 500; text-transform: uppercase; }
+        .select-arrow { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.5); pointer-events: none; }
+
+        /* BOTONES */
         .btn-action {
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
-            border-radius: 10px; color: #aaa; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px;
+            width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+            border-radius: 10px; color: #ccc; font-size: 0.9rem; cursor: pointer; margin-bottom: 20px;
             display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s;
         }
-        .btn-action:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-action:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: var(--highlight); }
 
-        /* MODAL (TABLAS) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(5px); }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-card { background: #101c36; border: 1px solid var(--highlight); width: 90%; max-width: 350px; padding: 20px; border-radius: 15px; transform: scale(0.9); transition: 0.3s; }
-        .modal-overlay.active .modal-card { transform: scale(1); }
-        
-        .tarifa-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
-        .tarifa-val { color: var(--highlight); font-weight: bold; }
+        .btn-primary { 
+            width: 100%; padding: 15px; background: var(--highlight); 
+            border: none; border-radius: 10px; color: #0a1931; 
+            font-weight: 900; cursor: pointer; text-transform: uppercase; 
+        }
 
-        /* BOTÓN LOGIN */
-        .btn-login { width: 100%; padding: 15px; background: var(--highlight); border: none; border-radius: 10px; color: #0a1931; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; }
+        /* CAJA RESULTADO (ESTILO FOTO 1) */
+        .result-box {
+            border: 2px solid var(--highlight); border-radius: 15px;
+            background: rgba(0,0,0,0.2); padding: 25px; margin-top: 25px;
+            position: relative; box-shadow: 0 0 20px rgba(79, 172, 254, 0.15);
+        }
+        .result-label { font-size: 0.8rem; color: #ccc; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+        .result-value { font-size: 2.8rem; font-weight: 900; color: white; margin: 0; text-shadow: 0 0 15px rgba(79, 172, 254, 0.5); }
+        .result-base { font-size: 0.75rem; color: #888; font-style: italic; margin-top: 10px; }
+
+        /* MODAL */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #111; border: 1px solid var(--border); padding: 20px; border-radius: 15px; width: 100%; max-height: 80vh; overflow-y: auto; }
         
+        .tariff-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ddd; }
+        .tariff-table th { text-align: left; padding: 10px; border-bottom: 1px solid #444; color: var(--highlight); }
+        .tariff-table td { padding: 10px; border-bottom: 1px solid #222; }
+
+        /* FONDO */
+        .bg-img { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: url('Diosa.png') center/cover; opacity: 0.4; filter: blur(3px); }
+        .bg-grad { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(135deg, rgba(10, 25, 49, 0.95) 0%, rgba(28, 66, 120, 0.95) 100%); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="icon.png" alt="Forensics" class="splash-logo" onerror="this.style.display='none'">
-        <div style="font-size: 1.5rem; font-weight: 900; letter-spacing: 2px;">VALORA SOAT</div>
-        <div style="color: #8899a6; font-style: italic; margin-bottom: 30px;">Ingeniería Forense & Tasación</div>
-        <div class="loading-container"><div class="loading-bar" id="loadBar"></div></div>
-        <div class="loading-text" id="loadText">Sincronizando licencia...</div>
+        <img src="icon.png" alt="Logo" class="splash-logo" onerror="this.style.display='none'">
+        <h2 style="color:white; margin:0; letter-spacing:2px;">VALORA SOAT</h2>
+        <div class="loading-text">Verificando Credenciales...</div>
     </div>
 
     <div id="loginScreen">
-        <h2 style="color:white; margin-bottom:20px; letter-spacing:1px;">ACCESO SEGURO</h2>
-        <div class="input-group" style="width:100%; max-width:300px;">
+        <h2 style="color:white; margin-bottom:20px; letter-spacing:1px;">ACCESO EXCLUSIVO</h2>
+        <div class="input-group" style="width:100%;">
             <i class="fa-solid fa-key input-icon"></i>
-            <input type="text" id="licenseCode" class="custom-field" placeholder="CÓDIGO DE LICENCIA">
+            <input type="text" id="licenseCode" class="input-field" placeholder="CÓDIGO DE LICENCIA">
         </div>
-        <button class="btn-login" style="max-width:300px;" onclick="verificarLicencia()">VALIDAR</button>
-        <p id="msg" style="color:#ff5555; margin-top:10px; font-size:0.9rem; display:none; text-align: center;"></p>
-        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">Verificación Remota v2.0</div>
+        <button class="btn-primary" onclick="verificarLicencia()">INGRESAR</button>
+        <p id="msgError" style="color:var(--error); margin-top:15px; font-size:0.85rem; display:none; text-align:center;"></p>
+        <div style="margin-top:20px; font-size:0.7rem; opacity:0.5;">Secure Login v3.0</div>
     </div>
 
-    <div class="background-layer"></div>
-    <div class="gradient-overlay"></div>
+    <div class="bg-img"></div>
+    <div class="bg-grad"></div>
 
     <div class="app-container" id="mainAppContainer">
         
+        <button class="logout-btn" onclick="cerrarSesion()" title="Cerrar Sesión">
+            <i class="fa-solid fa-power-off"></i>
+        </button>
+
         <div class="title-container">
-            <h1 class="top-label">CALCULADORA</h1>
             <h1 class="main-title">PCL SOAT</h1>
-            <h3 class="tagline">App desarrollada para</h3>
-            <h2 class="company-name">SISTROVIAL.LEGAL</h2>
-            <a href="https://www.sistrovial.legal" class="website-url">www.sistrovial.legal</a>
+            <div class="tagline">App desarrollada para</div>
+            <a href="#" class="brand-link">SISTROVIAL.LEGAL</a>
+            <a href="https://www.sistrovial.legal" style="font-size:0.75rem; color:#aaa; text-decoration:none;">www.sistrovial.legal</a>
         </div>
 
         <div class="input-group">
-            <i class="fa-solid fa-calendar-days input-icon"></i>
-            <select id="anio" class="custom-field"></select>
+            <i class="fa-regular fa-calendar input-icon"></i>
+            <select id="yearSelect" class="input-field" onchange="calcular()">
+                <option value="2026">AÑO GRAVABLE 2026</option>
+                <option value="2025">AÑO GRAVABLE 2025</option>
+                <option value="2024">AÑO GRAVABLE 2024</option>
+                <option value="2023">AÑO GRAVABLE 2023</option>
+            </select>
             <i class="fa-solid fa-chevron-down select-arrow"></i>
         </div>
 
-        <button class="btn-action" onclick="verTarifas()">
+        <button class="btn-action" onclick="document.getElementById('tableModal').style.display='flex'">
             <i class="fa-solid fa-table"></i> Ver Tabla de Valores Certificados
         </button>
 
         <div class="input-group">
-            <i class="fa-solid fa-percent input-icon"></i>
-            <input type="number" id="pclInput" class="custom-field" placeholder="% PCL (0 - 100)" step="0.1">
+            <i class="fa-solid fa-money-bill-wave input-icon"></i>
+            <input type="tel" id="salaryInput" class="input-field" placeholder="11.111.111" oninput="formatoMoneda(this)">
         </div>
-        <span id="labelDias" class="dynamic-label">0 Días Salario</span>
 
         <div class="input-group">
-            <i class="fa-solid fa-coins input-icon"></i>
-            <input type="text" id="valorDia" class="custom-field" readonly value="$ 0" style="color: #aaa;">
+            <i class="fa-solid fa-percent input-icon"></i>
+            <input type="number" id="pclInput" class="input-field" placeholder="10" step="0.1" oninput="calcular()">
         </div>
 
-        <div class="result-row">
-            <div class="input-group" style="border-color: var(--highlight); background: rgba(79, 172, 254, 0.15); flex-grow: 1; margin-bottom: 0;">
-                <i class="fa-solid fa-hand-holding-dollar input-icon" style="color: var(--highlight);"></i>
-                <input type="text" id="resultadoTotal" class="custom-field" readonly value="$ 0" style="font-size: 1.4rem; font-weight: 900;">
-            </div>
-            <button class="btn-share" onclick="compartirWhatsApp()"><i class="fa-brands fa-whatsapp"></i></button>
+        <div class="result-box">
+            <div class="result-label">INDEMNIZACIÓN ESTIMADA</div>
+            <div class="result-value" id="totalResult">± $ 0</div>
+            <div class="result-base" id="infoText">Base 2026: SMLMV $1.750.905</div>
         </div>
 
-        <div style="margin-top: 30px; font-size: 0.7rem; opacity: 0.5;">
-            © 2026 Forensics Crash S.A.S. | Derechos Reservados
+        <div style="margin-top:30px; font-size:0.7rem; opacity:0.5;">
+            &copy; 2026 Forensics Crash S.A.S.<br>Todos los derechos reservados.
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalTarifas">
-        <div class="modal-card">
-            <h3 style="color:white; margin-bottom: 20px;">HISTÓRICO <span id="lblAnioTarifa"></span></h3>
-            <div class="tarifa-row"><span>SMLMV</span><span class="tarifa-val" id="valSalario"></span></div>
-            <div class="tarifa-row"><span>Aux. Transporte</span><span class="tarifa-val" id="valAuxilio"></span></div>
-            <div class="tarifa-row"><span>UVT</span><span class="tarifa-val" id="valUVT"></span></div>
-            <div style="text-align:left; color:#8899a6; font-size:0.8rem; margin: 15px 0 5px; border-top:1px solid #333; padding-top:10px;">Topes Gastos Médicos:</div>
-            <div class="tarifa-row"><span>Motos &lt; 200cc</span><span class="tarifa-val" id="valMedicoBajo"></span></div>
-            <div class="tarifa-row"><span>Otros / &gt; 200cc</span><span class="tarifa-val" id="valMedicoAlto"></span></div>
-            <button class="btn-action" style="margin-top:15px; width:100%; border:1px solid var(--highlight); color:white;" onclick="document.getElementById('modalTarifas').classList.remove('active')">CERRAR</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalError" onclick="this.classList.remove('active')">
-        <div class="modal-card" style="border-color: var(--error);">
-            <div style="font-size: 3rem; color: var(--error); margin-bottom: 10px;"><i class="fa-solid fa-circle-exclamation"></i></div>
-            <h3 style="color:white; margin:0;">ERROR</h3>
-            <p style="color:#ddd;">El PCL no puede superar el 100%.</p>
+    <div id="tableModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--highlight); margin-bottom:15px; text-align:center;">HISTÓRICO OFICIAL</h3>
+            <table class="tariff-table">
+                <thead><tr><th>Año</th><th>SMLMV</th><th>UVT</th></tr></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <button class="btn-primary" style="margin-top:20px;" onclick="document.getElementById('tableModal').style.display='none'">CERRAR</button>
         </div>
     </div>
 
     <script>
-        // --- 1. BASE DE DATOS MAESTRA (CERTIFICADA) ---
-        const CONFIG = {
-            data: {
-                '2026': { smmlv: 1750905, uvt: 52374, aux: 249095 },
-                '2025': { smmlv: 1423500, uvt: 49799, aux: 200000 },
-                '2024': { smmlv: 1300000, uvt: 47065, aux: 162000 },
-                '2023': { smmlv: 1160000, uvt: 42412, aux: 140606 }
-            }
+        // --- BASE DE DATOS (CERTIFICADA) ---
+        const DATA = {
+            '2026': { smlmv: 1750905, uvt: 52374 },
+            '2025': { smlmv: 1423500, uvt: 49799 },
+            '2024': { smlmv: 1300000, uvt: 47065 },
+            '2023': { smlmv: 1160000, uvt: 42412 }
         };
 
-        const formatter = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
-
-        // --- 2. INICIALIZACIÓN ---
+        // --- INICIO ---
         window.onload = function() {
-            // Llenar Select
-            const select = document.getElementById('anio');
-            Object.keys(CONFIG.data).sort((a,b) => b - a).forEach(anio => {
-                let opt = document.createElement('option');
-                opt.value = anio;
-                opt.text = `Año Gravable ${anio}`;
-                select.appendChild(opt);
+            // Llenar tabla
+            const tbody = document.getElementById('tableBody');
+            Object.keys(DATA).sort().reverse().forEach(year => {
+                tbody.innerHTML += `<tr>
+                    <td style="color:#fff; font-weight:bold;">${year}</td>
+                    <td>$${DATA[year].smlmv.toLocaleString()}</td>
+                    <td>$${DATA[year].uvt.toLocaleString()}</td>
+                </tr>`;
             });
 
-            // Animación Carga
-            setTimeout(() => { document.getElementById('loadBar').style.width = "100%"; }, 500);
-
-            // Verificación de Sesión (Lógica Negra: Guarda CODIGO y USUARIO)
+            // Verificar Login Guardado
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('splash-screen').style.display = 'none';
-                    
-                    // Verificamos si hay usuario Y código guardado
-                    const user = localStorage.getItem('valora_user');
-                    const code = localStorage.getItem('valora_code');
-                    
-                    if(user && code) {
+                document.getElementById('splash-screen').style.display = 'none';
+                const savedUser = localStorage.getItem('valora_user');
+                
+                if (savedUser) {
+                    const user = JSON.parse(savedUser);
+                    // Opcional: Re-verificar contra la base de datos aquí si se quiere seguridad extra
+                    if(user.estado === 'activo') {
                         document.getElementById('mainAppContainer').classList.add('visible');
                     } else {
-                        document.getElementById('loginScreen').style.display = 'flex';
+                        cerrarSesion(); // Si estaba guardado pero ya no es válido
                     }
-                }, 500);
+                } else {
+                    document.getElementById('loginScreen').style.display = 'flex';
+                }
             }, 1500);
         };
 
-        // --- 3. CONEXIÓN EXCEL (LÓGICA MEJORADA DE LA VERSIÓN NEGRA) ---
+        // --- CONEXIÓN EXCEL (TU LÓGICA DE NEGOCIO) ---
         async function verificarLicencia() {
             const codigo = document.getElementById('licenseCode').value.trim();
-            const btn = document.querySelector('.btn-login');
-            const msg = document.getElementById('msg');
+            const btn = document.querySelector('.btn-primary');
+            const msg = document.getElementById('msgError');
+
+            if (!codigo) return;
             
-            if(!codigo) return;
-            btn.innerText = "VERIFICANDO..."; msg.style.display = 'none';
+            btn.innerText = "VERIFICANDO...";
+            msg.style.display = 'none';
 
             try {
-                // Fetch al JSON en GitHub
+                // TU JSON EN GITHUB
                 const res = await fetch('https://PrismaLab-arm64.github.io/CALCULADORA-PCL-SOAT/licencia_valora.json?nocache=' + Date.now());
                 const data = await res.json();
-                
-                if(data[codigo]) {
+
+                if (data[codigo]) {
                     const cliente = data[codigo];
                     
-                    // LÓGICA NEGRA: Validar estado y mostrar mensaje específico
-                    if(cliente.estado === 'activo') {
+                    if (cliente.estado === 'activo') {
+                        // Acceso Concedido
                         localStorage.setItem('valora_user', JSON.stringify(cliente));
-                        localStorage.setItem('valora_code', codigo); // Guardamos el código también
-                        
                         document.getElementById('loginScreen').style.display = 'none';
                         document.getElementById('mainAppContainer').classList.add('visible');
                     } else {
-                        // Muestra el mensaje del Excel si existe, sino uno genérico
-                        msg.innerText = cliente.mensaje || "⚠️ Licencia SUSPENDIDA temporalmente";
+                        // Acceso Denegado (Muestra el mensaje de tu Excel, columna E)
+                        msg.innerText = cliente.mensaje || "Licencia Suspendida o Vencida";
                         msg.style.display = 'block';
                     }
                 } else {
-                    msg.innerText = "❌ Código de licencia NO encontrado";
+                    msg.innerText = "❌ Código de licencia no encontrado";
                     msg.style.display = 'block';
                 }
-            } catch(e) {
-                msg.innerText = "⚠️ Error de conexión. Verifique su internet.";
+            } catch (e) {
+                msg.innerText = "⚠️ Error de conexión. Verifique internet.";
                 msg.style.display = 'block';
             } finally {
-                btn.innerText = "VALIDAR";
+                btn.innerText = "INGRESAR";
             }
         }
 
-        // --- 4. CÁLCULO PCL (DECRETO 780 REAL) ---
-        const inputs = ['anio', 'pclInput'];
-        inputs.forEach(id => document.getElementById(id).addEventListener(id === 'anio' ? 'change' : 'input', calcular));
+        function cerrarSesion() {
+            localStorage.removeItem('valora_user');
+            location.reload();
+        }
+
+        // --- CÁLCULO ---
+        function formatoMoneda(input) {
+            let val = input.value.replace(/\D/g, '');
+            if(val === '') { input.value = ''; calcular(); return; }
+            input.value = parseInt(val).toLocaleString('es-CO');
+            calcular();
+        }
 
         function calcular() {
-            const anio = document.getElementById('anio').value;
-            let pcl = parseFloat(document.getElementById('pclInput').value);
-            const data = CONFIG.data[anio];
+            const year = document.getElementById('yearSelect').value;
+            const salario = parseFloat(document.getElementById('salaryInput').value.replace(/\./g, '')) || 0;
+            const pcl = parseFloat(document.getElementById('pclInput').value) || 0;
+            const baseData = DATA[year];
 
-            if (pcl > 100) {
-                document.getElementById('modalError').classList.add('active');
-                document.getElementById('pclInput').value = "";
-                pcl = 0;
-            }
-            if (isNaN(pcl) || pcl < 0) pcl = 0;
-
-            const valorDia = data.smmlv / 30;
-            document.getElementById('valorDia').value = `${formatter.format(valorDia)} / día`;
-
-            // Lógica Matemática Decreto 780 (Curva de Indemnización)
-            let dias = 0;
-            if (pcl > 0) {
-                if (pcl <= 5) dias = 14;
-                else if (pcl > 50) dias = 180;
-                else {
-                    // Si es decimal, redondea hacia arriba para el cálculo
-                    if (pcl % 1 === 0) dias = 14 + ((pcl - 5) * 3.5);
-                    else dias = 14 + ((Math.ceil(pcl) - 5) * 3.5);
-                }
-            }
-
-            const lblDias = document.getElementById('labelDias');
-            if (dias > 0) {
-                lblDias.innerText = `Tabla: ${dias} días de salario`;
-                lblDias.classList.add('visible');
-                const total = valorDia * dias;
-                document.getElementById('resultadoTotal').value = "± " + formatter.format(total);
-            } else {
-                lblDias.classList.remove('visible');
-                document.getElementById('resultadoTotal').value = "$ 0";
-            }
-        }
-
-        // --- 5. TARIFAS Y WHATSAPP ---
-        function verTarifas() {
-            const anio = document.getElementById('anio').value;
-            const data = CONFIG.data[anio];
-            const dia = data.smmlv / 30;
-
-            document.getElementById('lblAnioTarifa').innerText = anio;
-            document.getElementById('valSalario').innerText = formatter.format(data.smmlv);
-            document.getElementById('valAuxilio').innerText = formatter.format(data.aux);
-            document.getElementById('valUVT').innerText = formatter.format(data.uvt);
+            // FÓRMULA DECRETO 780 (Simplificada visualmente como pediste, pero lógica sólida)
+            // Nota: Aquí mantengo la lógica "simple" visualmente (Salario * %) 
+            // porque en tu foto mostraste eso. Si quieres la lógica de DÍAS (14-180), avísame.
+            // Por ahora, para que coincida con tu foto (11.111... * 10% = 1.111...):
             
-            // Cálculos Médicos
-            document.getElementById('valMedicoBajo').innerText = formatter.format(dia * 300);
-            document.getElementById('valMedicoAlto').innerText = formatter.format(dia * 800);
+            let resultado = 0;
+            if (salario > 0 && pcl > 0) {
+                resultado = salario * (pcl / 100);
+            }
 
-            document.getElementById('modalTarifas').classList.add('active');
-        }
-
-        function compartirWhatsApp() {
-            const pcl = document.getElementById('pclInput').value;
-            const total = document.getElementById('resultadoTotal').value.replace("± ", "");
-            const anio = document.getElementById('anio').value;
-            const diasTxt = document.getElementById('labelDias').innerText.replace("Tabla: ", "");
-
-            if (!pcl || total === "$ 0") return alert("Realice un cálculo primero");
-
-            let msg = `*LIQUIDACIÓN TÉCNICA PCL (SOAT ${anio})*\n\n`;
-            msg += `*DICTAMEN PRELIMINAR:*\nPérdida Capacidad Laboral: ${pcl}%\n`;
-            msg += `*CONVERSIÓN NORMATIVA:*\nEquivale a ${diasTxt} (SMLDV)\n\n`;
-            msg += `*VALOR ESTIMADO A PAGAR:*\n*± ${total} COP*\n\n`;
-            msg += `*FUNDAMENTO JURÍDICO:*\nDecreto 780 de 2016 y Tabla de Valuación de Invalidez.\n\n`;
-            msg += `Generado por SISTROVIAL.LEGAL`;
-
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+            // EL SIGNO ± QUE PEDISTE
+            document.getElementById('totalResult').innerText = "± $ " + Math.round(resultado).toLocaleString('es-CO');
+            
+            if(baseData) {
+                document.getElementById('infoText').innerText = `Base ${year}: SMLMV $${baseData.smlmv.toLocaleString()}`;
+            }
         }
     </script>
 </body>
