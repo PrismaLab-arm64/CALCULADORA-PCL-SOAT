@@ -1,6 +1,13 @@
 # 📱 Calculadora PCL SOAT - Forensics Crash Edition
-**Versión Actual:** 1.2.0 (Secure Patch CSP v1.0) | **Build:** V17-Final
+**Versión Actual:** 1.2.1 (Offline Fix + SW Network-First Lic) | **Build:** V18-Patch
 **Desarrollado por:** Ing. John A. Skinner S. 
+
+## ✅ Patch 1.2.1 (Correcciones Repo)
+- Service Worker registrado desde la app (PWA funcional).
+- Precache corregido: `Diosa.png` (antes apuntaba a `Diosa.jpg`).
+- Estrategia de caché: `licencia_valora.json` en **Network-First** para evitar licencias obsoletas.
+- CSP aplicado vía meta-tag (mitigación XSS básica acorde a los CDNs usados).
+
 
 ## 🛡️ Aviso Legal
 Esta herramienta realiza estimaciones basadas en la normativa vigente. Los valores finales pueden variar por redondeos bancarios o ajustes en las tablas oficiales de la Superintendencia Financiera.
