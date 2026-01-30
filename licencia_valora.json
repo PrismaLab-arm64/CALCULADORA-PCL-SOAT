@@ -1,4 +1,4 @@
-{
+ Cano{
   "VS-ADMIN": {
     "nombre": "Ing John A. Skinner",
     "estado": "activo",
@@ -21,17 +21,17 @@
     "mensaje": ""
   },
   "VS-UE828": {
+    "nombre": "Abg. Angel Peralta",
+    "estado": "activo",
+    "plan": "pro",
+    "vence": "2027-12-15",
+    "mensaje": "\"Licencia Premium\""
+  },
+  "VS-LM643": {
     "nombre": "Abg. Andrea Cano",
     "estado": "activo",
     "plan": "pro",
     "vence": "2026-12-15",
-    "mensaje": "\"Licencia Activa\""
-  },
-  "VS-LM643": {
-    "nombre": "Abg. Angel Peralta",
-    "estado": "activo",
-    "plan": "pro",
-    "vence": "2027-12-31",
     "mensaje": "\"Licencia Activa\""
   },
   "VS-OG839": {
