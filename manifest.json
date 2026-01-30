@@ -1,10 +1,10 @@
 {
   "name": "Calculadora PCL SOAT",
   "short_name": "PCL SOAT",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#0a1931",
-  "theme_color": "#0a1931",
+  "background_color": "#08142b",
+  "theme_color": "#08142b",
   "description": "Calculadora de Indemnización PCL SOAT por Forensics Crash.",
   "orientation": "portrait",
   "icons": [
@@ -20,6 +20,6 @@
     }
   ],
   "scope": "./",
-  "id": "pcl-soat",
+  "id": "./?source=pwa",
   "lang": "es-CO"
 }
