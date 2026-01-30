@@ -1,94 +1,72 @@
-/**
- * Service Worker - PCL SOAT (Offline-first controlado)
- * - Precache de assets estáticos
- * - Navegación: fallback a index.html
- * - licencia_valora.json: Network-First (evita licencias obsoletas)
- */
-const CACHE_NAME = 'pcl-soat-v1.2.1';
+const CACHE_NAME = 'pcl-soat-v26-1'; // cambia este nombre para forzar actualización de caché
+
 const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
+  './Diosa.png',
   './icon.png',
-  './Diosa.png'
+  './licencia_valora.json'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((names) =>
-      Promise.all(names.map((name) => (name !== CACHE_NAME ? caches.delete(name) : undefined)))
-    )
+    caches.keys().then((keys) =>
+      Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)))
+    ).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-function isNavigationRequest(request) {
-  return request.mode === 'navigate' ||
-    (request.headers.get('accept') || '').includes('text/html');
-}
-
-async function networkFirst(request) {
-  const cache = await caches.open(CACHE_NAME);
-  try {
-    const fresh = await fetch(request, { cache: 'no-store' });
-    // Solo cachear si fue OK y es GET
-    if (fresh && fresh.ok) cache.put(request, fresh.clone());
-    return fresh;
-  } catch (e) {
-    const cached = await cache.match(request);
-    if (cached) return cached;
-    throw e;
-  }
-}
-
-async function cacheFirst(request) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(request);
-  if (cached) return cached;
-
-  const res = await fetch(request);
-  if (res && res.ok) cache.put(request, res.clone());
-  return res;
-}
-
 self.addEventListener('fetch', (event) => {
-  const { request } = event;
+  const req = event.request;
+  const url = new URL(req.url);
 
-  // Solo GET
-  if (request.method !== 'GET') return;
+  // Solo manejar mismo origen
+  if (url.origin !== self.location.origin) return;
 
-  const url = new URL(request.url);
+  // Licencias: Network-first (no validar contra JSON viejo)
+  if (url.pathname.endsWith('/licencia_valora.json')) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
 
-  // Si es navegación, intenta red y cae a index.html offline
-  if (isNavigationRequest(request)) {
+  // Navegación: fallback a index.html
+  if (req.mode === 'navigate') {
     event.respondWith(
-      fetch(request)
-        .then((res) => {
-          // Guarda la última versión del index para offline
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', copy)).catch(() => {});
-          return res;
-        })
-        .catch(() => caches.match('./index.html'))
+      fetch(req).catch(() => caches.match('./index.html'))
     );
     return;
   }
 
-  // Licencias: Network-First
-  if (url.pathname.endsWith('/licencia_valora.json')) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  // Resto: Cache-First
-  event.respondWith(
-    cacheFirst(request).catch(() => caches.match('./index.html'))
-  );
+  // Estáticos: cache-first
+  event.respondWith(cacheFirst(req));
 });
+
+async function cacheFirst(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const res = await fetch(request);
+  const cache = await caches.open(CACHE_NAME);
+  cache.put(request, res.clone());
+  return res;
+}
+
+async function networkFirst(request) {
+  try {
+    const res = await fetch(request, { cache: 'no-store' });
+    const cache = await caches.open(CACHE_NAME);
+    cache.put(request, res.clone());
+    return res;
+  } catch (e) {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    throw e;
+  }
+}
