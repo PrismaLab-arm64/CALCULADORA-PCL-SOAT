@@ -14,46 +14,46 @@
     "mensaje": "\"Pago pendiente. El servicio ha sido suspendido temporalmente.\""
   },
   "VS-OH778": {
-    "nombre": "",
-    "estado": "",
+    "nombre": "Ususrio temporal",
+    "estado": "activo",
     "plan": "pro",
-    "vence": "2026-12-31",
+    "vence": "2026-03-15",
     "mensaje": ""
   },
   "VS-UE828": {
-    "nombre": "",
-    "estado": "",
+    "nombre": "Abg. Andrea Cano",
+    "estado": "activo",
     "plan": "pro",
-    "vence": "2026-12-31",
-    "mensaje": ""
+    "vence": "2026-12-15",
+    "mensaje": "\"Licencia Activa\""
   },
   "VS-LM643": {
-    "nombre": "",
-    "estado": "",
+    "nombre": "Abg. Angel Peralta",
+    "estado": "activo",
     "plan": "pro",
     "vence": "2026-12-31",
     "mensaje": ""
   },
   "VS-OG839": {
-    "nombre": "",
-    "estado": "",
+    "nombre": "Abg. Sandra liliana",
+    "estado": "activo",
     "plan": "pro",
-    "vence": "2026-12-31",
-    "mensaje": ""
+    "vence": "2027-12-15",
+    "mensaje": "\"Licencia Activa\""
   },
   "VS-LZ306": {
     "nombre": "",
     "estado": "",
     "plan": "pro",
     "vence": "2026-12-31",
-    "mensaje": ""
+    "mensaje": "\"Licencia Activa\""
   },
   "VS-WH272": {
     "nombre": "",
     "estado": "",
     "plan": "pro",
     "vence": "2026-12-31",
-    "mensaje": ""
+    "mensaje": "\"Licencia Activa\""
   },
   "VS-YI544": {
     "nombre": "",
