@@ -123,11 +123,14 @@ const PUBLIC_KEY_JWK = {
     if (dl < 0) return { ok: false, err: "Licencia vencida" };
 
     try {
-      const pub = await importPublicKey();
-      const sigBytes = b64uToBytes(sigB64u);
-      if (sigBytes.length !== 64) {
-        return { ok: false, err: "Firma inválida: tamaño esperado 64 bytes (r||s)" };
-      }
+      const sigBytes = b64uToBytes(sigB64u); // firma DER (ASN.1)
+const data = new TextEncoder().encode(payloadB64u);
+const ok = await crypto.subtle.verify(
+  { name: "ECDSA", hash: "SHA-256" },
+  pub,
+  sigBytes,
+  data
+);
       const data = new TextEncoder().encode(payloadB64u);
       const ok = await crypto.subtle.verify(
         { name: "ECDSA", hash: "SHA-256" },
