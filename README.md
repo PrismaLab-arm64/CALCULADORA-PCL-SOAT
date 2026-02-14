@@ -1,3 +1,128 @@
+# Calculadora PCL-SOAT  
+**Forensic Compensation Engine – PWA para liquidación técnica y legal de indemnizaciones PCL**
+
+---
+
+## Descripción General
+
+Calculadora PCL-SOAT es una **Aplicación Web Progresiva (PWA)** orientada a la **liquidación técnica, normativa y económica de indemnizaciones por Pérdida de Capacidad Laboral (PCL)** conforme al marco legal colombiano aplicable al SOAT.
+
+El producto ha sido diseñado como un **activo digital profesional**, no como una herramienta académica o demostrativa. Su enfoque combina **automatización normativa**, **uso offline en campo**, **control de licencias premium** y **escenarios reales de uso jurídico, forense y asegurador**.
+
+Se trata de una solución lista para **operación, licenciamiento, integración o adquisición**, con una base técnica sólida y una barrera normativa clara.
+
+---
+
+## Visión del Producto
+
+No es una calculadora genérica.  
+Es una **herramienta profesional de apoyo pericial y jurídico**, concebida para operar tanto:
+
+- En **campo**, sin conectividad permanente.
+- En **entornos corporativos**, con control de usuarios y licencias.
+- En escenarios donde la **consistencia normativa y la trazabilidad** son críticas.
+
+El diseño prioriza confiabilidad, simplicidad operativa y escalabilidad.
+
+---
+
+## Problema que Atiende
+
+En la práctica profesional, los cálculos de indemnización por PCL presentan fallas recurrentes:
+
+- Errores humanos en conversiones normativas.
+- Uso de hojas de cálculo sin trazabilidad.
+- Falta de control sobre usuarios, versiones y licencias.
+- Dependencia total de conexión a internet.
+- Ausencia de herramientas listas para dictamen preliminar.
+
+Esta PWA centraliza y automatiza el proceso, garantizando **consistencia técnica, respaldo normativo y control de uso**.
+
+---
+
+## Propuesta de Valor
+
+- Cálculo automático **en tiempo real**, sin botones ni procesos manuales.
+- Alineación normativa con tablas y topes oficiales.
+- Funcionamiento **offline-first** como PWA instalable.
+- Generación de dictámenes técnicos listos para compartir.
+- Sistema **premium con licencias, usuarios y control temporal**.
+
+---
+
+## Funcionalidades Principales
+
+### 1. Motor de Cálculo Dinámico
+- Cálculo inmediato según porcentaje de PCL.
+- Conversión automática a días de salario conforme a normativa.
+- Visualización clara del valor estimado en COP.
+
+### 2. Base Económica Histórica
+- Gestión interna de SMMLV y UVT por año.
+- Preparada para ampliaciones futuras sin modificar la lógica central.
+- Evita cálculos con valores desactualizados.
+
+### 3. Cumplimiento Normativo
+Incorpora reglas y topes para:
+- Indemnización por PCL.
+- Gastos médicos y quirúrgicos.
+- Gastos funerarios.
+- Transporte de víctimas.
+
+El cálculo está estructurado para **uso técnico-legal**, no solo informativo.
+
+---
+
+## Sistema Premium y de Licenciamiento
+
+La aplicación integra un **modelo premium funcional**, diseñado para control profesional y monetización:
+
+### Licencias
+- Licencias temporales con **contador automático de días**.
+- Validación activa del estado de la licencia.
+- Restricción de uso al vencer la licencia.
+
+### Usuarios Personalizados
+- Identificación del usuario dentro de la aplicación.
+- Mensajes personalizados (ej. *“Bienvenido, [Usuario]”*).
+- Preparada para escenarios multiusuario.
+
+### Multiplataforma
+- Uso desde distintos dispositivos bajo una misma licencia.
+- Ideal para equipos periciales, firmas legales o consultores.
+
+### Base para Monetización
+Preparada para:
+- Suscripciones mensuales o anuales.
+- Licencias corporativas.
+- Modelos white-label.
+- Integraciones futuras con backend o API.
+
+---
+
+## Generación de Dictamen Técnico
+
+La PWA genera un **dictamen preliminar estructurado**, que incluye:
+
+- Porcentaje de PCL.
+- Conversión normativa aplicada.
+- Valor estimado de indemnización.
+- Fundamentación técnica.
+
+El resultado puede compartirse directamente por **WhatsApp u otros canales**, convirtiendo la aplicación en una herramienta productiva.
+
+---
+
+## Arquitectura del Proyecto
+
+/
+├── index.html # Interfaz principal y lógica de negocio
+├── manifest.json # Configuración PWA
+├── sw.js # Service Worker (offline-first)
+├── licencia_valora.json # Control de licencias y estado premium
+├── icon.png # Iconografía PWA
+├── Diosa.png # Identidad visual
+└── README.md # Documentación
 
 Arquitectura simple, portable y fácil de mantener.
 
