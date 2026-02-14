@@ -1,16 +1,54 @@
+<!-- ====== PREMIUM ACTIVATION PANEL (Signed License) ====== -->
+<section id="premiumPanel" style="margin:16px 0; padding:14px; border:1px solid rgba(0,0,0,.12); border-radius:12px;">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+    <div>
+      <div style="font-weight:700; font-size:14px;">Activación Premium (Licencia firmada)</div>
+      <div id="premiumStatus" style="opacity:.85; font-size:12px; margin-top:4px;">
+        Estado: <b>FREE</b>
+      </div>
+      <div id="premiumUser" style="opacity:.85; font-size:12px; margin-top:4px; display:none;"></div>
+      <div id="premiumDays" style="opacity:.85; font-size:12px; margin-top:4px; display:none;"></div>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button id="btnOpenPremium" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer;">
+        Activar / Gestionar
+      </button>
+      <button id="btnClearPremium" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer; display:none;">
+        Quitar licencia
+      </button>
+    </div>
+  </div>
+
+  <div id="premiumBox" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid rgba(0,0,0,.12);">
+    <label style="display:block; font-size:12px; opacity:.85; margin-bottom:6px;">Pegar licencia (token)</label>
+    <textarea id="licenseTokenInput" rows="4" placeholder="Pega aquí el token de licencia firmado..."
+      style="width:100%; padding:10px; border-radius:10px; border:1px solid rgba(0,0,0,.15); background:transparent; color:inherit;"></textarea>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:center;">
+      <input id="licenseFileInput" type="file" accept=".lic,.txt,.json" style="max-width:240px;" />
+      <button id="btnValidateLicense" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer;">
+        Validar licencia
+      </button>
+      <button id="btnClosePremium" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer;">
+        Cerrar
+      </button>
+    </div>
+
+    <div id="premiumMsg" style="margin-top:10px; font-size:12px; opacity:.9;"></div>
+  </div>
+</section>
+<!-- ====== /PREMIUM ACTIVATION PANEL ====== -->
+
 <script>
 /* =========================================================
    SIGNED LICENSE (NO DB) - WebCrypto ECDSA P-256
    - No rompe tu sistema actual.
    - Activa Premium con token firmado localmente.
    ========================================================= */
-
 (function () {
-  // ====== CONFIG ======
   const LS_KEY = "pcl_signed_license_token_v1";
 
-  // Reemplaza esto por tu clave pública real (JWK) cuando la generemos.
-  // Por ahora deja este ejemplo para que el código quede listo.
   const PUBLIC_KEY_JWK = {
     "kty":"EC",
     "crv":"P-256",
@@ -19,14 +57,6 @@
     "ext":true
   };
 
-  // El token esperado tiene formato:
-  // base64url(payloadJSON) + "." + base64url(signatureDERorRAW)
-  // payloadJSON incluye: user, plan, exp (YYYY-MM-DD), features, lic_id, issued_at
-  //
-  // Nota: aquí usamos firma ECDSA P-256 y signature "raw" (r||s, 64 bytes) en base64url.
-  // (Cuando generemos licencias, generaremos firma en ese formato.)
-
-  // ====== Helpers ======
   const $ = (id) => document.getElementById(id);
   const b64uToBytes = (b64u) => {
     const b64 = b64u.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((b64u.length + 3) % 4);
@@ -37,7 +67,6 @@
   };
   const bytesToText = (bytes) => new TextDecoder().decode(bytes);
   const parseISODate = (s) => {
-    // "YYYY-MM-DD"
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s||"").trim());
     if (!m) return null;
     const dt = new Date(Date.UTC(+m[1], +m[2]-1, +m[3], 0, 0, 0));
@@ -77,31 +106,29 @@
     try {
       const payloadBytes = b64uToBytes(payloadB64u);
       payloadJson = JSON.parse(bytesToText(payloadBytes));
-    } catch (e) {
+    } catch {
       return { ok: false, err: "Payload inválido: no es JSON válido" };
     }
 
-    // Validaciones mínimas
     const user = String(payloadJson.user || "").trim();
     const plan = String(payloadJson.plan || "").trim().toLowerCase();
     const exp = String(payloadJson.exp || "").trim();
+
     if (!user || !plan || !exp) {
       return { ok: false, err: "Payload incompleto: requiere user, plan, exp" };
     }
 
-    // Verifica expiración
     const dl = daysLeft(exp);
     if (dl === null) return { ok: false, err: "Fecha exp inválida (use YYYY-MM-DD)" };
     if (dl < 0) return { ok: false, err: "Licencia vencida" };
 
-    // Verifica firma
     try {
       const pub = await importPublicKey();
-      const sigBytes = b64uToBytes(sigB64u); // firma raw r||s (64 bytes)
+      const sigBytes = b64uToBytes(sigB64u);
       if (sigBytes.length !== 64) {
         return { ok: false, err: "Firma inválida: tamaño esperado 64 bytes (r||s)" };
       }
-      const data = new TextEncoder().encode(payloadB64u); // firma sobre payloadB64u (no sobre JSON raw)
+      const data = new TextEncoder().encode(payloadB64u);
       const ok = await crypto.subtle.verify(
         { name: "ECDSA", hash: "SHA-256" },
         pub,
@@ -109,154 +136,103 @@
         data
       );
       if (!ok) return { ok: false, err: "Firma no válida" };
-    } catch (e) {
-      return { ok: false, err: "Error verificando firma: " + (e && e.message ? e.message : String(e)) };
+    } catch {
+      return { ok: false, err: "Error verificando firma" };
     }
 
     return { ok: true, payload: payloadJson };
   }
 
-  // ====== Premium State ======
+  function enableYear2027IfAllowed() {
+    const premium = !!window.__PCL_PREMIUM__;
+    const features = (window.__PCL_LICENSE__ && window.__PCL_LICENSE__.features) ? window.__PCL_LICENSE__.features : {};
+    const allow2027 = premium && (features.y2027 === true || Object.keys(features).length === 0);
+    document.querySelectorAll("select").forEach(sel => {
+      const opt = Array.from(sel.options || []).find(o => String(o.value) === "2027" || /2027/.test(o.text || ""));
+      if (opt) opt.disabled = !allow2027;
+    });
+  }
+
   function setPremiumUI(state) {
-    // state: { premium:boolean, user?:string, plan?:string, exp?:string, features?:object }
     const premium = !!state.premium;
-    const statusEl = $("premiumStatus");
+    $("premiumStatus").innerHTML = premium ? `Estado: <b>PREMIUM</b>` : `Estado: <b>FREE</b>`;
+
     const userEl = $("premiumUser");
     const daysEl = $("premiumDays");
     const btnClear = $("btnClearPremium");
 
     if (premium) {
       const d = daysLeft(state.exp);
-      statusEl.innerHTML = `Estado: <b>PREMIUM</b>`;
       userEl.style.display = "";
       daysEl.style.display = "";
-      userEl.textContent = `Usuario: ${state.user || "—"} | Plan: ${String(state.plan||"premium").toUpperCase()}`;
-      daysEl.textContent = `Vence: ${state.exp || "—"} | Días restantes: ${d !== null ? d : "—"}`;
       btnClear.style.display = "";
+      userEl.textContent = `Usuario: ${state.user || "—"} | Plan: ${(state.plan || "premium").toUpperCase()}`;
+      daysEl.textContent = `Vence: ${state.exp || "—"} | Días restantes: ${d !== null ? d : "—"}`;
     } else {
-      statusEl.innerHTML = `Estado: <b>FREE</b>`;
       userEl.style.display = "none";
       daysEl.style.display = "none";
       btnClear.style.display = "none";
     }
 
-    // Hook para tu lógica existente:
-    // Guardamos un flag global (no rompe nada).
     window.__PCL_PREMIUM__ = premium;
     window.__PCL_LICENSE__ = state || {};
-    // Si tienes un selector de año con 2027 deshabilitado, lo re-habilitamos aquí si corresponde:
     enableYear2027IfAllowed();
-  }
-
-  function enableYear2027IfAllowed() {
-    // Si tu selector de año tiene option value="2027" o texto "2027", intentamos habilitarlo sin romper.
-    const premium = !!window.__PCL_PREMIUM__;
-    const features = (window.__PCL_LICENSE__ && window.__PCL_LICENSE__.features) ? window.__PCL_LICENSE__.features : {};
-    const allow2027 = premium && (features.y2027 === true || features.year2027 === true || features["2027"] === true || Object.keys(features).length === 0);
-    // "allow2027" por defecto true si premium y no hay features (no bloqueamos por defecto).
-    const selects = document.querySelectorAll("select");
-    selects.forEach(sel => {
-      const opt = Array.from(sel.options || []).find(o => String(o.value) === "2027" || /2027/.test(o.text || ""));
-      if (opt) opt.disabled = !allow2027;
-    });
   }
 
   function showMsg(txt, ok) {
     const el = $("premiumMsg");
-    if (!el) return;
     el.textContent = txt;
-    el.style.color = ok ? "inherit" : "rgba(255,120,120,1)";
-    el.style.opacity = "1";
+    el.style.color = ok ? "inherit" : "crimson";
+  }
+
+  function togglePremiumBox(show) {
+    $("premiumBox").style.display = show ? "" : "none";
   }
 
   async function loadExistingToken() {
     const token = localStorage.getItem(LS_KEY);
-    if (!token) {
-      setPremiumUI({ premium: false });
-      return;
-    }
+    if (!token) { setPremiumUI({ premium: false }); return; }
     const res = await verifyToken(token);
-    if (!res.ok) {
-      // Si el token guardado ya no valida, lo limpiamos para evitar bloqueos raros.
-      localStorage.removeItem(LS_KEY);
-      setPremiumUI({ premium: false });
-      return;
-    }
+    if (!res.ok) { localStorage.removeItem(LS_KEY); setPremiumUI({ premium: false }); return; }
     const p = res.payload;
-    setPremiumUI({ premium: true, user: p.user, plan: p.plan, exp: p.exp, features: p.features || {}, lic_id: p.lic_id, issued_at: p.issued_at });
-  }
-
-  // ====== UI wiring ======
-  function togglePremiumBox(show) {
-    const box = $("premiumBox");
-    if (!box) return;
-    box.style.display = show ? "" : "none";
+    setPremiumUI({ premium: true, user: p.user, plan: p.plan, exp: p.exp, features: p.features || {} });
   }
 
   async function onValidate() {
-    const input = $("licenseTokenInput");
-    const token = (input && input.value) ? input.value.trim() : "";
-    if (!token) {
-      showMsg("Pega un token o carga un archivo de licencia.", false);
-      return;
-    }
+    const token = ($("licenseTokenInput").value || "").trim();
+    if (!token) { showMsg("Pega un token o carga un archivo de licencia.", false); return; }
     const res = await verifyToken(token);
-    if (!res.ok) {
-      showMsg("❌ " + res.err, false);
-      return;
-    }
+    if (!res.ok) { showMsg("❌ " + res.err, false); return; }
     localStorage.setItem(LS_KEY, token);
     const p = res.payload;
-    setPremiumUI({ premium: true, user: p.user, plan: p.plan, exp: p.exp, features: p.features || {}, lic_id: p.lic_id, issued_at: p.issued_at });
+    setPremiumUI({ premium: true, user: p.user, plan: p.plan, exp: p.exp, features: p.features || {} });
     showMsg("✅ Licencia validada. Premium activado.", true);
     togglePremiumBox(false);
   }
 
   function onClear() {
     localStorage.removeItem(LS_KEY);
-    $("licenseTokenInput") && ($("licenseTokenInput").value = "");
-    showMsg("Licencia eliminada. Modo FREE.", true);
+    $("licenseTokenInput").value = "";
     setPremiumUI({ premium: false });
+    showMsg("Licencia eliminada. Modo FREE.", true);
   }
 
   function wireEvents() {
-    const openBtn = $("btnOpenPremium");
-    const closeBtn = $("btnClosePremium");
-    const clearBtn = $("btnClearPremium");
-    const validateBtn = $("btnValidateLicense");
-    const fileInput = $("licenseFileInput");
-
-    if (openBtn) openBtn.addEventListener("click", () => togglePremiumBox(true));
-    if (closeBtn) closeBtn.addEventListener("click", () => togglePremiumBox(false));
-    if (clearBtn) clearBtn.addEventListener("click", onClear);
-    if (validateBtn) validateBtn.addEventListener("click", onValidate);
-
-    if (fileInput) {
-      fileInput.addEventListener("change", async (e) => {
-        try {
-          const f = e.target.files && e.target.files[0];
-          if (!f) return;
-          const text = await f.text();
-          $("licenseTokenInput").value = String(text || "").trim();
-          showMsg("Archivo cargado. Pulsa “Validar licencia”.", true);
-        } catch (err) {
-          showMsg("No se pudo leer el archivo.", false);
-        }
-      });
-    }
+    $("btnOpenPremium").addEventListener("click", () => togglePremiumBox(true));
+    $("btnClosePremium").addEventListener("click", () => togglePremiumBox(false));
+    $("btnValidateLicense").addEventListener("click", onValidate);
+    $("btnClearPremium").addEventListener("click", onClear);
+    $("licenseFileInput").addEventListener("change", async (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (!f) return;
+      $("licenseTokenInput").value = (await f.text()).trim();
+      showMsg("Archivo cargado. Pulsa “Validar licencia”.", true);
+    });
   }
 
-  // ====== init ======
   document.addEventListener("DOMContentLoaded", async () => {
-    try {
-      wireEvents();
-      await loadExistingToken();
-      // Mantén compatibilidad: si tu lógica actual usa licencia_valora.json, no la tocamos aún.
-      // En la fase 2 la retiramos.
-    } catch (e) {
-      setPremiumUI({ premium: false });
-    }
+    wireEvents();
+    await loadExistingToken();
   });
-
 })();
 </script>
