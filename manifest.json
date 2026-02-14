@@ -1,25 +1,43 @@
 {
-  "name": "Calculadora PCL SOAT",
-  "short_name": "PCL SOAT",
+  "name": "Calculadora PCL-SOAT",
+  "short_name": "PCL-SOAT",
+  "description": "PWA profesional para liquidación técnica y legal de indemnizaciones por Pérdida de Capacidad Laboral (PCL) en el contexto SOAT.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#08142b",
-  "theme_color": "#08142b",
-  "description": "Calculadora de Indemnización PCL SOAT por Forensics Crash.",
-  "orientation": "portrait",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "orientation": "portrait-primary",
+  "background_color": "#0b0b0b",
+  "theme_color": "#0b0b0b",
+  "categories": ["business", "finance", "productivity", "tools"],
+  "lang": "es-CO",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+
   "icons": [
     {
       "src": "icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "scope": "./",
-  "id": "./?source=pwa",
-  "lang": "es-CO"
+
+  "shortcuts": [
+    {
+      "name": "Abrir Calculadora",
+      "short_name": "Calculadora",
+      "description": "Abrir la PWA en modo aplicación.",
+      "url": "./",
+      "icons": [
+        { "src": "icon.png", "sizes": "192x192" }
+      ]
+    }
+  ]
 }
