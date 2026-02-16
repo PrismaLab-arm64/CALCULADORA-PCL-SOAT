@@ -14,7 +14,7 @@
 
   // ⚠️ Sustituye por tu SECRET real (el mismo del generador offline).
   // Si lo dejas vacío, la app seguirá en modo FREE.
-  const SECRET = ""; // <-- pega tu SECRET aquí
+  const SECRET = "Sk1nn3r%%2025"; // <-- pega tu SECRET aquí
 
   // === Helpers base64url ===
   function b64uEncode(bytes){
