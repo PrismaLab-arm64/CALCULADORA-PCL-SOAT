@@ -109,7 +109,7 @@
       premiumStatus.innerHTML = 'Estado: <b>FREE</b>';
       premiumUser.style.display = "none";
       premiumDays.style.display = "none";
-      return "FREE";
+      return { state:"FREE", isPremium:false, user:"", daysLeft:0 };
     }
 
     const res = await window.PCLSOAT_LICENSE.verifyToken(token);
@@ -117,7 +117,7 @@
       premiumStatus.innerHTML = 'Estado: <b style="color:var(--danger)">FREE</b>';
       premiumUser.style.display = "none";
       premiumDays.style.display = "none";
-      return "FREE";
+      return { state:"FREE", isPremium:false, user:"", daysLeft:0, reason:res.reason || "" };
     }
 
     const user = res.payload?.user || "Usuario";
@@ -126,7 +126,7 @@
     premiumDays.textContent = `Días restantes: ${res.daysLeft}`;
     premiumUser.style.display = "";
     premiumDays.style.display = "";
-    return "PREMIUM";
+    return { state:"PREMIUM", isPremium:true, user, daysLeft:res.daysLeft };
   }
 
   // ====== Cálculo ======
@@ -143,8 +143,18 @@
     kpiSmlDv.textContent = dv ? fmtCOP(dv) : "—";
     kpiCop.textContent = total ? fmtCOP(total) : "—";
 
-    const premiumState = await refreshPremiumUI();
-    dictamen.value = buildDictamen({year, pcl, sml, smlDvCop: dv, totalCop: total, premiumState});
+    const premium = await refreshPremiumUI();
+
+    // Dictamen textual: SOLO PREMIUM (modelo de negocio + control de uso)
+    if (!premium.isPremium){
+      dictamen.value = "🔒 Dictamen preliminar disponible solo en versión PREMIUM.\n\nActiva tu licencia para habilitar:\n- Dictamen textual\n- Copiar/compartir\n";
+      btnCopyDictamen.disabled = true;
+      btnCopyDictamen.style.display = "none";
+    } else {
+      dictamen.value = buildDictamen({year, pcl, sml, smlDvCop: dv, totalCop: total, premiumState: premium.state});
+      btnCopyDictamen.disabled = false;
+      btnCopyDictamen.style.display = "inline-block";
+    }
   }
 
   // ====== Eventos ======

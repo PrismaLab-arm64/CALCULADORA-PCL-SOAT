@@ -1,14 +1,14 @@
 /* sw.js — offline-first simple cache */
-const SW_VERSION = "pclsoat-sw-v4";
+const SW_VERSION = "pclsoat-sw-v5";
 const CACHE_NAME = SW_VERSION;
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./assets/css/styles.css",
-  "./assets/js/license.js",
-  "./assets/js/app.js",
+  "./assets/css/styles.min.css",
+  "./assets/js/license.min.js",
+  "./assets/js/app.min.js",
   "./icon.png",
   "./Diosa.png"
 ];
