@@ -6,7 +6,7 @@
 
 (function () {
   // ⚠️ Debe ser EXACTAMENTE el mismo SECRET que uses en el license-generator.html
-  const SECRET = "PCL::SOAT::2025::PREMIUM::CAMBIAME";
+  const SECRET = "Sk1nn3r%%2025";
 
   const LS_KEY = "pcl_license_token_v1";
 
