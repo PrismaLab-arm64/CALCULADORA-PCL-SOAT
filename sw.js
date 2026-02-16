@@ -6,7 +6,7 @@
    - Limpieza de caches antiguos por versión
    ========================================================= */
 
-const SW_VERSION = "pclsoat-sw-v3"; // cambia este string cuando publiques cambios importantes
+const SW_VERSION = "pclsoat-sw-v4"; // cambia este string cuando publiques cambios importantes
 const CACHE_APP = `${SW_VERSION}-app`;
 const CACHE_ASSETS = `${SW_VERSION}-assets`;
 
@@ -17,6 +17,7 @@ const APP_SHELL = [
   "./manifest.json",
   "./icon.png",
   "./Diosa.png"
+   "./assets/js/license.js"
 ];
 
 // Archivos que queremos tratar como "navegación" (app shell)
