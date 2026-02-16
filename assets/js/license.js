@@ -1,187 +1,88 @@
-/* =========================================================
-   PCL-SOAT License (HMAC) - Offline stable
-   - Token: payloadB64u.signatureB64u
-   - signature = HMAC_SHA256(payloadB64u, SECRET)
-   ========================================================= */
+/*
+  license.js — Verificación de token premium (HMAC-SHA256) + estado local.
+  Formato token:  base64url(payloadJson) + "." + base64url(hmac_sha256(payloadB64u, SECRET))
 
-(function () {
-  // ⚠️ Debe ser EXACTAMENTE el mismo SECRET que uses en el license-generator.html
-  const SECRET = "Sk1nn3r%%2025";
+  IMPORTANTE:
+  - Para producción, NO dejes el SECRET hardcodeado en cliente.
+  - En tu modelo actual (100% offline), el SECRET en cliente es una barrera ligera, no seguridad fuerte.
+*/
+(function(){
+  "use strict";
 
-  const LS_KEY = "pcl_license_token_v1";
+  // === CONFIG ===
+  const LICENSE_STORAGE_KEY = "pclsoat_license_token_v1";
 
-  const $ = (id) => document.getElementById(id);
+  // ⚠️ Sustituye por tu SECRET real (el mismo del generador offline).
+  // Si lo dejas vacío, la app seguirá en modo FREE.
+  const SECRET = ""; // <-- pega tu SECRET aquí
 
-  function b64uToBytes(b64u) {
-    const b64 = b64u.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((b64u.length + 3) % 4);
-    const str = atob(b64);
-    const bytes = new Uint8Array(str.length);
-    for (let i=0; i<str.length; i++) bytes[i] = str.charCodeAt(i);
-    return bytes;
-  }
-
-  function bytesToText(bytes) { return new TextDecoder().decode(bytes); }
-  function textToBytes(text) { return new TextEncoder().encode(text); }
-
-  function b64uEncode(bytes) {
+  // === Helpers base64url ===
+  function b64uEncode(bytes){
     let bin = "";
-    const arr = new Uint8Array(bytes);
-    for (let i=0; i<arr.length; i++) bin += String.fromCharCode(arr[i]);
-    return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    const arr = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
+    for (let i=0;i<arr.length;i++) bin += String.fromCharCode(arr[i]);
+    const b64 = btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    return b64;
   }
-
-  function todayISO(){
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
+  function b64uToBytes(b64u){
+    const b64 = b64u.replace(/-/g,"+").replace(/_/g,"/") + "===".slice((b64u.length + 3) % 4);
+    const bin = atob(b64);
+    const out = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) out[i] = bin.charCodeAt(i);
+    return out;
   }
+  function textToBytes(s){ return new TextEncoder().encode(s); }
 
-  async function hmacSha256(message){
+  async function hmacSha256(secret, message){
     const key = await crypto.subtle.importKey(
       "raw",
-      textToBytes(SECRET),
+      textToBytes(secret),
       { name: "HMAC", hash: "SHA-256" },
       false,
       ["sign"]
     );
     const sig = await crypto.subtle.sign("HMAC", key, textToBytes(message));
-    return b64uEncode(sig);
+    return b64uEncode(new Uint8Array(sig));
   }
 
-  async function verifyToken(token) {
-    token = String(token||"").trim();
-    if (!token || !token.includes(".")) return { ok:false, err:"Token inválido" };
+  function nowUtcMs(){ return Date.now(); }
+  function daysLeft(expUtcMs){
+    const ms = expUtcMs - nowUtcMs();
+    return Math.floor(ms / (24*3600*1000));
+  }
 
-    const [payloadB64u, sigB64u] = token.split(".", 2);
-    if (!payloadB64u || !sigB64u) return { ok:false, err:"Token incompleto" };
+  async function verifyToken(token){
+    if (!SECRET) return { ok:false, reason:"SECRET vacío en la PWA. Mantiene modo FREE." };
+    if (!token || typeof token !== "string" || !token.includes(".")) return { ok:false, reason:"Token inválido." };
 
-    try {
-      const expected = await hmacSha256(payloadB64u);
-      if (expected !== sigB64u) return { ok:false, err:"Firma no coincide" };
+    const [payloadB64u, sigB64u] = token.split(".");
+    if (!payloadB64u || !sigB64u) return { ok:false, reason:"Token incompleto." };
 
-      const payload = JSON.parse(bytesToText(b64uToBytes(payloadB64u)));
-      if (!payload.user || !payload.exp) return { ok:false, err:"Payload incompleto" };
-      if (String(payload.exp) < todayISO()) return { ok:false, err:"Licencia vencida" };
+    const expected = await hmacSha256(SECRET, payloadB64u);
+    if (expected !== sigB64u) return { ok:false, reason:"Firma NO coincide (SECRET incorrecto o token modificado)." };
 
-      return { ok:true, payload };
-    } catch (e) {
-      return { ok:false, err:"Token inválido" };
+    let payload;
+    try{
+      payload = JSON.parse(new TextDecoder().decode(b64uToBytes(payloadB64u)));
+    }catch(e){
+      return { ok:false, reason:"Payload inválido." };
     }
+
+    const exp = Number(payload?.expUtcMs);
+    if (!exp || !Number.isFinite(exp)) return { ok:false, reason:"Payload sin expiración (expUtcMs)." };
+
+    const left = daysLeft(exp);
+    if (left < 0) return { ok:false, reason:"Licencia vencida.", payload };
+    return { ok:true, payload, daysLeft:left };
   }
 
-  function daysLeft(expISO){
-    // cálculo simple por fecha ISO local
-    const now = new Date();
-    const exp = new Date(expISO + "T00:00:00");
-    const a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const b = new Date(exp.getFullYear(), exp.getMonth(), exp.getDate());
-    return Math.floor((b - a) / 86400000);
-  }
+  function saveToken(token){ localStorage.setItem(LICENSE_STORAGE_KEY, token); }
+  function loadToken(){ return localStorage.getItem(LICENSE_STORAGE_KEY) || ""; }
+  function clearToken(){ localStorage.removeItem(LICENSE_STORAGE_KEY); }
 
-  function enableYear2027IfAllowed() {
-    const premium = !!window.__PCL_PREMIUM__;
-    const features = (window.__PCL_LICENSE__ && window.__PCL_LICENSE__.features) ? window.__PCL_LICENSE__.features : {};
-    const allow2027 = premium && (features.y2027 === true || Object.keys(features).length === 0);
-
-    document.querySelectorAll("select").forEach(sel => {
-      const opt = Array.from(sel.options || []).find(o => String(o.value) === "2027" || /2027/.test(o.text || ""));
-      if (opt) opt.disabled = !allow2027;
-    });
-  }
-
-  function setPremiumUI(state){
-    const premium = !!state.premium;
-    window.__PCL_PREMIUM__ = premium;
-    window.__PCL_LICENSE__ = state.payload || {};
-
-    const statusEl = $("premiumStatus");
-    const userEl = $("premiumUser");
-    const daysEl = $("premiumDays");
-    const btnClear = $("btnClearPremium");
-
-    if (!statusEl) return; // si aún no existe el panel, no rompe
-
-    if (premium) {
-      const p = state.payload;
-      const d = daysLeft(p.exp);
-      statusEl.innerHTML = `Estado: <b>PREMIUM</b>`;
-      userEl.style.display = "";
-      daysEl.style.display = "";
-      btnClear.style.display = "";
-      userEl.textContent = `Usuario: ${p.user} | Plan: ${(p.plan||"premium").toUpperCase()}`;
-      daysEl.textContent = `Vence: ${p.exp} | Días restantes: ${isFinite(d) ? d : "—"}`;
-    } else {
-      statusEl.innerHTML = `Estado: <b>FREE</b>`;
-      userEl.style.display = "none";
-      daysEl.style.display = "none";
-      btnClear.style.display = "none";
-    }
-    enableYear2027IfAllowed();
-  }
-
-  function showMsg(txt, ok){
-    const el = $("premiumMsg");
-    if (!el) return;
-    el.textContent = txt;
-    el.style.color = ok ? "inherit" : "crimson";
-  }
-
-  async function loadExisting(){
-    const token = localStorage.getItem(LS_KEY);
-    if (!token) return setPremiumUI({ premium:false });
-
-    const res = await verifyToken(token);
-    if (!res.ok) {
-      localStorage.removeItem(LS_KEY);
-      return setPremiumUI({ premium:false });
-    }
-    setPremiumUI({ premium:true, payload: res.payload });
-  }
-
-  async function activateFromInput(){
-    const token = ($("licenseTokenInput")?.value || "").trim();
-    if (!token) return showMsg("Pega un token o carga un archivo.", false);
-
-    const res = await verifyToken(token);
-    if (!res.ok) return showMsg("❌ " + res.err, false);
-
-    localStorage.setItem(LS_KEY, token);
-    setPremiumUI({ premium:true, payload: res.payload });
-    showMsg("✅ Premium activado.", true);
-    $("premiumBox").style.display = "none";
-  }
-
-  function clearLicense(){
-    localStorage.removeItem(LS_KEY);
-    if ($("licenseTokenInput")) $("licenseTokenInput").value = "";
-    setPremiumUI({ premium:false });
-    showMsg("Licencia eliminada. Modo FREE.", true);
-  }
-
-  function wirePanel(){
-    // Si no existe el panel, no rompe
-    if (!$("btnOpenPremium")) return;
-
-    $("btnOpenPremium").addEventListener("click", () => { $("premiumBox").style.display = ""; });
-    $("btnClosePremium").addEventListener("click", () => { $("premiumBox").style.display = "none"; });
-    $("btnValidateLicense").addEventListener("click", activateFromInput);
-    $("btnClearPremium").addEventListener("click", clearLicense);
-
-    $("licenseFileInput").addEventListener("change", async (e) => {
-      const f = e.target.files && e.target.files[0];
-      if (!f) return;
-      $("licenseTokenInput").value = (await f.text()).trim();
-      showMsg("Archivo cargado. Pulsa “Validar licencia”.", true);
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    wirePanel();
-    await loadExisting();
-  });
-
-  // Exponer funciones por si quieres activación programática
-  window.PCL_ClearLicense = clearLicense;
+  // Exponer API mínima a la app
+  window.PCLSOAT_LICENSE = {
+    verifyToken, saveToken, loadToken, clearToken,
+    STORAGE_KEY: LICENSE_STORAGE_KEY
+  };
 })();

@@ -1,44 +1,155 @@
-<!-- ====== PREMIUM ACTIVATION PANEL (Signed License) ====== -->
-<section id="premiumPanel" style="margin:16px 0; padding:14px; border:1px solid rgba(0,0,0,.12); border-radius:12px;">
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-    <div>
-      <div style="font-weight:700; font-size:14px;">Activación Premium</div>
-      <div id="premiumStatus" style="opacity:.85; font-size:12px; margin-top:4px;">
-        Estado: <b>FREE</b>
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>CALCULADORA PCL-SOAT</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#111111" />
+
+  <link rel="icon" href="icon.png" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <!-- CSP básica (ajusta si luego incluyes CDNs) -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self';
+                 img-src 'self' data:;
+                 style-src 'self' 'unsafe-inline';
+                 script-src 'self';
+                 connect-src 'self';
+                 object-src 'none';
+                 base-uri 'self';
+                 frame-ancestors 'none'">
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="brand__icon" src="icon.png" alt="PCL-SOAT" onerror="this.style.display='none'">
+      <div>
+        <div class="brand__title">CALCULADORA PCL-SOAT</div>
+        <div class="brand__subtitle">Motor de liquidación (SMLDV) — Offline-first</div>
       </div>
-      <div id="premiumUser" style="opacity:.85; font-size:12px; margin-top:4px; display:none;"></div>
-      <div id="premiumDays" style="opacity:.85; font-size:12px; margin-top:4px; display:none;"></div>
     </div>
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button id="btnOpenPremium" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer;">
-        Activar / Gestionar
-      </button>
-      <button id="btnClearPremium" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer; display:none;">
-        Quitar licencia
-      </button>
+    <div class="status">
+      <span id="netStatus" class="pill">Online</span>
+      <span id="swStatus" class="pill pill--muted">SW: —</span>
     </div>
-  </div>
+  </header>
 
-  <div id="premiumBox" style="display:none; margin-top:12px; padding-top:12px; border-top:1px solid rgba(0,0,0,.12);">
-    <label style="display:block; font-size:12px; opacity:.85; margin-bottom:6px;">Pegar token</label>
-    <textarea id="licenseTokenInput" rows="4" placeholder="Pega aquí el token..."
-      style="width:100%; padding:10px; border-radius:10px; border:1px solid rgba(0,0,0,.15); background:transparent; color:inherit;"></textarea>
+  <main class="wrap">
+    <!-- ====== PREMIUM ACTIVATION PANEL (Signed License) ====== -->
+    <section id="premiumPanel" class="card">
+      <div class="row row--spread row--wrap">
+        <div>
+          <div class="h">Activación Premium</div>
+          <div id="premiumStatus" class="muted">Estado: <b>FREE</b></div>
+          <div id="premiumUser" class="muted" style="display:none;"></div>
+          <div id="premiumDays" class="muted" style="display:none;"></div>
+        </div>
 
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; align-items:center;">
-      <input id="licenseFileInput" type="file" accept=".lic,.txt,.json" style="max-width:240px;" />
-      <button id="btnValidateLicense" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer;">
-        Validar licencia
-      </button>
-      <button id="btnClosePremium" type="button" style="padding:10px 12px; border-radius:10px; border:1px solid rgba(0,0,0,.18); cursor:pointer;">
-        Cerrar
-      </button>
-    </div>
+        <div class="btnrow">
+          <button id="btnOpenLicense" class="btn">Activar / Gestionar</button>
+          <button id="btnClearLicense" class="btn btn--ghost">Quitar licencia</button>
+        </div>
+      </div>
 
-    <div id="premiumMsg" style="margin-top:10px; font-size:12px; opacity:.9;"></div>
-  </div>
-</section>
-<!-- ====== /PREMIUM ACTIVATION PANEL ====== -->
+      <div id="licenseModal" class="modal" aria-hidden="true">
+        <div class="modal__card">
+          <div class="row row--spread">
+            <div class="h">Licencia Premium</div>
+            <button id="btnCloseLicense" class="btn btn--ghost">Cerrar</button>
+          </div>
 
-<!-- ✅ Carga el módulo final de licencias -->
-<script src="./assets/js/license.js"></script>
+          <label class="lbl">Pegar token</label>
+          <textarea id="licenseToken" class="mono" placeholder="Pega aquí el token firmado (payload.firma)"></textarea>
+
+          <div class="btnrow">
+            <button id="btnValidateLicense" class="btn">Validar licencia</button>
+            <button id="btnCopyState" class="btn btn--ghost">Copiar estado</button>
+          </div>
+
+          <div id="licenseMsg" class="msg" role="status" aria-live="polite"></div>
+          <div class="muted small">
+            Nota: el token se guarda localmente (localStorage). Sin backend.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="h">Cálculo PCL (Incapacidad Permanente – SOAT)</div>
+      <div class="grid">
+        <div>
+          <label class="lbl">Año (SMMLV)</label>
+          <select id="year">
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
+          <div class="muted small" id="smmlvInfo"></div>
+        </div>
+
+        <div>
+          <label class="lbl">Porcentaje PCL (%)</label>
+          <input id="pcl" type="number" inputmode="decimal" min="0" max="100" step="0.1" placeholder="Ej: 18.5" />
+          <div class="muted small">Rango esperado: 1 a 100. Se aplica tope de 180 SMLDV.</div>
+        </div>
+      </div>
+
+      <div class="results">
+        <div class="kpi">
+          <div class="kpi__label">Equivalencia (SMLDV)</div>
+          <div id="kpiSml" class="kpi__value">—</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__label">SMLDV (COP)</div>
+          <div id="kpiSmlDv" class="kpi__value">—</div>
+        </div>
+        <div class="kpi kpi--big">
+          <div class="kpi__label">Indemnización estimada (COP)</div>
+          <div id="kpiCop" class="kpi__value">—</div>
+        </div>
+      </div>
+
+      <details class="muted small">
+        <summary>Base normativa / criterio</summary>
+        <ul>
+          <li>Tope máximo incapacidad permanente: 180 SMLDV. (Ver, por ejemplo, Decreto 3990 de 2007 / Decreto 780 de 2016 – referencias públicas).</li>
+          <li>Equivalencia SMLDV vs. %PCL implementada como regla lineal por tramos (1–5% = 14; 5–50% = 14 + (PCL-5)*3.5; &gt;50% = 180) según tablas divulgadas por fuentes técnicas.</li>
+        </ul>
+      </details>
+    </section>
+
+    <section class="card">
+      <div class="h">Dictamen preliminar (texto)</div>
+      <textarea id="dictamen" class="mono" readonly></textarea>
+      <div class="btnrow">
+        <button id="btnCopyDictamen" class="btn btn--ghost">Copiar</button>
+      </div>
+    </section>
+
+    <footer class="footer muted small">
+      <div>Modo offline: si instalas la PWA, seguirá operando sin internet (según caché del Service Worker).</div>
+      <div>Build modular: <code>assets/js/app.js</code> + <code>assets/js/license.js</code>.</div>
+    </footer>
+  </main>
+
+  <script src="assets/js/license.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    // SW register
+    (function(){
+      const swEl = document.getElementById('swStatus');
+      if (!('serviceWorker' in navigator)) { swEl.textContent = 'SW: no'; return; }
+      navigator.serviceWorker.register('./sw.js').then(reg=>{
+        swEl.textContent = 'SW: ok';
+      }).catch(()=>{
+        swEl.textContent = 'SW: err';
+      });
+    })();
+  </script>
+</body>
+</html>
