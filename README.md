@@ -1,228 +1,164 @@
-# Calculadora PCL-SOAT  
-**Forensic Compensation Engine – PWA para liquidación técnica y legal de indemnizaciones PCL**
+# CALCULADORA PCL-SOAT (PWA)
+
+**Motor de liquidación (SMLDV) — Offline-first** para estimar indemnización por **Pérdida de Capacidad Laboral (PCL)** en el contexto SOAT (Colombia), con **control de licencias por token** (sin backend) y **dictamen preliminar** habilitable por plan.
 
 ---
 
-## Descripción General
+## ✅ Acceso (GitHub Pages)
 
-Calculadora PCL-SOAT es una **Aplicación Web Progresiva (PWA)** orientada a la **liquidación técnica, normativa y económica de indemnizaciones por Pérdida de Capacidad Laboral (PCL)** conforme al marco legal colombiano aplicable al SOAT.
+La app está publicada en:
 
-El producto ha sido diseñado como un **activo digital profesional**, no como una herramienta académica o demostrativa. Su enfoque combina **automatización normativa**, **uso offline en campo**, **control de licencias premium** y **escenarios reales de uso jurídico, forense y asegurador**.
+- https://prismalab-arm64.github.io/CALCULADORA-PCL-SOAT/
 
-Se trata de una solución lista para **operación, licenciamiento, integración o adquisición**, con una base técnica sólida y una barrera normativa clara.
-
----
-
-## Visión del Producto
-
-No es una calculadora genérica.  
-Es una **herramienta profesional de apoyo pericial y jurídico**, concebida para operar tanto:
-
-- En **campo**, sin conectividad permanente.
-- En **entornos corporativos**, con control de usuarios y licencias.
-- En escenarios donde la **consistencia normativa y la trazabilidad** son críticas.
-
-El diseño prioriza confiabilidad, simplicidad operativa y escalabilidad.
+Desde allí puedes:
+- Abrir la calculadora.
+- Instalarla como **PWA** (Android / iOS / Desktop).
+- Usarla **offline** luego de la primera carga (Service Worker).
 
 ---
 
-## Problema que Atiende
+## 🎯 Qué hace (en 30 segundos)
 
-En la práctica profesional, los cálculos de indemnización por PCL presentan fallas recurrentes:
-
-- Errores humanos en conversiones normativas.
-- Uso de hojas de cálculo sin trazabilidad.
-- Falta de control sobre usuarios, versiones y licencias.
-- Dependencia total de conexión a internet.
-- Ausencia de herramientas listas para dictamen preliminar.
-
-Esta PWA centraliza y automatiza el proceso, garantizando **consistencia técnica, respaldo normativo y control de uso**.
+1. Seleccionas **año (SMMLV)**.
+2. Ingresas **% PCL** (rango esperado 1–100).
+3. La app calcula:
+   - **Equivalencia en SMLDV** (por tramos).
+   - **SMLDV (COP)** del año.
+   - **Indemnización estimada (COP)**.
+4. (Según licencia) genera/permite **dictamen preliminar** y **copiado** para compartir.
 
 ---
 
-## Propuesta de Valor
+## ✨ Funcionalidades
 
-- Cálculo automático **en tiempo real**, sin botones ni procesos manuales.
-- Alineación normativa con tablas y topes oficiales.
-- Funcionamiento **offline-first** como PWA instalable.
-- Generación de dictámenes técnicos listos para compartir.
-- Sistema **premium con licencias, usuarios y control temporal**.
+### Cálculo (core)
+- Cálculo por porcentaje de PCL con visualización inmediata.
+- Aplicación de **tope máximo 180 SMLDV**.
+- Conversión **SMLDV vs %PCL** por tramos (implementación interna):
+  - 1–5%  → 14 SMLDV
+  - 5–50% → 14 + (PCL − 5) × 3.5
+  - >50%  → 180 SMLDV (tope)
 
----
+> Nota: el cálculo está implementado en el build compilado y se muestra como “Base normativa / criterio” dentro de la app.
 
-## Funcionalidades Principales
+### PWA / Offline-first
+- **Service Worker** para caché offline.
+- Instalable como aplicación (manifest + iconos).
+- Operativa sin internet una vez instalada y cacheada.
 
-### 1. Motor de Cálculo Dinámico
-- Cálculo inmediato según porcentaje de PCL.
-- Conversión automática a días de salario conforme a normativa.
-- Visualización clara del valor estimado en COP.
+### Licencias (sin servidor)
+- Activación por **token pegable** dentro de la app.
+- Persistencia local del token vía **localStorage** (no usa backend).
+- Contador de días / vencimiento según token.
 
-### 2. Base Económica Histórica
-- Gestión interna de SMMLV y UVT por año.
-- Preparada para ampliaciones futuras sin modificar la lógica central.
-- Evita cálculos con valores desactualizados.
-
-### 3. Cumplimiento Normativo
-Incorpora reglas y topes para:
-- Indemnización por PCL.
-- Gastos médicos y quirúrgicos.
-- Gastos funerarios.
-- Transporte de víctimas.
-
-El cálculo está estructurado para **uso técnico-legal**, no solo informativo.
+### Dictamen preliminar (según plan)
+- **FREE:** dictamen y/o copiado restringido.
+- **PREMIUM:** dictamen visible + **copiado habilitado** + **nombre de usuario** + **días restantes**.
 
 ---
 
-## Sistema Premium y de Licenciamiento
+## 🔐 Licenciamiento por Token (formato + flujo)
 
-La aplicación integra un **modelo premium funcional**, diseñado para control profesional y monetización:
+### Formato esperado
+El token se compone de **2 partes**:
 
-### Licencias
-- Licencias temporales con **contador automático de días**.
-- Validación activa del estado de la licencia.
-- Restricción de uso al vencer la licencia.
+`payloadB64u.signatureB64u`
 
-### Usuarios Personalizados
-- Identificación del usuario dentro de la aplicación.
-- Mensajes personalizados (ej. *“Bienvenido, [Usuario]”*).
-- Preparada para escenarios multiusuario.
+- `payloadB64u`: JSON codificado (Base64URL)
+- `signatureB64u`: firma HMAC-SHA256 (Base64URL)
 
-### Multiplataforma
-- Uso desde distintos dispositivos bajo una misma licencia.
-- Ideal para equipos periciales, firmas legales o consultores.
-
-### Base para Monetización
-Preparada para:
-- Suscripciones mensuales o anuales.
-- Licencias corporativas.
-- Modelos white-label.
-- Integraciones futuras con backend o API.
+### Cómo activar en la app
+1. En la app: **Activación Premium** → “Pegar token”.
+2. Presiona **Validar licencia**.
+3. Si es válido, la app cambia el estado y habilita las funciones premium según el payload.
 
 ---
 
-## Generación de Dictamen Técnico
+## 🧩 Generador/Validador SIMPLE (Offline)
 
-La PWA genera un **dictamen preliminar estructurado**, que incluye:
+Este repo incluye un generador local:
 
-- Porcentaje de PCL.
-- Conversión normativa aplicada.
-- Valor estimado de indemnización.
-- Fundamentación técnica.
+- `license-generator-simple.html`
 
-El resultado puede compartirse directamente por **WhatsApp u otros canales**, convirtiendo la aplicación en una herramienta productiva.
+Uso:
+1. Abre el archivo **con doble clic** (sin internet).
+2. Ingresa:
+   - **Usuario (nombre visible)**
+   - **Plan**
+   - **Vencimiento** (si el plan es DEMO, se calcula automático a 30 días)
+   - (Opcional) `lic_id`
+   - (Opcional) `features` (JSON), ejemplo:
+     ```json
+     { "whatsapp": true, "dictamen": true }
+     ```
+3. Clic en **Generar token** y luego **Copiar token**.
+4. Pégalo en la app y valida.
+
+> DEMO: fija vencimiento automático a **30 días**.  
+> Otros planes: el vencimiento se controla con el calendario (ej.: 6 o 12 meses según tu política comercial).
 
 ---
 
-## Arquitectura del Proyecto
+## 📁 Estructura del proyecto (etapa actual)
 
+Build compilado listo para GitHub Pages:
 /
-├── index.html # Interfaz principal y lógica de negocio
-├── manifest.json # Configuración PWA
-├── sw.js # Service Worker (offline-first)
-├── licencia_valora.json # Control de licencias y estado premium
-├── icon.png # Iconografía PWA
-├── Diosa.png # Identidad visual
-└── README.md # Documentación
+├─ index.html
+├─ manifest.json
+├─ sw.js
+├─ icon.png
+├─ Diosa.png
+├─ licencia_valora.json
+├─ license-generator-simple.html # OFFLINE: genera tokens
+└─ assets/
+├─ css/
+│ └─ styles.min.css
+└─ js/
+├─ app.min.js
+└─ license.min.js
 
-Arquitectura simple, portable y fácil de mantener.
-
----
-
-## Seguridad y Estabilidad
-
-- Implementación de políticas de seguridad (CSP).
-- Manejo controlado de errores de carga.
-- Funcionamiento estable incluso sin conexión a internet.
 
 ---
 
-## Escenarios de Uso
+## 🛠️ Notas técnicas
 
-- Peritos forenses.
-- Abogados litigantes y firmas jurídicas.
-- Consultores de riesgo y siniestros.
-- Aseguradoras (uso interno o integración).
-- Plataformas legales que requieran cálculo PCL integrado.
+- **Build**: el front está compilado y minificado en `assets/js/*.min.js` y `assets/css/*.min.css`.
+- **Sin backend**: la licencia se valida localmente y el token se almacena localmente.
+- **CSP / seguridad**: el proyecto contempla políticas para operación en modo web/PWA.
 
 ---
 
-## URL de Lanzamiento
+## 🧯 Troubleshooting (cuando “no refleja cambios”)
 
-La aplicación se encuentra disponible en:
+Si GitHub Pages carga una versión anterior, normalmente es por caché del Service Worker.
 
-🌐 **https://prismalab-arm64.github.io/CALCULADORA-PCL-SOAT/**
-
-Desde esta URL es posible:
-- Acceder a la aplicación.
-- Instalarla como PWA en dispositivos móviles y escritorio.
-- Evaluar su funcionamiento en modo online y offline.
-
----
-
-## Autor y Titularidad
-
-**Autor / Titular del Proyecto:** PrismaLab arm64  
-**GitHub:** https://github.com/PrismaLab-arm64  
-
-Este proyecto ha sido desarrollado como un **activo digital profesional** orientado al sector jurídico, forense y asegurador.
-
-El autor conserva la **titularidad plena del código fuente, la lógica de negocio, los algoritmos de cálculo, el sistema de licencias y el diseño funcional**.
+En Chrome:
+1. `F12` → **Application**
+2. **Service Workers** → *Unregister*
+3. **Storage** → *Clear site data*
+4. Recarga fuerte: `Ctrl + Shift + R`
 
 ---
 
-## Uso Profesional y Alcance
+## ⚠️ Alcance y responsabilidad
 
-Calculadora PCL-SOAT es una **herramienta de apoyo técnico**.
-
+Esta aplicación es un **apoyo técnico** para estimaciones y preliquidaciones.
 - No sustituye dictámenes periciales formales.
-- No reemplaza la valoración profesional especializada.
-- No constituye asesoría legal vinculante.
-
-El usuario final es responsable de la correcta interpretación y aplicación de los resultados.
+- No reemplaza asesoría legal.
+- El usuario final debe verificar el encuadre normativo y la aplicabilidad al caso concreto.
 
 ---
 
-## Licenciamiento y Uso Comercial
-
-El software opera bajo un **modelo de licenciamiento controlado**.
-
-No está permitida:
-- La redistribución del código.
-- La comercialización no autorizada.
-- La modificación con fines de reventa.
-
-Se contemplan esquemas de:
-- Licencias individuales o corporativas.
-- Integración en plataformas externas.
-- Modelos white-label.
-- Cesión o adquisición del producto.
-
----
-
-## Contacto
-
-Para licenciamiento, integraciones, uso corporativo o adquisición del proyecto, el contacto debe realizarse a través del perfil del autor en GitHub:
-
-👉 https://github.com/PrismaLab-arm64  
-
----
-
-## Estado del Proyecto
+## 📌 Estado del proyecto
 
 - Estado: **Activo**
-- Tipo: **PWA – Offline First**
-- Enfoque: **Profesional / Comercial**
-- Modelo: **Licenciamiento Premium**
+- Tipo: **PWA – Offline-first**
+- Modelo: **FREE + Licenciamiento por token (Premium)**
 
 ---
 
-## Conclusión
+## 📣 Contacto / Titularidad
 
-Calculadora PCL-SOAT es un **activo digital técnico y normativo**, con:
+Autor / Titular: **PrismaLab arm64**  
+GitHub: https://github.com/PrismaLab-arm64
 
-- Modelo premium funcional.
-- Control de usuarios y licencias.
-- Valor real para mercados especializados.
-- Alta barrera normativa y bajo costo operativo.
-
-Un producto **listo para escalar, licenciar, integrar o adquirir**.
