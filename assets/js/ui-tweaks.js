@@ -1,14 +1,14 @@
-/* ui-tweaks.js — Producción: menos pistas + UX premium + gancho 2027 + fondo azul */
+/* ui-tweaks.js — Producción: menos pistas + UX premium + gancho 2027 */
 (() => {
   "use strict";
 
-  const SHOW_RENEW_DAYS = 5;   // mostrar "Activar/Gestionar" cuando falten <= 5 días
+  const SHOW_RENEW_DAYS = 5;
   const RUN_EVERY_MS = 1200;
-  const YEAR_GANCHO = "2027";  // año premium visible pero bloqueado en FREE
+
+  const YEAR_GANCHO = "2027";
   const FALLBACK_YEAR = "2026";
 
   const norm = (s) => (s || "").toString().toLowerCase().trim();
-  const hasText = (el, txt) => el && norm(el.textContent).includes(norm(txt));
 
   function injectStyleOnce(id, cssText) {
     if (document.getElementById(id)) return;
@@ -18,21 +18,9 @@
     document.head.appendChild(style);
   }
 
-  function hideIfContains(selector, text) {
-    document.querySelectorAll(selector).forEach(el => {
-      if (hasText(el, text)) el.style.display = "none";
-    });
-  }
-
-  function hideButtonsByLabel(label) {
-    document.querySelectorAll("button, a").forEach(el => {
-      if (norm(el.textContent) === norm(label)) el.style.display = "none";
-    });
-  }
-
-  function findSectionByTitle(titleText) {
-    const all = Array.from(document.querySelectorAll("section, div, article, main"));
-    return all.find(el => hasText(el, titleText));
+  function isPremiumUI() {
+    return Array.from(document.querySelectorAll("*"))
+      .some(n => (n.textContent || "").includes("Estado: PREMIUM"));
   }
 
   function extractDaysLeft() {
@@ -47,129 +35,108 @@
     return null;
   }
 
-  function isPremiumUI() {
-    return Array.from(document.querySelectorAll("*"))
-      .some(n => (n.textContent || "").includes("Estado: PREMIUM"));
-  }
-
   function setSmallHint(text) {
     const el = document.getElementById("smmlvInfo");
     if (!el) return;
-    // Solo mensajes cortos y no invasivos
     el.textContent = text || "";
   }
 
   function ensure2027Gated(premium) {
-  const sel = document.getElementById("year");
-  if (!sel) return;
+    const sel = document.getElementById("year");
+    if (!sel) return;
 
-  // Asegura que exista la opción 2027
-  let opt = sel.querySelector(`option[value="${YEAR_GANCHO}"]`);
-  if (!opt) {
-    opt = document.createElement("option");
-    opt.value = YEAR_GANCHO;
-    opt.textContent = YEAR_GANCHO;
-    sel.insertBefore(opt, sel.firstChild);
-  }
-
-  const currentYear = String(new Date().getFullYear());
-  const isYear2027 = (currentYear === YEAR_GANCHO);
-
-  // Regla:
-  // - FREE: siempre bloqueado (gancho)
-  // - PREMIUM: solo habilitado si YA estamos en 2027 (datos oficiales deberían existir)
-  const canUse2027 = premium && isYear2027;
-
-  if (!canUse2027) {
-    opt.disabled = true;
-    if (!opt.textContent.includes("🔒")) opt.textContent = `${YEAR_GANCHO} 🔒`;
-
-    // Evita selección manual
-    if (sel.value === YEAR_GANCHO) {
-      sel.value = FALLBACK_YEAR;
-      setSmallHint("2027 se habilita cuando esté vigente.");
+    let opt = sel.querySelector(`option[value="${YEAR_GANCHO}"]`);
+    if (!opt) {
+      opt = document.createElement("option");
+      opt.value = YEAR_GANCHO;
+      opt.textContent = YEAR_GANCHO;
+      sel.insertBefore(opt, sel.firstChild);
     }
-    sel.addEventListener("change", () => {
+
+    const currentYear = String(new Date().getFullYear());
+    const isYear2027 = (currentYear === YEAR_GANCHO);
+
+    // Premium NO abre 2027 antes de tiempo. Solo se habilita cuando el año vigente sea 2027.
+    const canUse2027 = premium && isYear2027;
+
+    if (!canUse2027) {
+      opt.disabled = true;
+      if (!opt.textContent.includes("🔒")) opt.textContent = `${YEAR_GANCHO} 🔒`;
+
       if (sel.value === YEAR_GANCHO) {
         sel.value = FALLBACK_YEAR;
         setSmallHint("2027 se habilita cuando esté vigente.");
-      } else {
-        setSmallHint("");
       }
-    }, { once: true });
 
-  } else {
-    opt.disabled = false;
-    opt.textContent = YEAR_GANCHO;
-    setSmallHint("");
-  }
-}
-
-
-    // Gating: FREE -> disabled y con candado; PREMIUM -> habilitado
-    if (!premium) {
-      opt.disabled = true;
-      if (!opt.textContent.includes("🔒")) opt.textContent = `${YEAR_GANCHO} 🔒`;
-      // Si por algún motivo quedó seleccionado, vuelve a 2026
-      if (sel.value === YEAR_GANCHO) {
-        sel.value = FALLBACK_YEAR;
-        setSmallHint("2027 disponible con suscripción.");
+      // Evita selección manual en FREE o antes de 2027
+      if (!sel.__pclHooked) {
+        sel.addEventListener("change", () => {
+          if (sel.value === YEAR_GANCHO) {
+            sel.value = FALLBACK_YEAR;
+            setSmallHint("2027 se habilita cuando esté vigente.");
+          } else {
+            setSmallHint("");
+          }
+        });
+        sel.__pclHooked = true;
       }
-      // Bloqueo adicional ante cambios manuales
-      sel.addEventListener("change", () => {
-        if (sel.value === YEAR_GANCHO) {
-          sel.value = FALLBACK_YEAR;
-          setSmallHint("2027 disponible con suscripción.");
-        } else {
-          setSmallHint("");
-        }
-      }, { once: true });
     } else {
       opt.disabled = false;
       opt.textContent = YEAR_GANCHO;
-      // En premium no molestamos con textos
       setSmallHint("");
     }
   }
 
   function apply() {
-    // ===== Estilo: fondo azul tipo activador =====
+    // Fondo azul tipo activación
     injectStyleOnce("pcl-blue-bg", `
-      body { background: #08142b !important; }
-      .topbar { background: #08142b !important; border-bottom: 1px solid rgba(255,255,255,.08) !important; }
-      .wrap { padding-bottom: 28px; }
+      body{background:#08142b !important;}
+      .topbar{background:#08142b !important;border-bottom:1px solid rgba(255,255,255,.08) !important;}
     `);
 
-    // ===== Ocultar pistas (debug) =====
-    hideIfContains("div, span, small", "Online");
-    hideIfContains("div, span, small", "SW:");
-    hideIfContains("div, span, small", "Build:");
-    hideIfContains("div, span, small", "assets/js/");
-    hideIfContains("div, span, small", "localStorage"); // la nota del modal
-    hideIfContains("div, span, small", "Sin backend");  // la nota del modal
+    // Ocultar indicadores (azul): Online / SW
+    const net = document.getElementById("netStatus");
+    const sw  = document.getElementById("swStatus");
+    if (net) net.style.display = "none";
+    if (sw) sw.style.display  = "none";
 
-    // ===== Quitar botón "Copiar" del dictamen (naranja) =====
-    hideButtonsByLabel("Copiar");
+    // Quitar footer verde (Build)
+    document.querySelectorAll("footer .footer, footer").forEach(() => {});
+    document.querySelectorAll("footer .footer, footer").forEach(f => {
+      const txt = (f.textContent || "");
+      if (txt.includes("Build:") || txt.includes("Service Worker") || txt.includes("Modo offline")) {
+        // Mantén el footer si te gusta la frase offline; tú dijiste que el bloque verde sobra -> lo oculto completo
+        f.style.display = "none";
+      }
+    });
 
-    // ===== Panel premium (amarillo) =====
-    const panel = findSectionByTitle("Activación Premium");
+    // Quitar botón copiar del dictamen (naranja)
+    const btnCopyDict = document.getElementById("btnCopyDictamen");
+    if (btnCopyDict) btnCopyDict.style.display = "none";
+
+    // Quitar nota del modal (localStorage/sin backend)
+    document.querySelectorAll(".modal .muted.small, .modal .small.muted").forEach(el => {
+      const t = (el.textContent || "");
+      if (t.includes("localStorage") || t.toLowerCase().includes("sin backend")) {
+        el.style.display = "none";
+      }
+    });
+
+    // Panel Premium: en PREMIUM dejar solo contador y mostrar gestionar solo a ≤5 días
+    const panel = document.getElementById("premiumPanel");
     if (!panel) return;
 
     const premium = isPremiumUI();
     const days = extractDaysLeft();
 
-    // Botones dentro del panel
-    const btnManage = Array.from(panel.querySelectorAll("button, a"))
-      .find(el => norm(el.textContent).includes("activar") || norm(el.textContent).includes("gestionar"));
-    const btnRemove = Array.from(panel.querySelectorAll("button, a"))
-      .find(el => norm(el.textContent).includes("quitar"));
+    const btnManage = document.getElementById("btnOpenLicense");
+    const btnRemove = document.getElementById("btnClearLicense");
 
-    // FREE: panel visible (para convertir)
-    // PREMIUM: ocultar casi todo y mostrar gestionar solo cuando falten <=5 días
     if (premium) {
+      // Oculta detalles, deja visible "Días restantes" (el app lo llena)
+      // No tocamos el modal ni handlers
       Array.from(panel.querySelectorAll("*")).forEach(el => {
-        const txt = el.textContent || "";
-        const keep = txt.includes("Días restantes");
+        const keep = (el.id === "premiumDays") || (el.textContent || "").includes("Días restantes");
         if (!keep && el !== panel) el.style.display = "none";
       });
 
@@ -177,16 +144,15 @@
         if (days !== null && days <= SHOW_RENEW_DAYS) btnManage.style.display = "";
         else btnManage.style.display = "none";
       }
-
-      // Por seguridad/UX: ocultar "Quitar licencia" (evita que el cliente juegue con eso)
+      // Ocultar quitar licencia (tu decisión: menos superficie)
       if (btnRemove) btnRemove.style.display = "none";
     } else {
+      // FREE: botón gestionar visible para activar
       if (btnManage) btnManage.style.display = "";
-      // En FREE también oculto "Quitar licencia" (no aporta y da pistas)
       if (btnRemove) btnRemove.style.display = "none";
     }
 
-    // ===== Gancho 2027 gated =====
+    // Gancho 2027
     ensure2027Gated(premium);
   }
 
