@@ -143,16 +143,18 @@
   <script src="assets/js/license.min.js"></script>
   <script src="assets/js/app.min.js"></script>
 
+  <!-- Tweaks UI (oculta online/sw, build, copiar, y gestiona panel premium) -->
+  <script src="assets/js/ui-tweaks.js"></script>
+
   <!-- SW register -->
   <script>
     (function(){
       const swEl = document.getElementById('swStatus');
-      if (!('serviceWorker' in navigator)) { swEl.textContent = 'SW: no'; return; }
+      if (!('serviceWorker' in navigator)) { if(swEl) swEl.textContent = 'SW: no'; return; }
       navigator.serviceWorker.register('./sw.js')
-        .then(()=>{ swEl.textContent = 'SW: ok'; })
-        .catch(()=>{ swEl.textContent = 'SW: err'; });
+        .then(()=>{ if(swEl) swEl.textContent = 'SW: ok'; })
+        .catch(()=>{ if(swEl) swEl.textContent = 'SW: err'; });
     })();
-    <script src="./assets/js/ui-tweaks.js"></script>
   </script>
-  </body>
+</body>
 </html>
