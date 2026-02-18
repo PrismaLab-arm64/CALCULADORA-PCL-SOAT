@@ -1,19 +1,25 @@
-/* ui-tweaks.js — Limpieza UI producción + lógica "renovar a 5 días"
-   No depende de app.min.js. Opera por DOM/textos.
-*/
+/* ui-tweaks.js — Producción: menos pistas + UX premium + gancho 2027 + fondo azul */
 (() => {
   "use strict";
 
-  // Ajustes
-  const SHOW_RENEW_DAYS = 5;     // mostrar "Activar/Gestionar" cuando falten <= 5 días
-  const RUN_EVERY_MS = 1200;     // re-aplicar (por si la app re-renderiza)
+  const SHOW_RENEW_DAYS = 5;   // mostrar "Activar/Gestionar" cuando falten <= 5 días
+  const RUN_EVERY_MS = 1200;
+  const YEAR_GANCHO = "2027";  // año premium visible pero bloqueado en FREE
+  const FALLBACK_YEAR = "2026";
 
-  // Helpers
   const norm = (s) => (s || "").toString().toLowerCase().trim();
   const hasText = (el, txt) => el && norm(el.textContent).includes(norm(txt));
 
-  function hideIfContains(tag, text) {
-    document.querySelectorAll(tag).forEach(el => {
+  function injectStyleOnce(id, cssText) {
+    if (document.getElementById(id)) return;
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = cssText;
+    document.head.appendChild(style);
+  }
+
+  function hideIfContains(selector, text) {
+    document.querySelectorAll(selector).forEach(el => {
       if (hasText(el, text)) el.style.display = "none";
     });
   }
@@ -25,13 +31,11 @@
   }
 
   function findSectionByTitle(titleText) {
-    // Busca un contenedor que incluya el título "Activación Premium"
     const all = Array.from(document.querySelectorAll("section, div, article, main"));
     return all.find(el => hasText(el, titleText));
   }
 
   function extractDaysLeft() {
-    // Busca "Días restantes:" y extrae el número
     const nodes = Array.from(document.querySelectorAll("*"));
     for (const n of nodes) {
       const t = n.textContent || "";
@@ -44,29 +48,81 @@
   }
 
   function isPremiumUI() {
-    // Si en el panel aparece "Estado: PREMIUM"
     return Array.from(document.querySelectorAll("*"))
       .some(n => (n.textContent || "").includes("Estado: PREMIUM"));
   }
 
+  function setSmallHint(text) {
+    const el = document.getElementById("smmlvInfo");
+    if (!el) return;
+    // Solo mensajes cortos y no invasivos
+    el.textContent = text || "";
+  }
+
+  function ensure2027Gated(premium) {
+    const sel = document.getElementById("year");
+    if (!sel) return;
+
+    // Asegura que exista la opción 2027
+    let opt = sel.querySelector(`option[value="${YEAR_GANCHO}"]`);
+    if (!opt) {
+      opt = document.createElement("option");
+      opt.value = YEAR_GANCHO;
+      opt.textContent = YEAR_GANCHO;
+      sel.insertBefore(opt, sel.firstChild);
+    }
+
+    // Gating: FREE -> disabled y con candado; PREMIUM -> habilitado
+    if (!premium) {
+      opt.disabled = true;
+      if (!opt.textContent.includes("🔒")) opt.textContent = `${YEAR_GANCHO} 🔒`;
+      // Si por algún motivo quedó seleccionado, vuelve a 2026
+      if (sel.value === YEAR_GANCHO) {
+        sel.value = FALLBACK_YEAR;
+        setSmallHint("2027 disponible con suscripción.");
+      }
+      // Bloqueo adicional ante cambios manuales
+      sel.addEventListener("change", () => {
+        if (sel.value === YEAR_GANCHO) {
+          sel.value = FALLBACK_YEAR;
+          setSmallHint("2027 disponible con suscripción.");
+        } else {
+          setSmallHint("");
+        }
+      }, { once: true });
+    } else {
+      opt.disabled = false;
+      opt.textContent = YEAR_GANCHO;
+      // En premium no molestamos con textos
+      setSmallHint("");
+    }
+  }
+
   function apply() {
-    // 1) Ocultar indicadores azules (online / sw)
+    // ===== Estilo: fondo azul tipo activador =====
+    injectStyleOnce("pcl-blue-bg", `
+      body { background: #08142b !important; }
+      .topbar { background: #08142b !important; border-bottom: 1px solid rgba(255,255,255,.08) !important; }
+      .wrap { padding-bottom: 28px; }
+    `);
+
+    // ===== Ocultar pistas (debug) =====
     hideIfContains("div, span, small", "Online");
     hideIfContains("div, span, small", "SW:");
-
-    // 2) Ocultar info verde de build/debug
     hideIfContains("div, span, small", "Build:");
     hideIfContains("div, span, small", "assets/js/");
+    hideIfContains("div, span, small", "localStorage"); // la nota del modal
+    hideIfContains("div, span, small", "Sin backend");  // la nota del modal
 
-    // 3) Ocultar botón "Copiar" (naranja)
+    // ===== Quitar botón "Copiar" del dictamen (naranja) =====
     hideButtonsByLabel("Copiar");
 
-    // 4) Lógica del panel de activación
+    // ===== Panel premium (amarillo) =====
     const panel = findSectionByTitle("Activación Premium");
     if (!panel) return;
 
-    const days = extractDaysLeft();
     const premium = isPremiumUI();
+    const days = extractDaysLeft();
 
     // Botones dentro del panel
     const btnManage = Array.from(panel.querySelectorAll("button, a"))
@@ -74,36 +130,32 @@
     const btnRemove = Array.from(panel.querySelectorAll("button, a"))
       .find(el => norm(el.textContent).includes("quitar"));
 
-    // Regla:
-    // - En FREE: mostrar panel completo (para suscripción)
-    // - En PREMIUM: ocultar todo el panel excepto contador; y mostrar gestionar solo si faltan <= 5 días
+    // FREE: panel visible (para convertir)
+    // PREMIUM: ocultar casi todo y mostrar gestionar solo cuando falten <=5 días
     if (premium) {
-      // Oculta datos “Estado/Usuario” pero deja visible “Días restantes”
       Array.from(panel.querySelectorAll("*")).forEach(el => {
         const txt = el.textContent || "";
         const keep = txt.includes("Días restantes");
         if (!keep && el !== panel) el.style.display = "none";
       });
 
-      // Botón gestionar solo en ventana de renovación
       if (btnManage) {
         if (days !== null && days <= SHOW_RENEW_DAYS) btnManage.style.display = "";
         else btnManage.style.display = "none";
       }
 
-      // Botón “Quitar licencia”: opcional
-      // Si lo quieres oculto siempre en premium, descomenta la siguiente línea:
-      // if (btnRemove) btnRemove.style.display = "none";
-
+      // Por seguridad/UX: ocultar "Quitar licencia" (evita que el cliente juegue con eso)
+      if (btnRemove) btnRemove.style.display = "none";
     } else {
-      // FREE: panel visible completo (no tocar), solo garantiza que el botón gestionar exista/sea visible
       if (btnManage) btnManage.style.display = "";
-      // btnRemove normalmente no debería estar en free, pero si aparece, puedes ocultarlo:
-      // if (btnRemove) btnRemove.style.display = "none";
+      // En FREE también oculto "Quitar licencia" (no aporta y da pistas)
+      if (btnRemove) btnRemove.style.display = "none";
     }
+
+    // ===== Gancho 2027 gated =====
+    ensure2027Gated(premium);
   }
 
-  // Ejecuta ahora y re-ejecuta periódicamente (por si tu app pinta de nuevo)
   apply();
   setInterval(apply, RUN_EVERY_MS);
 })();
