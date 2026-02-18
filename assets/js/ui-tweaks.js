@@ -1,7 +1,8 @@
 /* ui-tweaks.js — Producción: menos pistas + UX premium + gancho 2027
-   - Premium panel: "Titular: NOMBRE — Días restantes: N"
-   - Dictamen: añade bloque premium (Titular + días) al inicio SOLO en Premium
+   - Premium panel: "Asesor: NOMBRE — Días restantes: N"
+   - Dictamen: añade bloque premium (Asesor + días) al inicio SOLO en Premium
    - Botón dictamen: WhatsApp SOLO en Premium (copia + abre wa.me)
+   - Ajustes visuales: Fondo azul, cards integradas, responsive mejorado.
 */
 (() => {
   "use strict";
@@ -23,8 +24,14 @@
   }
 
   function isPremiumUI() {
-    return Array.from(document.querySelectorAll("*"))
-      .some(n => (n.textContent || "").includes("Estado: PREMIUM"));
+    const el = document.getElementById("premiumStatus");
+    if (el) {
+      const t = (el.textContent || "").toUpperCase();
+      return t.includes("PREMIUM") || t.includes("DEMO") || t.includes("PRUEBA");
+    }
+    // Fallback: check body text just in case
+    return document.body.textContent.includes("Estado: PREMIUM") ||
+      document.body.textContent.includes("Estado: DEMO");
   }
 
   function extractDaysLeft() {
@@ -50,7 +57,7 @@
     el.textContent = text || "";
   }
 
-  // Titular:
+  // Asesor:
   // 1) Si premiumUser lo llena, lo usamos
   // 2) Si no, leemos token guardado (payload.user)
   function getTitularName() {
@@ -126,7 +133,7 @@
     if (!t) return false;
 
     if (navigator.clipboard && window.isSecureContext) {
-      try { await navigator.clipboard.writeText(t); return true; } catch {}
+      try { await navigator.clipboard.writeText(t); return true; } catch { }
     }
     try {
       const ta = document.createElement("textarea");
@@ -154,26 +161,56 @@
     const d = (typeof days === "number") ? String(days) : "—";
     const name = (titular && titular.trim()) ? titular.trim() : "—";
     return (
-      `TITULAR: ${name}\n` +
+      `ASESOR: ${name}\n` +
       `SUSCRIPCIÓN: ${d} día(s) restantes\n` +
       `----------------------------------------\n`
     );
   }
 
   function apply() {
-    // Fondo azul consistente
+    // Fondo azul consistente y homólogo
     injectStyleOnce("pcl-blue-bg", `
-      body{background:#08142b !important;}
-      .topbar{background:#08142b !important;border-bottom:1px solid rgba(255,255,255,.08) !important;}
+      body, .topbar { background-color: #08142b !important; color: #ffffff; }
+      .topbar { border-bottom: 1px solid rgba(255,255,255,.15) !important; }
+      
+      /* Ajuste de cards para homologar con el azul */
+      .card, .modal__card {
+        background-color: #0c1e3d !important; /* Azul ligeramente más claro que el fondo */
+        color: #e0e6ed !important;
+        border: 1px solid #1c355e !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      }
+      
+      /* Inputs y selects oscuros */
+      input, select, textarea {
+        background-color: #060f21 !important;
+        color: #fff !important;
+        border: 1px solid #2a4065 !important;
+      }
+      
+      /* Botones y acentos */
+      .h { color: #5c9eff !important; } /* Títulos en azul claro */
+      .muted { color: #8ba6ca !important; }
+      
+      /* Dictamen más grande */
+      #dictamen { height: 160px !important; min-height: 160px; }
+      
+      /* Responsive Tweaks */
+      @media (max-width: 600px) {
+        .row { flex-wrap: wrap; }
+        .btnrow { flex-direction: column; width: 100%; gap: 10px; }
+        .btn { width: 100%; margin: 0 !important; }
+        .kpi { width: 100%; margin-bottom: 10px; }
+      }
     `);
 
     // Ocultar Online/SW
     const net = document.getElementById("netStatus");
-    const sw  = document.getElementById("swStatus");
+    const sw = document.getElementById("swStatus");
     if (net) net.style.display = "none";
-    if (sw)  sw.style.display  = "none";
+    if (sw) sw.style.display = "none";
 
-    // Ocultar footer completo
+    // Ocultar footer completo pero si hay info importante moverla
     document.querySelectorAll("footer.footer, footer").forEach(f => { f.style.display = "none"; });
 
     // Ocultar nota del modal
@@ -191,8 +228,8 @@
 
     const btnManage = document.getElementById("btnOpenLicense");
     const btnRemove = document.getElementById("btnClearLicense");
-    const elDays    = document.getElementById("premiumDays");
-    const elUser    = document.getElementById("premiumUser");
+    const elDays = document.getElementById("premiumDays");
+    const elUser = document.getElementById("premiumUser");
 
     // Dictamen
     const btnCopyDict = document.getElementById("btnCopyDictamen");
@@ -202,26 +239,44 @@
       const titular = getTitularName();
       const name = (titular && titular.trim()) ? titular.trim() : "Usuario";
 
-      // Línea premium: Titular + Días
+      // Línea premium: Asesor + Días
       const dtxt = (typeof days === "number") ? String(days) : "—";
       if (elDays) {
         elDays.style.display = "";
-        elDays.textContent = `Titular: ${name} — Días restantes: ${dtxt}`;
+        elDays.textContent = `Asesor: ${name} — Días restantes: ${dtxt}`;
       }
       if (elUser) elUser.style.display = "none";
 
-      // Ocultar todo en panel excepto premiumDays
+      // Ocultar todo en panel excepto premiumDays y botones necesarios
       Array.from(panel.querySelectorAll("*")).forEach(el => {
-        const keep = (el === elDays) || (el.id === "premiumDays");
-        if (!keep && el !== panel) el.style.display = "none";
+        // Mantenemos solo contenedores hijos directos o elDay
+        const isChild = el.parentElement === panel;
+        // La lógica original oculta divs internos, tratamos de ser específicos
+        if ((el === elDays) || (el.id === "premiumDays")) {
+          el.style.display = "";
+        } else if (el.classList.contains("row") || el.classList.contains("btnrow")) {
+          // Dejar que los contenedores se muestren si tienen contenido visible
+        } else {
+          // Ocultar premiumStatus, labels viejos, etc.
+          if (el.id === "premiumStatus" || el.id === "premiumUser" || el.classList.contains("h")) {
+            el.style.display = "none";
+          }
+        }
       });
 
-      // Botón gestionar solo a <=5 días
+      // Botón gestionar: visible si <= 5 días O si es un usuario "demo" para permitir cambio
+      const isDemo = name.toLowerCase().includes("demo") || name.toLowerCase().includes("prueba");
+
       if (btnManage) {
-        if (days !== null && days <= SHOW_RENEW_DAYS) btnManage.style.display = "";
-        else btnManage.style.display = "none";
+        // Lógica corregida: Siempre permitir gestionar si es demo para salir del trap
+        if (isDemo || (days !== null && days <= SHOW_RENEW_DAYS)) {
+          btnManage.style.display = "";
+          btnManage.textContent = "Gestionar Licencia";
+        } else {
+          btnManage.style.display = "none";
+        }
       }
-      if (btnRemove) btnRemove.style.display = "none";
+      if (btnRemove) btnRemove.style.display = "none"; // Preferimos btnManage que abre el modal
 
       // Dictamen: botón WhatsApp + encabezado premium
       if (btnCopyDict) {
@@ -234,7 +289,7 @@
 
             // Inserta header premium si no existe ya
             const header = buildPremiumDictamenHeader(name, days);
-            const already = raw.startsWith("TITULAR:");
+            const already = raw.startsWith("ASESOR:");
             const finalText = already ? raw : (header + raw);
 
             await copyToClipboard(finalText);
