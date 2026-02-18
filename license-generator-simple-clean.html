@@ -1,265 +1,362 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1220" />
-  <title>Generador de Licencias — PCL/SOAT</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Licencias PCL-SOAT</title>
   <style>
-    :root{--bg:#0b1220;--card:#121a2b;--txt:#e7edf7;--muted:#9fb0c6;--line:rgba(255,255,255,.12);--ok:#3ddc97;--bad:#ff5c73;--btn:#1a2440}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,var(--bg),#070b14); color:var(--txt)}
-    main{max-width:820px;margin:0 auto;padding:16px}
-    h1{font-size:18px;margin:8px 0 6px}
-    p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.35}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
-    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px}
-    input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:#0f1626;color:var(--txt);outline:none}
-    textarea{min-height:110px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
-    .row{display:grid;grid-template-columns:1fr;gap:12px}
-    @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
-    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    button{padding:11px 12px;border-radius:12px;border:1px solid var(--line);background:var(--btn);color:var(--txt);cursor:pointer}
-    button:active{transform:scale(.99)}
-    .msg{margin-top:10px;font-size:13px}
-    .ok{color:var(--ok)} .bad{color:var(--bad)}
-    .pill{display:inline-block;padding:2px 10px;border-radius:999px;border:1px solid var(--line);font-size:12px;color:var(--muted)}
-    .tiny{font-size:12px;color:var(--muted)}
+    :root {
+      --bg: #0b1220;
+      --card-bg: #161f32;
+      --primary: #3b82f6;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: #334155;
+      --gold: #fbbf24;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      width: 100%;
+      max-width: 550px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    h1 { margin: 0 0 10px 0; font-size: 1.4rem; text-align: center; color: var(--primary); letter-spacing: 0.5px; }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+    
+    .input-group { margin-bottom: 24px; }
+    label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #0f172a;
+      color: white;
+      font-size: 1.1rem;
+      outline: none;
+      transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+
+    /* Plan Selection Grid */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .plan-option {
+      cursor: pointer;
+      position: relative;
+    }
+    .plan-option input { opacity: 0; position: absolute; }
+    .plan-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 10px;
+      background: #0f172a;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.2s;
+      text-align: center;
+      height: 100%;
+    }
+    .plan-card:hover { border-color: #475569; transform: translateY(-2px); }
+    
+    .plan-option input:checked + .plan-card {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.1);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    /* Gold Specific Styles */
+    .plan-option input[value="gold"]:checked + .plan-card {
+      border-color: var(--gold);
+      background: rgba(251, 191, 36, 0.1);
+    }
+
+    .plan-name { font-weight: bold; margin-bottom: 4px; font-size: 1rem; }
+    .plan-duration { font-size: 0.8rem; color: var(--muted); }
+    .gold-text { color: var(--gold); }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.2s;
+      box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+    }
+    .btn:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn:active { transform: translateY(1px); }
+
+    /* Result Area */
+    .result-area {
+      display: none;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .result-area.active { display: block; }
+    
+    .token-box {
+      background: #0f172a;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px dashed var(--border);
+      word-break: break-all;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      color: #a5b4fc;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .token-box:hover {
+      background: #1e293b;
+      border-color: var(--primary);
+    }
+    .token-box::after {
+      content: 'COPIAR';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 0.6rem;
+      background: var(--primary);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      opacity: 0.5;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      border-radius: 8px;
+      background: #10b981;
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+      display: none;
+      animation: slideUp 0.3s ease-out;
+      z-index: 100;
+    }
+    .toast.error { background: #ef4444; }
+
+    @keyframes fadeIn { from { opacity: 0; margin-top: 10px; } to { opacity: 1; margin-top: 24px; } }
+    @keyframes slideUp { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+
+    details { margin-top: 15px; color: var(--muted); font-size: 0.8rem; cursor: pointer; }
+    summary { outline: none; }
   </style>
 </head>
 <body>
-  <main>
-    <h1>Generador de Licencias — PCL / SOAT</h1>
-    <p class="tiny">Titular → Plan → Generar → Copiar</p>
 
+  <div class="toast" id="toast">Notificación</div>
+
+  <div class="container">
     <div class="card">
-      <div class="row">
-        <div>
-          <label>Titular (nombre visible)</label>
-          <input id="user" type="text" placeholder="Ej: Diego Rojas / Cliente X" autocomplete="off" />
-        </div>
-        <div>
-          <label>Plan (automático)</label>
-          <select id="plan">
-            <option value="demo" selected>Demo (30 días)</option>
-            <option value="pro">Pro (6 meses)</option>
-            <option value="premium">Premium (12 meses)</option>
-          </select>
+      <h1>GENERADOR DE LICENCIAS</h1>
+
+      <div class="input-group">
+        <label>Nombre del Asesor / Titular</label>
+        <input type="text" id="user" placeholder="Ej: Dra. Claudia López" autocomplete="off">
+      </div>
+
+      <div class="input-group">
+        <label>Seleccionar Plan</label>
+        <div class="plans-grid">
+          <!-- DEMO -->
+          <label class="plan-option">
+            <input type="radio" name="plan" value="demo" checked>
+            <div class="plan-card">
+              <span class="plan-name">DEMO</span>
+              <span class="plan-duration">30 Días</span>
+            </div>
+          </label>
+          
+          <!-- PRO -->
+          <label class="plan-option">
+            <input type="radio" name="plan" value="pro">
+            <div class="plan-card">
+              <span class="plan-name">PRO</span>
+              <span class="plan-duration">6 Meses</span>
+            </div>
+          </label>
+
+          <!-- PREMIUM -->
+          <label class="plan-option">
+            <input type="radio" name="plan" value="premium">
+            <div class="plan-card">
+              <span class="plan-name">PREMIUM</span>
+              <span class="plan-duration">12 Meses</span>
+            </div>
+          </label>
+
+          <!-- GOLD -->
+          <label class="plan-option">
+            <input type="radio" name="plan" value="gold">
+            <div class="plan-card" style="border-color: rgba(251, 191, 36, 0.5);">
+              <span class="plan-name gold-text">GOLD</span>
+              <span class="plan-duration" style="color:#fcd34d">24 Meses</span>
+            </div>
+          </label>
         </div>
       </div>
 
-      <details class="card" style="margin-top:12px">
-  <summary class="tiny" style="cursor:pointer">Opciones avanzadas (features)</summary>
-  <div style="margin-top:10px">
-    <label>Features (JSON)</label>
-    <textarea id="features">{ "whatsapp": true, "dictamen": true }</textarea>
-    <div class="tiny">Déjalo vacío si no lo usas.</div>
-  </div>
-</details>
+      <button id="btnGenerate" class="btn">GENERAR TOKEN</button>
 
-      <div class="btns">
-  <button id="btnGenerate">Generar</button>
-  <button id="btnCopy">Copiar</button>
-</div>
-
-<details style="margin-top:10px">
-  <summary class="tiny" style="cursor:pointer">Más opciones</summary>
-  <div class="btns" style="margin-top:10px">
-    <button id="btnVerify">Verificar</button>
-    <button id="btnReset">Limpiar</button>
-  </div>
-</details>
-
-      <div id="msg" class="msg tiny"></div>
+      <div id="resultArea" class="result-area">
+        <label>Token Generado (Click para copiar)</label>
+        <div class="token-box" id="tokenOutput"></div>
+        
+        <details>
+          <summary>Ver Payload (Detalles Técnicos)</summary>
+          <pre id="payloadOutput" style="margin-top:10px; background:#0b1220; padding:10px; border-radius:8px; overflow-x:auto;"></pre>
+        </details>
+      </div>
     </div>
+  </div>
 
-    <div class="card">
-      <label>Token (para copiar/pegar)</label>
-      <textarea id="token" placeholder="Aquí aparecerá el token..." readonly></textarea>
+  <script>
+    // ================== CONFIG ==================
+    const SECRET = "Sk1nn3r%%2025"; 
 
-      <label>Payload decodificado (solo lectura)</label>
-      <textarea id="payloadOut" readonly></textarea>
-    </div>
-
+    // ================== LOGIC ==================
+    const $ = id => document.getElementById(id);
     
-  </main>
+    // Base64Url Utils
+    const b64uEncode = (bytes) => {
+      let bin = "";
+      const arr = new Uint8Array(bytes);
+      for(let i=0; i<arr.length; i++) bin += String.fromCharCode(arr[i]);
+      return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    };
+    
+    const textToBytes = (s) => new TextEncoder().encode(s);
+    
+    // Date Utils
+    const todayISO = () => new Date().toISOString().split('T')[0];
+    const addDays = (d) => {
+        const date = new Date();
+        date.setDate(date.getDate() + d);
+        return date.toISOString().split('T')[0];
+    };
 
-<script>
-  // ================== CONFIG (SECRET embebido) ==================
-  // Cambia este valor antes de usar en producción.
-  const SECRET = "Sk1nn3r%%2025";
+    // Plans Configuration
+    const getPlanDays = (p) => {
+        switch(p) {
+            case 'demo': return 30;
+            case 'pro': return 180;
+            case 'premium': return 365;
+            case 'gold': return 730; // 24 Meses
+            default: return 30;
+        }
+    };
 
-  // ===== Utils =====
-  const $ = (id) => document.getElementById(id);
-
-  function b64uEncode(bytes) {
-    let bin = "";
-    const arr = new Uint8Array(bytes);
-    for (let i=0; i<arr.length; i++) bin += String.fromCharCode(arr[i]);
-    return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-  }
-
-  function b64uToBytes(b64u) {
-    const b64 = b64u.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((b64u.length + 3) % 4);
-    const str = atob(b64);
-    const bytes = new Uint8Array(str.length);
-    for (let i=0; i<str.length; i++) bytes[i] = str.charCodeAt(i);
-    return bytes;
-  }
-
-  function textToBytes(s) { return new TextEncoder().encode(s); }
-  function bytesToText(b) { return new TextDecoder().decode(b); }
-
-  function todayISO() {
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
-  }
-
-  function addDaysISO(days) {
-    const d = new Date();
-    d.setDate(d.getDate() + Number(days||0));
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth()+1).padStart(2,"0");
-    const dd = String(d.getDate()).padStart(2,"0");
-    return `${yyyy}-${mm}-${dd}`;
-  }
-
-  function planToDays(plan){
-    if (plan === "demo") return 30;
-    if (plan === "pro") return 180;
-    if (plan === "premium") return 365;
-    return 30;
-  }
-
-  function randId() {
-    const a = crypto.getRandomValues(new Uint8Array(6));
-    return "PCL-" + b64uEncode(a);
-  }
-
-  async function hmacSha256(secret, message) {
-    const key = await crypto.subtle.importKey(
-      "raw",
-      textToBytes(secret),
-      { name: "HMAC", hash: "SHA-256" },
-      false,
-      ["sign"]
-    );
-    const sig = await crypto.subtle.sign("HMAC", key, textToBytes(message));
-    return b64uEncode(sig);
-  }
-
-  function setMsg(text, ok=true) {
-    $("msg").innerHTML = ok
-      ? `<span class="ok">✅ ${text}</span>`
-      : `<span class="bad">❌ ${text}</span>`;
-  }
-
-  function parseFeatures() {
-    const raw = ($("features").value || "").trim();
-    if (!raw) return {};
-    const obj = JSON.parse(raw);
-    if (typeof obj !== "object" || obj === null) throw new Error("features debe ser un objeto JSON");
-    return obj;
-  }
-
-  // ===== Generate =====
-  $("btnGenerate").addEventListener("click", async () => {
-    try{
-      const user = ($("user").value || "").trim();
-      const plan = ($("plan").value || "demo").trim();
-      const lic_id = randId();
-      const features = parseFeatures();
-      const exp = addDaysISO(planToDays(plan));
-
-      if (!SECRET) return setMsg("SECRET no configurado en este archivo.", false);
-      if (!user) return setMsg("Falta el nombre del titular.", false);
-
-      const payload = {
-        lic_id,
-        user,
-        plan,
-        exp,
-        features,
-        issued_at: todayISO()
-      };
-
-      const payloadJson = JSON.stringify(payload);
-      const payloadB64u = b64uEncode(textToBytes(payloadJson));
-
-      // TOKEN (2 partes): payload.signature
-      const sigB64u = await hmacSha256(SECRET, payloadB64u);
-      const token = `${payloadB64u}.${sigB64u}`;
-
-      $("token").value = token;
-      $("payloadOut").value = JSON.stringify(payload, null, 2);
-      setMsg(`Token generado. Vence: ${exp}`);
-    }catch(e){
-      setMsg(e.message || String(e), false);
+    // Crypto Logic
+    async function signToken(payloadStr) {
+        const key = await crypto.subtle.importKey(
+            "raw", textToBytes(SECRET), 
+            { name: "HMAC", hash: "SHA-256" }, 
+            false, ["sign"]
+        );
+        const sig = await crypto.subtle.sign("HMAC", key, textToBytes(payloadStr));
+        return b64uEncode(sig);
     }
-  });
 
-  // ===== Copy =====
-  $("btnCopy").addEventListener("click", async () => {
-    try{
-      const token = ($("token").value || "").trim();
-      if (!token) return setMsg("No hay token para copiar.", false);
+    // UI Helpers
+    const showToast = (msg, isError = false) => {
+        const t = $('toast');
+        t.innerText = msg;
+        t.className = isError ? 'toast error' : 'toast';
+        t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 3000);
+    };
 
-      await navigator.clipboard.writeText(token);
-      setMsg("Token copiado.");
-    }catch(e){
-      const t = $("token");
-      t.removeAttribute("readonly");
-      t.focus();
-      t.select();
-      t.setSelectionRange(0, t.value.length);
-      t.setAttribute("readonly","readonly");
-      setMsg("No pude copiar automático. El token quedó seleccionado: usa 'Copiar' del sistema.", false);
-    }
-  });
+    // Main Action
+    $('btnGenerate').addEventListener('click', async () => {
+        const user = $('user').value.trim();
+        if(!user) {
+            showToast("Por favor, ingresa el nombre del asesor.", true);
+            $('user').focus();
+            return;
+        }
 
-  // ===== Verify local =====
-  $("btnVerify").addEventListener("click", async () => {
-    try{
-      const token = ($("token").value || "").trim();
-      if (!SECRET) return setMsg("SECRET no configurado.", false);
-      if (!token || !token.includes(".")) return setMsg("Token inválido.", false);
+        const planInput = document.querySelector('input[name="plan"]:checked');
+        const plan = planInput ? planInput.value : 'demo';
+        const days = getPlanDays(plan);
+        const exp = addDays(days);
+        
+        // Random License ID
+        const rand = window.crypto.getRandomValues(new Uint8Array(4));
+        const lic_id = "LIC-" + b64uEncode(rand);
 
-      const parts = token.split(".");
-      if (parts.length !== 2) return setMsg("Token inválido: se esperan 2 partes payload.signature", false);
+        // Core Payload
+        const payload = {
+            lic_id,
+            user,
+            plan,
+            exp,
+            features: { whatsapp: true, dictamen: true },
+            issued_at: todayISO()
+        };
 
-      const payloadB64u = parts[0];
-      const sigB64u = parts[1];
+        try {
+            const payloadJson = JSON.stringify(payload);
+            const payloadB64 = b64uEncode(textToBytes(payloadJson));
+            const sig = await signToken(payloadB64);
+            const token = `${payloadB64}.${sig}`;
+            
+            // Render Result
+            $('resultArea').classList.add('active');
+            $('tokenOutput').innerText = token;
+            $('payloadOutput').innerText = JSON.stringify(payload, null, 2);
+            
+            showToast("¡Licencia generada con éxito!");
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            
+        } catch(e) {
+            showToast("Error critico: " + e.message, true);
+        }
+    });
 
-      const expected = await hmacSha256(SECRET, payloadB64u);
-      if (expected !== sigB64u) return setMsg("Firma NO coincide (token modificado).", false);
-
-      const payload = JSON.parse(bytesToText(b64uToBytes(payloadB64u)));
-      $("payloadOut").value = JSON.stringify(payload, null, 2);
-
-      if (!payload.exp) return setMsg("Payload: exp faltante.", false);
-      if (payload.exp < todayISO()) return setMsg("Licencia vencida.", false);
-
-      setMsg(`Token válido y vigente. Vence: ${payload.exp}`);
-    }catch(e){
-      setMsg(e.message || String(e), false);
-    }
-  });
-
-  // ===== Reset =====
-  $("btnReset").addEventListener("click", () => {
-    $("user").value = "";
-    $("plan").value = "demo";
-    $("token").value = "";
-    $("payloadOut").value = "";
-    $("features").value = '{ "whatsapp": true, "dictamen": true }';
-    setMsg("Listo. Formulario limpio.");
-  });
-
-  // init
-  setMsg("Listo para generar.");
-</script>
+    // Copy Action
+    $('tokenOutput').addEventListener('click', () => {
+        const text = $('tokenOutput').innerText;
+        if(!text) return;
+        navigator.clipboard.writeText(text).then(() => showToast("Copiado al portapapeles"));
+    });
+  </script>
 </body>
 </html>

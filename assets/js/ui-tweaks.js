@@ -312,6 +312,59 @@
     ensure2027Gated(premium);
   }
 
+  // Lógica de Honorarios (Abogados)
+  function setupFeesCalculator() {
+    const kpiCop = document.getElementById("kpiCop");
+    const inpPct = document.getElementById("honorariosPct");
+    const valHon = document.getElementById("valHonorarios");
+    const valCli = document.getElementById("valCliente");
+
+    if (!kpiCop || !inpPct || !valHon || !valCli) return;
+
+    function parseCop(str) {
+      if (!str) return 0;
+      // Quitar todo menos números "15.000.000" -> 15000000
+      const clean = str.replace(/[^\d]/g, "");
+      return parseInt(clean, 10) || 0;
+    }
+
+    function fmtCop(n) {
+      return n.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "COP",
+        maximumFractionDigits: 0
+      });
+    }
+
+    function recalc() {
+      const total = parseCop(kpiCop.textContent);
+      const pct = parseFloat(inpPct.value) || 0;
+
+      if (total <= 0) {
+        valHon.textContent = "—";
+        valCli.textContent = "—";
+        // Si hay porcentaje pero no total, mostrar —
+        return;
+      }
+
+      const fee = total * (pct / 100);
+      const client = total - fee;
+
+      // Actualizar DOM
+      valHon.textContent = fmtCop(fee);
+      valCli.textContent = fmtCop(client);
+    }
+
+    // 1. Escuchar cambios en el KPI principal (cuando app.min.js calcula)
+    const obs = new MutationObserver(recalc);
+    obs.observe(kpiCop, { childList: true, characterData: true, subtree: true });
+
+    // 2. Escuchar input del porcentaje
+    inpPct.addEventListener("input", recalc);
+  }
+
+  setupFeesCalculator();
+
   apply();
   setInterval(apply, RUN_EVERY_MS);
 })();
