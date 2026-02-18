@@ -60,17 +60,51 @@
   }
 
   function ensure2027Gated(premium) {
-    const sel = document.getElementById("year");
-    if (!sel) return;
+  const sel = document.getElementById("year");
+  if (!sel) return;
 
-    // Asegura que exista la opción 2027
-    let opt = sel.querySelector(`option[value="${YEAR_GANCHO}"]`);
-    if (!opt) {
-      opt = document.createElement("option");
-      opt.value = YEAR_GANCHO;
-      opt.textContent = YEAR_GANCHO;
-      sel.insertBefore(opt, sel.firstChild);
+  // Asegura que exista la opción 2027
+  let opt = sel.querySelector(`option[value="${YEAR_GANCHO}"]`);
+  if (!opt) {
+    opt = document.createElement("option");
+    opt.value = YEAR_GANCHO;
+    opt.textContent = YEAR_GANCHO;
+    sel.insertBefore(opt, sel.firstChild);
+  }
+
+  const currentYear = String(new Date().getFullYear());
+  const isYear2027 = (currentYear === YEAR_GANCHO);
+
+  // Regla:
+  // - FREE: siempre bloqueado (gancho)
+  // - PREMIUM: solo habilitado si YA estamos en 2027 (datos oficiales deberían existir)
+  const canUse2027 = premium && isYear2027;
+
+  if (!canUse2027) {
+    opt.disabled = true;
+    if (!opt.textContent.includes("🔒")) opt.textContent = `${YEAR_GANCHO} 🔒`;
+
+    // Evita selección manual
+    if (sel.value === YEAR_GANCHO) {
+      sel.value = FALLBACK_YEAR;
+      setSmallHint("2027 se habilita cuando esté vigente.");
     }
+    sel.addEventListener("change", () => {
+      if (sel.value === YEAR_GANCHO) {
+        sel.value = FALLBACK_YEAR;
+        setSmallHint("2027 se habilita cuando esté vigente.");
+      } else {
+        setSmallHint("");
+      }
+    }, { once: true });
+
+  } else {
+    opt.disabled = false;
+    opt.textContent = YEAR_GANCHO;
+    setSmallHint("");
+  }
+}
+
 
     // Gating: FREE -> disabled y con candado; PREMIUM -> habilitado
     if (!premium) {
