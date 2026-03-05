@@ -33,7 +33,7 @@
       gap: 20px;
     }
     h1 { margin: 0 0 10px 0; font-size: 1.4rem; text-align: center; color: var(--primary); letter-spacing: 0.5px; }
-    
+
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -41,10 +41,10 @@
       padding: 24px;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     }
-    
+
     .input-group { margin-bottom: 24px; }
     label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
-    
+
     input[type="text"] {
       width: 100%;
       padding: 14px;
@@ -84,7 +84,7 @@
       height: 100%;
     }
     .plan-card:hover { border-color: #475569; transform: translateY(-2px); }
-    
+
     .plan-option input:checked + .plan-card {
       border-color: var(--primary);
       background: rgba(59, 130, 246, 0.1);
@@ -125,7 +125,7 @@
       animation: fadeIn 0.3s ease-in-out;
     }
     .result-area.active { display: block; }
-    
+
     .token-box {
       background: #0f172a;
       padding: 16px;
@@ -204,7 +204,16 @@
               <span class="plan-duration">30 Días</span>
             </div>
           </label>
-          
+
+          <!-- PLUS (NUEVO) -->
+          <label class="plan-option">
+            <input type="radio" name="plan" value="plus">
+            <div class="plan-card">
+              <span class="plan-name">PLUS</span>
+              <span class="plan-duration">3 Meses</span>
+            </div>
+          </label>
+
           <!-- PRO -->
           <label class="plan-option">
             <input type="radio" name="plan" value="pro">
@@ -224,7 +233,7 @@
           </label>
 
           <!-- GOLD -->
-          <label class="plan-option">
+          <label class="plan-option" style="grid-column: 1 / -1;">
             <input type="radio" name="plan" value="gold">
             <div class="plan-card" style="border-color: rgba(251, 191, 36, 0.5);">
               <span class="plan-name gold-text">GOLD</span>
@@ -239,7 +248,7 @@
       <div id="resultArea" class="result-area">
         <label>Token Generado (Click para copiar)</label>
         <div class="token-box" id="tokenOutput"></div>
-        
+
         <details>
           <summary>Ver Payload (Detalles Técnicos)</summary>
           <pre id="payloadOutput" style="margin-top:10px; background:#0b1220; padding:10px; border-radius:8px; overflow-x:auto;"></pre>
@@ -250,112 +259,130 @@
 
   <script>
     // ================== CONFIG ==================
-    const SECRET = "Sk1nn3r%%2025"; 
+    const SECRET = "Sk1nn3r%%2025";
 
     // ================== LOGIC ==================
     const $ = id => document.getElementById(id);
-    
+
     // Base64Url Utils
     const b64uEncode = (bytes) => {
       let bin = "";
       const arr = new Uint8Array(bytes);
-      for(let i=0; i<arr.length; i++) bin += String.fromCharCode(arr[i]);
-      return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+      for (let i = 0; i < arr.length; i++) bin += String.fromCharCode(arr[i]);
+      return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
     };
-    
+
     const textToBytes = (s) => new TextEncoder().encode(s);
-    
-    // Date Utils
-    const todayISO = () => new Date().toISOString().split('T')[0];
-    const addDays = (d) => {
-        const date = new Date();
-        date.setDate(date.getDate() + d);
-        return date.toISOString().split('T')[0];
+
+    // ================== DATE UTILS (LOCAL SAFE) ==================
+    // Evita UTC/toISOString para que exp no quede corrido por zona horaria.
+    const toLocalISODate = (d) => {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    };
+
+    const todayISO = () => {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      return toLocalISODate(d);
+    };
+
+    const addDays = (days) => {
+      const d = new Date();
+      d.setHours(0, 0, 0, 0);
+      d.setDate(d.getDate() + days);
+      return toLocalISODate(d);
     };
 
     // Plans Configuration
     const getPlanDays = (p) => {
-        switch(p) {
-            case 'demo': return 30;
-            case 'pro': return 180;
-            case 'premium': return 365;
-            case 'gold': return 730; // 24 Meses
-            default: return 30;
-        }
+      switch (p) {
+        case "demo": return 30;
+        case "plus": return 90;     // 3 Meses (aprox)
+        case "pro": return 180;     // 6 Meses (aprox)
+        case "premium": return 365; // 12 Meses (aprox)
+        case "gold": return 730;    // 24 Meses (aprox)
+        default: return 30;
+      }
     };
 
     // Crypto Logic
     async function signToken(payloadStr) {
-        const key = await crypto.subtle.importKey(
-            "raw", textToBytes(SECRET), 
-            { name: "HMAC", hash: "SHA-256" }, 
-            false, ["sign"]
-        );
-        const sig = await crypto.subtle.sign("HMAC", key, textToBytes(payloadStr));
-        return b64uEncode(sig);
+      const key = await crypto.subtle.importKey(
+        "raw",
+        textToBytes(SECRET),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"]
+      );
+      const sig = await crypto.subtle.sign("HMAC", key, textToBytes(payloadStr));
+      return b64uEncode(sig);
     }
 
     // UI Helpers
     const showToast = (msg, isError = false) => {
-        const t = $('toast');
-        t.innerText = msg;
-        t.className = isError ? 'toast error' : 'toast';
-        t.style.display = 'block';
-        setTimeout(() => t.style.display = 'none', 3000);
+      const t = $("toast");
+      t.innerText = msg;
+      t.className = isError ? "toast error" : "toast";
+      t.style.display = "block";
+      setTimeout(() => (t.style.display = "none"), 3000);
     };
 
     // Main Action
-    $('btnGenerate').addEventListener('click', async () => {
-        const user = $('user').value.trim();
-        if(!user) {
-            showToast("Por favor, ingresa el nombre del asesor.", true);
-            $('user').focus();
-            return;
-        }
+    $("btnGenerate").addEventListener("click", async () => {
+      const user = $("user").value.trim();
+      if (!user) {
+        showToast("Por favor, ingresa el nombre del asesor.", true);
+        $("user").focus();
+        return;
+      }
 
-        const planInput = document.querySelector('input[name="plan"]:checked');
-        const plan = planInput ? planInput.value : 'demo';
-        const days = getPlanDays(plan);
-        const exp = addDays(days);
-        
-        // Random License ID
-        const rand = window.crypto.getRandomValues(new Uint8Array(4));
-        const lic_id = "LIC-" + b64uEncode(rand);
+      const planInput = document.querySelector('input[name="plan"]:checked');
+      const plan = planInput ? planInput.value : "demo";
+      const days = getPlanDays(plan);
 
-        // Core Payload
-        const payload = {
-            lic_id,
-            user,
-            plan,
-            exp,
-            features: { whatsapp: true, dictamen: true },
-            issued_at: todayISO()
-        };
+      const exp = addDays(days);
 
-        try {
-            const payloadJson = JSON.stringify(payload);
-            const payloadB64 = b64uEncode(textToBytes(payloadJson));
-            const sig = await signToken(payloadB64);
-            const token = `${payloadB64}.${sig}`;
-            
-            // Render Result
-            $('resultArea').classList.add('active');
-            $('tokenOutput').innerText = token;
-            $('payloadOutput').innerText = JSON.stringify(payload, null, 2);
-            
-            showToast("¡Licencia generada con éxito!");
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            
-        } catch(e) {
-            showToast("Error critico: " + e.message, true);
-        }
+      // Random License ID
+      const rand = window.crypto.getRandomValues(new Uint8Array(4));
+      const lic_id = "LIC-" + b64uEncode(rand);
+
+      // Core Payload
+      const payload = {
+        lic_id,
+        user,
+        plan,
+        exp,
+        features: { whatsapp: true, dictamen: true },
+        issued_at: todayISO()
+      };
+
+      try {
+        const payloadJson = JSON.stringify(payload);
+        const payloadB64 = b64uEncode(textToBytes(payloadJson));
+        const sig = await signToken(payloadB64);
+        const token = `${payloadB64}.${sig}`;
+
+        // Render Result
+        $("resultArea").classList.add("active");
+        $("tokenOutput").innerText = token;
+        $("payloadOutput").innerText = JSON.stringify(payload, null, 2);
+
+        showToast("¡Licencia generada con éxito!");
+        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+
+      } catch (e) {
+        showToast("Error crítico: " + e.message, true);
+      }
     });
 
     // Copy Action
-    $('tokenOutput').addEventListener('click', () => {
-        const text = $('tokenOutput').innerText;
-        if(!text) return;
-        navigator.clipboard.writeText(text).then(() => showToast("Copiado al portapapeles"));
+    $("tokenOutput").addEventListener("click", () => {
+      const text = $("tokenOutput").innerText;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => showToast("Copiado al portapapeles"));
     });
   </script>
 </body>
